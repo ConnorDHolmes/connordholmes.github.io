@@ -424,6 +424,7 @@ body {
     will-change: transform;
     position: absolute;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     background-color: #FFF;
     transform-style: flat;
 }
