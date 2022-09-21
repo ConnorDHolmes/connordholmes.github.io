@@ -538,7 +538,7 @@ body {
         grid-row-gap: 4px;
         grid-column-gap: 4px;
         margin-left: -1px;
-        padding-bottom: 56px;
+        padding-bottom: 128px;
     }
 
     .slide .columns {
