@@ -367,6 +367,10 @@ body {
 		.card-wrapper .hover-text-wrapper {
         	display: none;
       	}
+
+        .side {
+            outline: none;
+        }
 	}
 
 .hover-text-group {
