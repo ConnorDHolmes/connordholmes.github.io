@@ -367,10 +367,6 @@ body {
 		.card-wrapper .hover-text-wrapper {
         	display: none;
       	}
-
-        .side {
-            outline: none;
-        }
 	}
 
 .hover-text-group {
@@ -429,7 +425,6 @@ body {
     position: absolute;
     backface-visibility: hidden;
     background-color: #FFF;
-    outline: solid 1px #FFF;
     transform-style: flat;
 }
 
