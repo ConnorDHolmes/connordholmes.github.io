@@ -11,6 +11,7 @@ html {
 body {
     margin: 0;
     padding: 0;
+    background-color: #DDD;
 }
 
 .nav {
@@ -145,10 +146,16 @@ body {
 .title {
     color: #000;
     font-family: "Work Sans";
-    font-size: 48px;
+    font-size: 2.5vw;
     font-weight: 300;
     margin-bottom: 16px;
 }
+
+.title a {
+    color: #000;
+    transition: 0.1s color ease, 0.1s background-color ease;
+}
+
 
 .slider {
     width: 100%;
@@ -493,8 +500,14 @@ body {
     -webkit-mask-image: linear-gradient(to left, transparent 12px, #FFF 50%, transparent calc(100% - 12px));
 }
 
+.content.about {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-left: 64px;
+}
 
-.content.about,
 .content.contact {
     display: flex;
     flex-direction: column;
@@ -502,14 +515,26 @@ body {
     padding-left: 64px;
 }
 
-.content.contact a {
-    text-decoration: none;
-    color: #000;
+
+.content.about img {
+    width: 30%;
+    height: auto;
+    object-fit: cover;
+    margin-left: 64px;
+    border-radius: 32px;
+    filter:brightness(1.45);
 }
+
+
 
 @media (min-width: 992px) {
     .card-wrapper:hover * {
         animation-play-state: paused;
+    }
+
+    .title a:hover {
+        color: white;
+        background-color: black;
     }
 }
 
@@ -533,6 +558,23 @@ body {
     .card-wrapper .card-hover-text {
         color: #000;
     }
+
+    .title {
+        font-size: 3.5vw;
+    }
+
+    .content.about {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
+    .content.about img {
+        width: 50%;
+        margin-left: 0;
+        margin-bottom: 32px;
+        border-radius: 16px;
+    }
+
 
 
 }
@@ -615,6 +657,18 @@ body {
     .content.about .title,
     .content.contact .title {
         font-size: 24px;
+    }
+
+    .content.about {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
+    .content.about img {
+        width: 60%;
+        margin-left: 0;
+        margin-bottom: 16px;
+        border-radius: 8px;
     }
 
 }
