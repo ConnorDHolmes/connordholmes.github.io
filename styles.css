@@ -480,13 +480,9 @@ body {
 
 @media (max-width: 480px) {
 
-    body,
-    html {
-        height: -webkit-fill-available;
-    }
 
     .wrapper {
-        padding: 8px
+        padding: 8px 8px 128px 8px;
         row-gap: 16px;
     }
 
