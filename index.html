@@ -1,120 +1,58 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Connor Holmes' Portfolio</title>
-  <meta name="description" content="A selection of projects developed by Connor Holmes">
-  <meta name="author" content="Connor Holmes">
+    <title>Connor Holmes' Portfolio</title>
+    <meta
+      name="description"
+      content="A selection of works developed by Connor Holmes"
+    />
+    <meta name="author" content="Connor Holmes" />
 
-  <meta property="og:title" content="Connor Holmes' Portfolio">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.connorholmes.me/">
-  <meta property="og:description" content="A selection of projects developed by Connor Holmes">
-  <meta property="og:image" content="images/connor_portrait.jpg">
+    <meta property="og:title" content="Connor Holmes' Portfolio" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" />
+    <meta
+      property="og:description"
+      content="A selection of works developed by Connor Holmes"
+    />
+    <meta property="og:image" content="" />
 
+    <!--
   <link rel="icon" href="/favicon.ico">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-  <link rel="stylesheet" href="styles.css">
+  <body>
+    <div id="cursor"></div>
 
-</head>
-
-<body>
-
-    <div class="wrapper">
-        <div class="screens-frame">
-            <div class="perspective-frame">
-                <div class="panel desktop">
-                    <div class="screen">
-
-                    </div>
-                    <div class="screen-black"></div>
-                    <div class="screen-blocker"></div>
-                </div>
+    <div id="wrapper">
+      <div id="scene">
+        <div id="room">
+          <div class="side top"></div>
+          <div class="side left"></div>
+          <div class="side bottom"></div>
+          <div class="side right">
+            <div class="content">
+              <h1>connor holmes</h1>
+              <h2>frontend engineer and ux problem-solver</h2>
             </div>
+          </div>
+          <div class="side back">
+            <div class="screen"></div>
+            <div id="reflection-wrapper"></div>
+          </div>
         </div>
-        <div class="info-frame">
-            <div class="info-slides-wrapper">
-                <div class="info-slide"  id="slide1">
-                    <div class="title">CONNOR HOLMES</div>
-                    <div class="caption-1">FRONTEND ENGINEER • UX PROBLEM-SOLVER</div>
-                    <div class="caption-2">Based in Brooklyn, NY</div>
-                    <a class="site-link" href="assets/Connor_Holmes_Resume.pdf" download="Connor Holmes' Resumé" target="_blank">📎 Resumé</a>
-                </div>
-                <div class="info-slide"  id="slide2">
-                    <div class="title">PERSONAL EYES</div>
-                    <div class="caption-1">HTML • CSS • JQUERY</div>
-                    <div class="caption-2">Marketing website for Las Vegas optician Personal Eyes</div>
-                    <a class="site-link" href="https://personaleyeslasvegas.com" target="_blank">🔗 personaleyeslasvegas.com</a>
-                </div>
-                <div class="info-slide" id="slide3">
-                    <div class="title">INKLING AGENCY</div>
-                    <div class="caption-1">WEBFLOW • JQUERY</div>
-                    <div class="caption-2">Portfolio site for Inkling, a creative agency</div>
-                    <a class="site-link" href="https://wereinkling.com" target="_blank">🔗 wereinkling.com</a>
-                </div>
-                <div class="info-slide" id="slide4">
-                    <div class="title">ARES SECURITY</div>
-                    <div class="caption-1">REACT • NEXT.JS • CONTENTFUL CMS</div>
-                    <div class="caption-2">Marketing site for Ares, cybersecurity leader</div>
-                    <a class="site-link" href="https://aressecuritycorp.com" target="_blank">🔗 aressecuritycorp.com</a>
-                </div>
-                <div class="info-slide" id="slide5">
-                    <div class="title">SEED AI</div>
-                    <div class="caption-1">REACT • NEXT.JS • CONTENTFUL CMS</div>
-                    <div class="caption-2">Marketing site for SeedAI, AI advocacy nonprofit</div>
-                    <a class="site-link" href="https://www.seedai.org" target="_blank">🔗 seedai.org</a>
-                </div>
-                <div class="info-slide" id="slide6">
-                    <div class="title">KEEP COMPANY</div>
-                    <div class="caption-1">WEBFLOW • JQUERY</div>
-                    <div class="caption-2">Marketing site for Keep Company, a coaching community for parents and caregivers</div>
-                    <a class="site-link" href="https://www.keep-company.com/" target="_blank">🔗 keep-company.com</a>
-                </div>
-                <div class="info-slide" id="slide7">
-                    <div class="title">VM2020</div>
-                    <div class="caption-1">WEBFLOW • JQUERY</div>
-                    <div class="caption-2">Marketing site for VM2020, a cybersecurity company</div>
-                    <a class="site-link" href="https://www.vm2020.com/" target="_blank">🔗 vm2020.com</a>
-                </div>
-            </div>
-        </div>
-        <div class="control-panel">
-            <div class="button-wrapper" id="button-screen-switch" title="Toggle screen size">
-                <div class="screen-toggle desktop"></div>
-            </div>
-            <div class="button-wrapper last" id="button-prev-slide" title="Previous">
-                <div class="prev-arrow">
-                    <div class="prev-lines">
-                    </div>
-                </div>
-            </div>
-            <div class="slide-counter">
-                <span id="current-slide-number"></span>
-                <span id="slash">/</span>
-                <span id="total-slide-number">/</span>
-            </div>
-            <div class="button-wrapper" id="button-next-slide" title="Next">
-                <div class="next-arrow">
-                    <div class="next-lines">
-                    </div>
-                </div>
-            </div>
-            <div class="copyright">© 2023 Connor D. Holmes</div>
-        </div>
+      </div>
     </div>
 
-
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

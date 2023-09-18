@@ -1,176 +1,149 @@
-function FadeInIframe() {
-    let loaded = false;
-    $("#screen-sim").on("load", function() {
-        $(".screen").css("opacity", "1");
-        loaded = true;
-    });
-    setTimeout(function() {
-        if (!loaded) {
-            FadeInIframe();
-        }
-    }, 100);
+const win = {
+  w: window.innerWidth,
+  h: window.innerHeight,
+  midX: window.innerWidth / 2,
+  midY: window.innerHeight / 2,
+};
 
+const scene = {
+  el: document.querySelector("#scene"),
+  h: document.querySelector("#scene").offsetHeight,
+};
+
+const cursor = {
+  el: document.querySelector("#cursor"),
+  x: win.midX,
+  y: win.midY,
+  easeX: win.midX,
+  easeY: win.midY,
+  ease: 0.25,
+  w: document.querySelector("#cursor").offsetWidth,
+  h: document.querySelector("#cursor").offsetHeight,
+};
+
+const room = {
+  el: document.querySelector("#room"),
+  view: {
+    focus: false,
+    h: 120,
+    v: 90,
+    focusH: 3,
+    focusV: 2,
+    easeH: 120,
+    easeV: 90,
+    ease: 0.05,
+  },
+  ease: 0.15,
+  easeX: win.midX,
+  easeY: win.midY,
+};
+
+function orientRoom() {
+  room.view.easeH +=
+    ((room.view.focus ? room.view.focusH : room.view.h) - room.view.easeH) *
+    room.view.ease;
+  room.view.easeV +=
+    ((room.view.focus ? room.view.focusV : room.view.v) - room.view.easeV) *
+    room.view.ease;
+
+  room.easeX += (cursor.x - room.easeX) * room.ease;
+  room.easeY += (cursor.y - room.easeY) * room.ease;
+
+  const tiltX = -room.view.easeH + (room.easeX / win.w) * (room.view.easeH * 2);
+  const tiltY = room.view.easeV - (room.easeY / win.h) * (room.view.easeV * 2);
+
+  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${tiltY}deg) rotateY(${tiltX}deg)`;
 }
 
+function contextCursor() {
+  cursor.easeX += (cursor.x - cursor.easeX) * cursor.ease;
+  cursor.easeY += (cursor.y - cursor.easeY) * cursor.ease;
 
-function screenSizer() {
-    const screenHeight = $(".panel").outerHeight();
-    const screenWidth = $(".panel").outerWidth();
-    const frameHeight = $(".screens-frame").outerHeight();
-    const frameWidth = $(".screens-frame").outerWidth();
-
-    const percentOfWindowHeight = frameHeight / screenHeight;
-    const percentOfWindowWidth = frameWidth / screenWidth;
-
-
-    if (percentOfWindowWidth > percentOfWindowHeight) {
-        $(".perspective-frame").css("transform", "scale("+percentOfWindowHeight+")");
-
-    } else {
-        $(".perspective-frame").css("transform", "scale("+percentOfWindowWidth+")");
-    }
-
+  cursor.el.style.transform = `translate3d(${cursor.easeX - cursor.w / 2}px, ${
+    cursor.easeY - cursor.h / 2
+  }px, 0)`;
 }
 
-$(document).ready(function() {
+function cloneScreen() {
+  const screen = document.querySelector(".screen");
+  const reflection = screen.cloneNode(true);
+  reflection.classList.add("reflection");
 
-    setTimeout(function() {
-        $(".wrapper").css("opacity", "1");
-    }, 250);
+  const screenDescendants = screen.querySelectorAll("*");
+  const reflectionDescendants = reflection.querySelectorAll("*");
+  const pairs = [];
+  screenDescendants.forEach((descendant, index) => {
+    pairs.push([descendant, reflectionDescendants[index]]);
+  });
 
-    screenSizer();
-
-    let slide = 1;
-
-    let infoPositioning = 0
-
-
-
-
-    $("#slide"+slide+"").addClass("current");
-
-
-
-    const screenSources = {
-        1: "firstpage.html",
-        2: "https://personaleyeslasvegas.com",
-        3: "https://wereinkling.com",
-        4: "https://aressecuritycorp.com",
-        5: "https://www.seedai.org/",
-        6: "https://www.keep-company.com/",
-        7: "https://www.vm2020.com/",
-    }
-
-    const totalSlides = 7;
-
-    $("#current-slide-number").html(slide);
-    $("#total-slide-number").html(totalSlides);
-
-    $(".screen").append('<iframe id="screen-sim" src='+screenSources[slide]+' style="border: none;" height="100%" width="100%" title="Simulated Screen"></iframe>');
-
-
-    const panel = document.querySelector(".panel");
-
-    let resizeObserver = new ResizeObserver(() => {
-        screenSizer();
-        if ($(".panel").outerWidth() != 390 && $(".panel").outerWidth() != 1366) {
-            $(".screen").css("transition", "0.1s ease opacity");
-            $(".screen").css("opacity", "0");
-        } else {
-            $(".screen").css("transition", "0.3s ease opacity");
-            $(".screen").css("opacity", "1");
-        }
+  //ROUTE ALL JAVASCRIPT ACTIONS WITHIN SCREEN THROUGH THIS FUNCTION
+  pairs.forEach((pair) => {
+    pair[0].addEventListener("mouseenter", function () {
+      pair[0].classList.add("hover");
+      pair[1].classList.add("hover");
     });
-
-    resizeObserver.observe(panel);
-
-
-
-
-
-
-    $(window).resize(function() {
-        $(".perspective-frame").css("transition", "none");
-        $(".info-slides-wrapper").css("transition-delay", "0s");
-        screenSizer();
-
-
-        infoPositioning = (($(".info-frame").height() * slide) - $(".info-frame").height()) * -1;
-        $(".info-slides-wrapper").css("transform", "translateY("+infoPositioning+"px)");
-
-        setTimeout(function() {
-            $(".info-slides-wrapper").css("transition-delay", "0.5s");
-        }, 50);
+    pair[0].addEventListener("mouseleave", function () {
+      pair[0].classList.remove("hover");
+      pair[1].classList.remove("hover");
     });
+  });
 
+  document.getElementById("reflection-wrapper").append(reflection);
+}
 
+function sizeFrame() {
+  const scaleVal = win.h / scene.h;
+  scene.el.style.transform = `scale(${scaleVal})`;
+}
 
+function resetMeasurements() {
+  win.w = window.innerWidth;
+  win.h = window.innerHeight;
+  win.midX = win.w / 2;
+  win.midY = win.h / 2;
+  scene.h = scene.el.offsetHeight;
+}
 
-    $("#button-screen-switch").click(function() {
-        $(".perspective-frame").css("transition", "transform linear 0s");
-        if ($(".panel").hasClass("phone")) {
-            $(".panel").removeClass("phone");
-            $(".panel").addClass("desktop");
-            $(".screen-toggle").removeClass("phone");
-            $(".screen-toggle").addClass("desktop");
-        } else {
-            $(".panel").removeClass("desktop");
-            $(".panel").addClass("phone");
-            $(".screen-toggle").removeClass("desktop");
-            $(".screen-toggle").addClass("phone");
-        }
-    });
+function resetView() {
+  cursor.el.style.visibility = "hidden";
+  cursor.x = win.midX;
+  cursor.y = win.midY;
+}
 
+function refresh() {
+  orientRoom();
+  contextCursor();
+  sizeFrame();
+  requestAnimationFrame(refresh);
+}
 
+window.addEventListener("resize", resetMeasurements);
 
+window.addEventListener("blur", resetView);
 
-    $("#button-prev-slide").click(function() {
-        if (slide > 1) {
-            slide +=-1;
-            $("#button-next-slide").removeClass("last");
-            $(".info-slide").removeClass("current");
-            $("#slide"+slide+"").addClass("current");
-            $(".screen").css("opacity", "0");
-            setTimeout(function() {
-                $(".screen").children().remove();
-                $(".screen").append('<iframe id="screen-sim" src='+screenSources[slide]+' style="border: none;" height="100%" width="100%" title="Simulated Screen"></iframe>');
-            }, 500);
-            FadeInIframe();
-            $("#current-slide-number").html(slide);
-            $("#total-slide-number").html(totalSlides);
-            if (slide === 1) {
-                $("#button-prev-slide").addClass("last");
-            }
-            infoPositioning = (($(".info-frame").height() * slide) - $(".info-frame").height()) * -1;
-            $(".info-slides-wrapper").css("transform", "translateY("+infoPositioning+"px)");
-        }
-    });
-
-    $("#button-next-slide").click(function() {
-        if (slide < 7) {
-            slide +=1;
-            $("#button-prev-slide").removeClass("last");
-            $(".info-slide").removeClass("current");
-            $("#slide"+slide+"").addClass("current");
-            $(".screen").css("opacity", "0");
-            setTimeout(function() {
-                $(".screen").children().remove();
-                $(".screen").append('<iframe id="screen-sim" src='+screenSources[slide]+' style="border: none;" height="100%" width="100%" title="Simulated Screen"></iframe>');
-            }, 500);
-            FadeInIframe();
-            $("#current-slide-number").html(slide);
-            $("#total-slide-number").html(totalSlides);
-            if (slide === 7) {
-                $("#button-next-slide").addClass("last");
-            }
-            infoPositioning = (($(".info-frame").height() * slide) - $(".info-frame").height()) * -1;
-            $(".info-slides-wrapper").css("transform", "translateY("+infoPositioning+"px)");
-        }
-    });
-
-
-
-
-
-
+document.addEventListener("mousemove", function (event) {
+  cursor.el.style.visibility = "visible";
+  cursor.x = event.pageX;
+  cursor.y = event.pageY;
 });
+
+document.documentElement.addEventListener("mouseleave", resetView);
+
+document.documentElement.addEventListener("mouseenter", function (event) {
+  cursor.x = event.pageX;
+  cursor.y = event.pageY;
+  cursor.easeX = event.pageX;
+  cursor.easeY = event.pageY;
+});
+
+document.addEventListener("keyup", function (event) {
+  if (event.key === "Shift") {
+    room.view.focus = !room.view.focus;
+  } else if (event.key === "m") {
+    document.querySelector("body").classList.toggle("light-mode");
+    console.log("mode switched");
+  }
+});
+
+cloneScreen();
+refresh();
