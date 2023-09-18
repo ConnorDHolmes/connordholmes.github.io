@@ -17,8 +17,8 @@ const cursor = {
   easeX: win.midX,
   easeY: win.midY,
   ease: 0.25,
-  w: document.querySelector("#cursor").offsetWidth,
-  h: document.querySelector("#cursor").offsetHeight,
+  halfW: document.querySelector("#cursor").offsetWidth / 2,
+  halfH: document.querySelector("#cursor").offsetHeight / 2,
 };
 
 const room = {
@@ -59,8 +59,8 @@ function contextCursor() {
   cursor.easeX += (cursor.x - cursor.easeX) * cursor.ease;
   cursor.easeY += (cursor.y - cursor.easeY) * cursor.ease;
 
-  cursor.el.style.transform = `translate3d(${cursor.easeX - cursor.w / 2}px, ${
-    cursor.easeY - cursor.h / 2
+  cursor.el.style.transform = `translate3d(${cursor.easeX - cursor.halfW}px, ${
+    cursor.easeY - cursor.halfH
   }px, 0)`;
 }
 
@@ -69,23 +69,34 @@ function cloneScreen() {
   const reflection = screen.cloneNode(true);
   reflection.classList.add("reflection");
 
+  //BIND EACH DIV IN THE SCREEN TO ITS REFLECTION COUNTERPART
   const screenDescendants = screen.querySelectorAll("*");
-  const reflectionDescendants = reflection.querySelectorAll("*");
-  const pairs = [];
+  const pairMap = new Map();
+
+  const classObserver = new MutationObserver(onClassListChange);
+  function onClassListChange(changes) {
+    changes.forEach((change) => {
+      pairMap.get(change.target).classList = change.target.classList;
+    });
+  }
+
   screenDescendants.forEach((descendant, index) => {
-    pairs.push([descendant, reflectionDescendants[index]]);
+    pairMap.set(descendant, reflection.querySelectorAll("*")[index]);
+    classObserver.observe(descendant, {
+      attributeFilter: ["class"],
+    });
+    //HOVER HANDLING FOR ALL SCREEN ELEMENTS
+    descendant.addEventListener("mouseenter", function () {
+      descendant.classList.add("hover");
+    });
+    descendant.addEventListener("mouseleave", function () {
+      descendant.classList.remove("hover");
+    });
   });
 
-  //ROUTE ALL JAVASCRIPT ACTIONS WITHIN SCREEN THROUGH THIS FUNCTION
-  pairs.forEach((pair) => {
-    pair[0].addEventListener("mouseenter", function () {
-      pair[0].classList.add("hover");
-      pair[1].classList.add("hover");
-    });
-    pair[0].addEventListener("mouseleave", function () {
-      pair[0].classList.remove("hover");
-      pair[1].classList.remove("hover");
-    });
+  //ALL NON-HOVER JS FUNCTIONALITY WITHIN SCREEN
+  document.getElementById("column-1").addEventListener("click", function () {
+    this.classList.toggle("red");
   });
 
   document.getElementById("reflection-wrapper").append(reflection);
