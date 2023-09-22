@@ -171,8 +171,8 @@ document.addEventListener("keyup", function (event) {
   }
 });
 
-document.addEventListener("readystatechange", function (e) {
-  if (e.target.readyState === "complete") {
+document.addEventListener("readystatechange", function (event) {
+  if (event.target.readyState === "complete") {
     reveal();
   }
 });

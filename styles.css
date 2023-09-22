@@ -135,24 +135,24 @@ body.light-mode {
 }
 
 .side.back::after {
-  background-image: url("https://ipfs.filebase.io/ipfs/QmVSdYQoeh9DdgiZK6cstcf5mRwRPGh5KrxjFW9KMAJ6xr");
+  background-image: url("images/wall_bgr_back.png");
 }
 
 .side.top::after {
-  background-image: url("https://ipfs.filebase.io/ipfs/QmYJ8q3ibbXzKvoafGAyJnjMSG4gSXR2Xoc2FfW2jEwr55");
+  background-image: url("images/wall_bgr_gradient_up.png");
 }
 
 .side.bottom::after {
-  background-image: url("https://ipfs.filebase.io/ipfs/QmZn9GZwwNuC8TUQ26GZr1m9JWutFqwiEUoUUTK2KwzoDg");
+  background-image: url("images/wall_bgr_gradient_down.png");
   opacity: 0.5;
 }
 
 .side.left::after {
-  background-image: url("https://ipfs.filebase.io/ipfs/QmY7yrNUzbbowjuQLA4LKnYMeRA67d6WkQbc1jkYUjr97E");
+  background-image: url("images/wall_bgr_gradient_left.png");
 }
 
 .side.right::after {
-  background-image: url("https://ipfs.filebase.io/ipfs/QmS4vYq4PcvLGwXaaLmoUVWysMy4garS8DPSELYEgA4zCD");
+  background-image: url("images/wall_bgr_gradient_right.png");
 }
 
 .side.right .content {
@@ -263,7 +263,7 @@ body:active #cursor.clickable::after {
 .screen .inner .column {
   width: 33.33%;
   height: 100%;
-  transition: 0.5s ease background-color;
+  transition: 0.25s ease background-color;
 }
 
 .screen .inner .column.hover {
