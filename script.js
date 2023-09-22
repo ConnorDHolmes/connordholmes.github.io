@@ -40,6 +40,11 @@ const room = {
   easeY: win.midY,
 };
 
+let sampleRange = 100;
+const diffsList = [];
+let prevTime = performance.now();
+let multiplier = 1;
+
 function orientRoom() {
   room.view.easeH +=
     ((room.view.focus ? room.view.focusH : room.view.h) - room.view.easeH) *
@@ -132,9 +137,6 @@ function resetView() {
   cursor.y = win.midY;
 }
 
-let sampleRange = 100;
-diffsList = [];
-let prevTime = performance.now();
 function sampleFrameRate() {
   if (sampleRange > 0) {
     const newTime = performance.now();
@@ -143,13 +145,23 @@ function sampleFrameRate() {
     sampleRange -= 1;
     requestAnimationFrame(sampleFrameRate);
   } else {
-    console.log(diffsList);
     let total = 0;
     diffsList.forEach((diff) => {
       total += diff;
     });
     const average = total / diffsList.length;
-    console.log(1000 / average);
+    const frameRate = 1000 / average;
+    console.log(frameRate);
+    multiplier = frameRate / 60;
+    console.log(multiplier);
+    console.log(Math.round(multiplier));
+
+    function resetEases(easesList) {
+      easesList.forEach((ease) => {
+        ease = ease / multiplier;
+      });
+    }
+    resetEases([room.view.ease, room.ease, cursor.ease]);
   }
 }
 
