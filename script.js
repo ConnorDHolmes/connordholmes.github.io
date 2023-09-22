@@ -5,6 +5,8 @@ const win = {
   midY: window.innerHeight / 2,
 };
 
+const overlay = document.getElementById("overlay");
+
 const scene = {
   el: document.querySelector("#scene"),
   h: document.querySelector("#scene").offsetHeight,
@@ -69,33 +71,42 @@ function cloneScreen() {
   const reflection = screen.cloneNode(true);
   reflection.classList.add("reflection");
 
-  //BIND EACH DIV IN THE SCREEN TO ITS REFLECTION COUNTERPART
   const screenDescendants = screen.querySelectorAll("*");
   const pairMap = new Map();
-
+  //MUTATION OBSERVER AND CALLBACK FUNCTION
   const classObserver = new MutationObserver(onClassListChange);
   function onClassListChange(changes) {
     changes.forEach((change) => {
       pairMap.get(change.target).classList = change.target.classList;
     });
   }
-
+  //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE
   screenDescendants.forEach((descendant, index) => {
-    pairMap.set(descendant, reflection.querySelectorAll("*")[index]);
-    classObserver.observe(descendant, {
-      attributeFilter: ["class"],
-    });
-    //HOVER HANDLING FOR ALL SCREEN ELEMENTS
-    descendant.addEventListener("mouseenter", function () {
-      descendant.classList.add("hover");
-    });
-    descendant.addEventListener("mouseleave", function () {
-      descendant.classList.remove("hover");
-    });
+    if (
+      descendant.hasAttribute("data-m") ||
+      descendant.hasAttribute("data-h")
+    ) {
+      pairMap.set(descendant, reflection.querySelectorAll("*")[index]);
+      classObserver.observe(descendant, {
+        attributeFilter: ["class"],
+      });
+      //HOVER HANDLING FOR ALL SCREEN ELEMENTS WITH DATA-H (HOVERABLE) ATTRIBUTE
+      if (descendant.hasAttribute("data-h")) {
+        descendant.addEventListener("mouseenter", function () {
+          this.classList.add("hover");
+          cursor.el.classList.add("clickable");
+        });
+        descendant.addEventListener("mouseleave", function () {
+          this.classList.remove("hover");
+          cursor.el.classList.remove("clickable");
+        });
+      }
+    }
   });
 
-  //ALL NON-HOVER JS FUNCTIONALITY WITHIN SCREEN
-  document.getElementById("column-1").addEventListener("click", function () {
+  //ALL JS FUNCTIONALITY WITHIN SCREEN
+  //Example:
+  document.getElementById("column-1").addEventListener("mouseup", function () {
     this.classList.toggle("red");
   });
 
@@ -128,6 +139,10 @@ function refresh() {
   requestAnimationFrame(refresh);
 }
 
+function reveal() {
+  overlay.classList.add("reveal");
+}
+
 window.addEventListener("resize", resetMeasurements);
 
 window.addEventListener("blur", resetView);
@@ -153,6 +168,12 @@ document.addEventListener("keyup", function (event) {
   } else if (event.key === "m") {
     document.querySelector("body").classList.toggle("light-mode");
     console.log("mode switched");
+  }
+});
+
+document.addEventListener("readystatechange", function (e) {
+  if (e.target.readyState === "complete") {
+    reveal();
   }
 });
 

@@ -36,6 +36,21 @@ body.light-mode {
   background-color: var(--void-light);
 }
 
+#overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100000;
+  width: 100%;
+  height: 100vh;
+  background-color: #000;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+
+#overlay.reveal {
+  opacity: 0;
+}
+
 /* 3D SCENE */
 
 #wrapper {
@@ -179,10 +194,11 @@ body.light-mode {
   display: flex;
   flex-direction: column;
   pointer-events: auto;
+  transform-style: flat;
 }
 
 #reflection-wrapper {
-  /* filter: blur(8px); */
+  filter: blur(4px);
   position: absolute;
   top: 608px;
   left: 32px;
@@ -205,36 +221,55 @@ body.light-mode {
 #cursor {
   position: absolute;
   inset: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 0 var(--offwhite), inset 0 0 0 4px var(--offwhite);
+  width: 6px;
+  height: 6px;
   mix-blend-mode: exclusion;
   z-index: 1000;
   pointer-events: none;
   visibility: hidden;
 }
 
-/* INSIDE SCREEN */
-
-.screen .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 100%;
-  height: 100%;
-  transition: 1s ease grid-template-columns;
+#cursor::after {
+  content: "";
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: var(--offwhite);
+  transition: 0.2s ease transform;
 }
 
-.screen .grid .column {
+body:active #cursor::after {
+  transform: scale(0.66);
+}
+
+#cursor.clickable::after {
+  transform: scale(1.33);
+}
+
+body:active #cursor.clickable::after {
+  transform: scale(1);
+}
+
+/* INSIDE SCREEN */
+
+.screen .inner {
+  display: flex;
   width: 100%;
+  height: 100%;
+}
+
+.screen .inner .column {
+  width: 33.33%;
   height: 100%;
   transition: 0.5s ease background-color;
 }
 
-.screen .grid .column.hover {
+.screen .inner .column.hover {
   background-color: #aaa;
 }
 
-.screen .grid .red {
+.screen .inner .red {
   background-color: red !important;
 }
