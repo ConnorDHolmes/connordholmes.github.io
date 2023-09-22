@@ -154,14 +154,12 @@ function sampleFrameRate() {
     console.log(frameRate);
     multiplier = frameRate / 60;
     console.log(multiplier);
-    console.log(Math.round(multiplier));
+    multiplier = Math.round(multiplier);
+    console.log(multiplier);
 
-    function resetEases(easesList) {
-      easesList.forEach((ease) => {
-        ease = ease / multiplier;
-      });
-    }
-    resetEases([room.view.ease, room.ease, cursor.ease]);
+    room.ease = room.ease / multiplier;
+    room.view.ease = room.view.ease / multiplier;
+    cursor.ease = cursor.ease / multiplier;
   }
 }
 
