@@ -215,5 +215,5 @@ document.addEventListener("readystatechange", function (event) {
 });
 
 cloneScreen();
-sampleFrameRate();
+//sampleFrameRate();
 refresh();
