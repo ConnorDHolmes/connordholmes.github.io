@@ -59,15 +59,21 @@ function orientRoom() {
   const tiltX = -room.view.easeH + (room.easeX / win.w) * (room.view.easeH * 2);
   const tiltY = room.view.easeV - (room.easeY / win.h) * (room.view.easeV * 2);
 
-  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${tiltY}deg) rotateY(${tiltX}deg)`;
+  const roundedTiltX = Math.round(tiltX * 1000) / 1000;
+  const roundedTiltY = Math.round(tiltY * 1000) / 1000;
+
+  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${roundedTiltY}deg) rotateY(${roundedTiltX}deg)`;
 }
 
 function contextCursor() {
   cursor.easeX += (cursor.x - cursor.easeX) * cursor.ease;
   cursor.easeY += (cursor.y - cursor.easeY) * cursor.ease;
 
-  cursor.el.style.transform = `translate3d(${cursor.easeX - cursor.halfW}px, ${
-    cursor.easeY - cursor.halfH
+  const roundedEaseX = Math.round(cursor.easeX * 1000) / 1000;
+  const roundedEaseY = Math.round(cursor.easeY * 1000) / 1000;
+
+  cursor.el.style.transform = `translate3d(${roundedEaseX - cursor.halfW}px, ${
+    roundedEaseY - cursor.halfH
   }px, 0)`;
 }
 
