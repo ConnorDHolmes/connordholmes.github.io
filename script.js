@@ -40,11 +40,6 @@ const room = {
   easeY: win.midY,
 };
 
-let sampleRange = 100;
-const diffsList = [];
-let prevTime = performance.now();
-let multiplier = 1;
-
 function orientRoom() {
   room.view.easeH +=
     ((room.view.focus ? room.view.focusH : room.view.h) - room.view.easeH) *
@@ -59,22 +54,13 @@ function orientRoom() {
   const tiltX = -room.view.easeH + (room.easeX / win.w) * (room.view.easeH * 2);
   const tiltY = room.view.easeV - (room.easeY / win.h) * (room.view.easeV * 2);
 
-  const roundedTiltX = Math.round(tiltX * 1000) / 1000;
-  const roundedTiltY = Math.round(tiltY * 1000) / 1000;
-
-  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${roundedTiltY}deg) rotateY(${roundedTiltX}deg)`;
+  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${tiltY}deg) rotateY(${tiltX}deg)`;
 }
 
 function contextCursor() {
   cursor.easeX += (cursor.x - cursor.easeX) * cursor.ease;
   cursor.easeY += (cursor.y - cursor.easeY) * cursor.ease;
-
-  const roundedEaseX = Math.round(cursor.easeX * 1000) / 1000;
-  const roundedEaseY = Math.round(cursor.easeY * 1000) / 1000;
-
-  cursor.el.style.transform = `translate3d(${roundedEaseX - cursor.halfW}px, ${
-    roundedEaseY - cursor.halfH
-  }px, 0)`;
+  cursor.el.style.transform = `translate3d(${cursor.easeX}px, ${cursor.easeY}px, 0)`;
 }
 
 function cloneScreen() {
@@ -126,7 +112,7 @@ function cloneScreen() {
 
 function sizeFrame() {
   const scaleVal = win.h / scene.h;
-  scene.el.style.transform = `scale(${scaleVal})`;
+  scene.el.style.transform = `translate3d(0, 0, 0) scale(${scaleVal})`;
 }
 
 function resetMeasurements() {
@@ -143,36 +129,9 @@ function resetView() {
   cursor.y = win.midY;
 }
 
-function sampleFrameRate() {
-  if (sampleRange > 0) {
-    const newTime = performance.now();
-    diffsList.push(newTime - prevTime);
-    prevTime = newTime;
-    sampleRange -= 1;
-    requestAnimationFrame(sampleFrameRate);
-  } else {
-    let total = 0;
-    diffsList.forEach((diff) => {
-      total += diff;
-    });
-    const average = total / diffsList.length;
-    const frameRate = 1000 / average;
-    console.log(frameRate);
-    multiplier = frameRate / 60;
-    console.log(multiplier);
-    multiplier = Math.round(multiplier);
-    console.log(multiplier);
-
-    room.ease = room.ease / multiplier;
-    room.view.ease = room.view.ease / multiplier;
-    cursor.ease = cursor.ease / multiplier;
-  }
-}
-
 function refresh() {
   orientRoom();
   contextCursor();
-  sizeFrame();
   requestAnimationFrame(refresh);
 }
 
@@ -180,14 +139,17 @@ function reveal() {
   overlay.classList.add("reveal");
 }
 
-window.addEventListener("resize", resetMeasurements);
+window.addEventListener("resize", function () {
+  resetMeasurements();
+  sizeFrame();
+});
 
 window.addEventListener("blur", resetView);
 
 document.addEventListener("mousemove", function (event) {
   cursor.el.style.visibility = "visible";
-  cursor.x = event.pageX;
-  cursor.y = event.pageY;
+  cursor.x = event.pageX - cursor.halfW;
+  cursor.y = event.pageY - cursor.halfH;
 });
 
 document.documentElement.addEventListener("mouseleave", resetView);
@@ -214,6 +176,6 @@ document.addEventListener("readystatechange", function (event) {
   }
 });
 
+sizeFrame();
 cloneScreen();
-//sampleFrameRate();
 refresh();

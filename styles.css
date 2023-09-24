@@ -59,10 +59,10 @@ body.light-mode {
   width: 100%;
   height: 100%;
   display: flex;
-  perspective-origin: center center;
   justify-content: center;
   align-items: center;
   perspective: 1024px;
+  transform-style: flat;
   pointer-events: none;
 }
 
@@ -70,7 +70,6 @@ body.light-mode {
   width: 576px;
   height: 676px;
   transform-style: preserve-3d;
-  perspective-origin: center center;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,7 +82,7 @@ body.light-mode {
   position: relative;
   transform-style: preserve-3d;
   transform-origin: center center;
-  transform: translateZ(512px) rotateX(0deg) rotateY(0deg);
+  transform: translate3d(0, 0, 512px) rotateX(0deg) rotateY(0deg);
   flex-shrink: 0;
 }
 
@@ -97,7 +96,7 @@ body.light-mode {
 
 .side.back {
   height: 576px;
-  transform: translateZ(-511px);
+  transform: translate3d(0, 0, -511px);
 }
 
 .side.top {
