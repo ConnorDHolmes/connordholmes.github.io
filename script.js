@@ -35,7 +35,6 @@ const cursor = {
     target: win.midY,
     eased: win.midY,
   },
-  ease: 0.25,
   get half() {
     return cursor.el.offsetWidth / 2;
   },
@@ -47,17 +46,28 @@ const room = {
     isFocused: false,
     hor: {
       get target() {
-        return room.range.isFocused ? 3 : 120;
+        return room.range.isFocused ? 1 : 120;
       },
       eased: 120,
+      get cone() {
+        return room.range.hor.eased * 2;
+      },
     },
     vert: {
       get target() {
-        return room.range.isFocused ? 2 : 90;
+        return room.range.isFocused ? 1 : 90;
       },
       eased: 90,
+      get cone() {
+        return room.range.vert.eased * 2;
+      },
     },
-    ease: 0.05,
+    zoom: {
+      get target() {
+        return room.range.isFocused ? 608 : 512;
+      },
+      eased: 512,
+    },
   },
   x: {
     get target() {
@@ -71,32 +81,35 @@ const room = {
     },
     eased: cursor.y.target,
   },
-  ease: 0.15,
 };
 
-function ease(val, easing) {
-  val.eased += (val.target - val.eased) * easing;
+cursor.x.ease = cursor.y.ease = 0.25;
+room.x.ease = room.y.ease = 0.15;
+room.range.hor.ease = room.range.vert.ease = room.range.zoom.ease = 0.05;
+
+function ease(val) {
+  val.eased += (val.target - val.eased) * val.ease;
 }
 
 function refresh() {
   //CURSOR EASING
-  ease(cursor.x, cursor.ease);
-  ease(cursor.y, cursor.ease);
+  ease(cursor.x);
+  ease(cursor.y);
 
   //ROOM EASING
-  ease(room.x, room.ease);
-  ease(room.y, room.ease);
-  ease(room.range.hor, room.range.ease);
-  ease(room.range.vert, room.range.ease);
+  ease(room.x);
+  ease(room.y);
+  ease(room.range.hor);
+  ease(room.range.vert);
+  ease(room.range.zoom);
 
-  const tilt =
-    -room.range.hor.eased + (room.x.eased / win.w) * (room.range.hor.eased * 2);
-  const pan =
-    room.range.vert.eased -
-    (room.y.eased / win.h) * (room.range.vert.eased * 2);
+  room.pan =
+    -room.range.hor.eased + (room.x.eased / win.w) * room.range.hor.cone;
+  room.tilt =
+    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
 
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${pan}deg) rotateY(${tilt}deg)`;
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
 
   requestAnimationFrame(refresh);
 }
@@ -115,7 +128,7 @@ function cloneScreen() {
       pairMap.get(change.target).classList = change.target.classList;
     });
   }
-  //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE
+  //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE (MUTABLE OR HOVERABLE)
   screenDescendants.forEach((descendant, index) => {
     if (
       descendant.hasAttribute("data-m") ||
@@ -184,7 +197,6 @@ document.addEventListener("keyup", function (event) {
     room.range.isFocused = !room.range.isFocused;
   } else if (event.key === "m") {
     document.querySelector("body").classList.toggle("light-mode");
-    console.log("mode switched");
   }
 });
 

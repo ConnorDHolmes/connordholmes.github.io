@@ -4,7 +4,7 @@
   --void-dark: #000;
   --void-light: #eee;
   --offwhite: #bbb;
-  --mode-swap-ease: cubic-bezier(0.79, 0.14, 0.15, 0.86);
+  --mode-swap-ease: ease-in-out;
 }
 
 * {
@@ -39,16 +39,20 @@ body.light-mode {
 #overlay {
   position: absolute;
   inset: 0;
-  z-index: 100000;
+  z-index: 100;
   width: 100%;
   height: 100vh;
+  display: grid;
+  place-items: center;
   background-color: #000;
   pointer-events: none;
   transition: opacity 2s ease;
+  pointer-events: auto;
 }
 
 #overlay.reveal {
   opacity: 0;
+  pointer-events: none;
 }
 
 /* 3D SCENE */
@@ -94,18 +98,20 @@ body.light-mode {
   transform-style: flat;
 }
 
+.side.top,
+.side.bottom {
+  height: 1024px;
+}
+
 .side.back {
-  height: 576px;
   transform: translate3d(0, 0, -511px);
 }
 
 .side.top {
-  height: 1024px;
   transform: rotateX(-90deg) translate3d(0, 0, -511px);
 }
 
 .side.bottom {
-  height: 1024px;
   transform: rotateX(90deg) translate3d(0, 0, -63px);
 }
 
