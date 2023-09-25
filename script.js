@@ -1,66 +1,104 @@
-const win = {
-  w: window.innerWidth,
-  h: window.innerHeight,
-  midX: window.innerWidth / 2,
-  midY: window.innerHeight / 2,
-};
-
 const overlay = document.getElementById("overlay");
+
+const win = {
+  get w() {
+    return window.innerWidth;
+  },
+  get h() {
+    return window.innerHeight;
+  },
+  get midX() {
+    return win.w / 2;
+  },
+  get midY() {
+    return win.h / 2;
+  },
+};
 
 const scene = {
   el: document.querySelector("#scene"),
-  h: document.querySelector("#scene").offsetHeight,
+  get h() {
+    return scene.el.offsetHeight;
+  },
+  get scale() {
+    return win.h / scene.h;
+  },
 };
 
 const cursor = {
   el: document.querySelector("#cursor"),
-  x: win.midX,
-  y: win.midY,
-  easeX: win.midX,
-  easeY: win.midY,
+  x: {
+    target: win.midX,
+    eased: win.midX,
+  },
+  y: {
+    target: win.midY,
+    eased: win.midY,
+  },
   ease: 0.25,
-  halfW: document.querySelector("#cursor").offsetWidth / 2,
-  halfH: document.querySelector("#cursor").offsetHeight / 2,
+  get half() {
+    return cursor.el.offsetWidth / 2;
+  },
 };
 
 const room = {
   el: document.querySelector("#room"),
-  view: {
-    focus: false,
-    h: 120,
-    v: 90,
-    focusH: 3,
-    focusV: 2,
-    easeH: 120,
-    easeV: 90,
+  range: {
+    isFocused: false,
+    hor: {
+      get target() {
+        return room.range.isFocused ? 3 : 120;
+      },
+      eased: 120,
+    },
+    vert: {
+      get target() {
+        return room.range.isFocused ? 2 : 90;
+      },
+      eased: 90,
+    },
     ease: 0.05,
   },
+  x: {
+    get target() {
+      return cursor.x.target;
+    },
+    eased: cursor.x.target,
+  },
+  y: {
+    get target() {
+      return cursor.y.target;
+    },
+    eased: cursor.y.target,
+  },
   ease: 0.15,
-  easeX: win.midX,
-  easeY: win.midY,
 };
 
-function orientRoom() {
-  room.view.easeH +=
-    ((room.view.focus ? room.view.focusH : room.view.h) - room.view.easeH) *
-    room.view.ease;
-  room.view.easeV +=
-    ((room.view.focus ? room.view.focusV : room.view.v) - room.view.easeV) *
-    room.view.ease;
-
-  room.easeX += (cursor.x - room.easeX) * room.ease;
-  room.easeY += (cursor.y - room.easeY) * room.ease;
-
-  const tiltX = -room.view.easeH + (room.easeX / win.w) * (room.view.easeH * 2);
-  const tiltY = room.view.easeV - (room.easeY / win.h) * (room.view.easeV * 2);
-
-  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${tiltY}deg) rotateY(${tiltX}deg)`;
+function ease(val, easing) {
+  val.eased += (val.target - val.eased) * easing;
 }
 
-function contextCursor() {
-  cursor.easeX += (cursor.x - cursor.easeX) * cursor.ease;
-  cursor.easeY += (cursor.y - cursor.easeY) * cursor.ease;
-  cursor.el.style.transform = `translate3d(${cursor.easeX}px, ${cursor.easeY}px, 0)`;
+function refresh() {
+  //CURSOR EASING
+  ease(cursor.x, cursor.ease);
+  ease(cursor.y, cursor.ease);
+
+  //ROOM EASING
+  ease(room.x, room.ease);
+  ease(room.y, room.ease);
+  ease(room.range.hor, room.range.ease);
+  ease(room.range.vert, room.range.ease);
+
+  const tilt =
+    -room.range.hor.eased + (room.x.eased / win.w) * (room.range.hor.eased * 2);
+  const pan =
+    room.range.vert.eased -
+    (room.y.eased / win.h) * (room.range.vert.eased * 2);
+
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  room.el.style.transform = `translate3d(0, 0, 512px) rotateX(${pan}deg) rotateY(${tilt}deg)`;
+
+  requestAnimationFrame(refresh);
 }
 
 function cloneScreen() {
@@ -111,59 +149,39 @@ function cloneScreen() {
 }
 
 function sizeFrame() {
-  const scaleVal = win.h / scene.h;
-  scene.el.style.transform = `translate3d(0, 0, 0) scale(${scaleVal})`;
-}
-
-function resetMeasurements() {
-  win.w = window.innerWidth;
-  win.h = window.innerHeight;
-  win.midX = win.w / 2;
-  win.midY = win.h / 2;
-  scene.h = scene.el.offsetHeight;
+  scene.el.style.transform = `translate3d(0, 0, 0) scale(${scene.scale})`;
 }
 
 function resetView() {
   cursor.el.style.visibility = "hidden";
-  cursor.x = win.midX;
-  cursor.y = win.midY;
-}
-
-function refresh() {
-  orientRoom();
-  contextCursor();
-  requestAnimationFrame(refresh);
+  cursor.x.target = win.midX;
+  cursor.y.target = win.midY;
 }
 
 function reveal() {
   overlay.classList.add("reveal");
 }
 
-window.addEventListener("resize", function () {
-  resetMeasurements();
-  sizeFrame();
-});
+window.addEventListener("resize", sizeFrame);
 
 window.addEventListener("blur", resetView);
 
 document.addEventListener("mousemove", function (event) {
   cursor.el.style.visibility = "visible";
-  cursor.x = event.pageX - cursor.halfW;
-  cursor.y = event.pageY - cursor.halfH;
+  cursor.x.target = event.pageX - cursor.half;
+  cursor.y.target = event.pageY - cursor.half;
 });
 
 document.documentElement.addEventListener("mouseleave", resetView);
 
 document.documentElement.addEventListener("mouseenter", function (event) {
-  cursor.x = event.pageX;
-  cursor.y = event.pageY;
-  cursor.easeX = event.pageX;
-  cursor.easeY = event.pageY;
+  cursor.x.target = cursor.x.eased = event.pageX;
+  cursor.y.target = cursor.y.eased = event.pageY;
 });
 
 document.addEventListener("keyup", function (event) {
   if (event.key === "Shift") {
-    room.view.focus = !room.view.focus;
+    room.range.isFocused = !room.range.isFocused;
   } else if (event.key === "m") {
     document.querySelector("body").classList.toggle("light-mode");
     console.log("mode switched");
