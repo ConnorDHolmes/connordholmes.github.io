@@ -55,6 +55,21 @@ body.light-mode {
   pointer-events: none;
 }
 
+#hud {
+  mix-blend-mode: exclusion;
+  color: #ccc;
+  padding: 16px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  gap: 32px;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
 /* 3D SCENE */
 
 #wrapper {
@@ -208,7 +223,7 @@ body.light-mode {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background-color: #bbb;
+  background-color: #ccc;
   transition: 0.2s ease transform;
 }
 
