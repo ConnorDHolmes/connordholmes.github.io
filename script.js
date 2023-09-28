@@ -1,5 +1,5 @@
 const overlay = document.getElementById("overlay");
-const button = document.getElementById("button");
+const startButton = document.getElementById("start-button");
 
 const win = {
   get w() {
@@ -199,14 +199,14 @@ function reveal() {
   overlay.classList.add("reveal");
 }
 
-button.addEventListener("click", function () {
+startButton.addEventListener("click", function () {
   room.range.mode = "focused";
 });
-button.addEventListener("mouseenter", function () {
+startButton.addEventListener("mouseenter", function () {
   this.classList.add("hover");
   cursor.el.classList.add("clickable");
 });
-button.addEventListener("mouseleave", function () {
+startButton.addEventListener("mouseleave", function () {
   this.classList.remove("hover");
   cursor.el.classList.remove("clickable");
 });
