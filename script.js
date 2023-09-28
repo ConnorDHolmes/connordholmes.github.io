@@ -1,4 +1,5 @@
 const overlay = document.getElementById("overlay");
+const button = document.getElementById("button");
 
 const win = {
   get w() {
@@ -40,22 +41,27 @@ const cursor = {
   },
 };
 
+const cameraPos = new Map();
+cameraPos.set("orbit", { hor: 2, vert: 2, zoom: -1024, adj: 90 });
+cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("focused", { hor: 1, vert: 1, zoom: 544, adj: 0 });
+
 const room = {
   el: document.querySelector("#room"),
   range: {
-    isFocused: false,
+    mode: "orbit",
     hor: {
       get target() {
-        return room.range.isFocused ? 1 : 120;
+        return cameraPos.get(room.range.mode).hor;
       },
-      eased: 120,
+      eased: 5,
       get cone() {
         return room.range.hor.eased * 2;
       },
     },
     vert: {
       get target() {
-        return room.range.isFocused ? 1 : 90;
+        return cameraPos.get(room.range.mode).vert;
       },
       eased: 90,
       get cone() {
@@ -64,9 +70,15 @@ const room = {
     },
     zoom: {
       get target() {
-        return room.range.isFocused ? 608 : 512;
+        return cameraPos.get(room.range.mode).zoom;
       },
       eased: 512,
+    },
+    adj: {
+      get target() {
+        return cameraPos.get(room.range.mode).adj;
+      },
+      eased: 90,
     },
   },
   x: {
@@ -85,12 +97,17 @@ const room = {
 
 cursor.x.ease = cursor.y.ease = 0.25;
 room.x.ease = room.y.ease = 0.15;
-room.range.hor.ease = room.range.vert.ease = room.range.zoom.ease = 0.05;
+room.range.hor.ease =
+  room.range.vert.ease =
+  room.range.zoom.ease =
+  room.range.adj.ease =
+    0.05;
 
 function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
 }
 
+room.rotate = 0;
 function refresh() {
   //CURSOR EASING
   ease(cursor.x);
@@ -102,9 +119,12 @@ function refresh() {
   ease(room.range.hor);
   ease(room.range.vert);
   ease(room.range.zoom);
+  ease(room.range.adj);
 
   room.pan =
     -room.range.hor.eased + (room.x.eased / win.w) * room.range.hor.cone;
+  room.pan += room.range.adj.eased;
+
   room.tilt =
     room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
 
@@ -153,7 +173,8 @@ function cloneScreen() {
   });
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN
-  //Example:
+
+  //EXAMPLE:
   document.getElementById("column-1").addEventListener("mouseup", function () {
     this.classList.toggle("red");
   });
@@ -161,19 +182,34 @@ function cloneScreen() {
   document.getElementById("reflection-wrapper").append(reflection);
 }
 
+//SCALE THE SCENE TO FIT SCREEN HEIGHT
 function sizeFrame() {
   scene.el.style.transform = `translate3d(0, 0, 0) scale(${scene.scale})`;
 }
 
+//RESET VIEW TO MIDDLE
 function resetView() {
   cursor.el.style.visibility = "hidden";
   cursor.x.target = win.midX;
   cursor.y.target = win.midY;
 }
 
+//GET RID OF INITIAL OVERLAY
 function reveal() {
   overlay.classList.add("reveal");
 }
+
+button.addEventListener("click", function () {
+  room.range.mode = "focused";
+});
+button.addEventListener("mouseenter", function () {
+  this.classList.add("hover");
+  cursor.el.classList.add("clickable");
+});
+button.addEventListener("mouseleave", function () {
+  this.classList.remove("hover");
+  cursor.el.classList.remove("clickable");
+});
 
 window.addEventListener("resize", sizeFrame);
 
@@ -194,7 +230,13 @@ document.documentElement.addEventListener("mouseenter", function (event) {
 
 document.addEventListener("keyup", function (event) {
   if (event.key === "Shift") {
-    room.range.isFocused = !room.range.isFocused;
+    if (room.range.mode !== "orbit") {
+      if (room.range.mode === "normal") {
+        room.range.mode = "focused";
+      } else {
+        room.range.mode = "normal";
+      }
+    }
   } else if (event.key === "m") {
     document.querySelector("body").classList.toggle("light-mode");
   }
