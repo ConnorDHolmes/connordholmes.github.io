@@ -143,7 +143,7 @@ body.light-mode {
 }
 
 .button div {
-  transform: translate3d(0, -4px, 32px);
+  transform: translate3d(0, -6px, 32px);
 }
 
 .side.right {
