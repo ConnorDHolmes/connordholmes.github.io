@@ -42,7 +42,7 @@ const cursor = {
 };
 
 const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 2, vert: 2, zoom: -1024, adj: 90 });
+cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 544, adj: 0 });
 
