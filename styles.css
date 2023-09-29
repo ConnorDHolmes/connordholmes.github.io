@@ -132,7 +132,7 @@ body.light-mode {
   transform-style: preserve-3d;
   display: flex;
   gap: 24px;
-  transition: visibility 0s linear 0.25s;
+  transition: visibility 0s linear 0.5s;
 }
 
 #buttons-row.hide {
@@ -157,6 +157,7 @@ body.light-mode {
 
 .button {
   pointer-events: auto;
+  position: relative;
   padding: 12px 18px;
   border-radius: 32px;
   border: 1px solid var(--accent);
@@ -168,6 +169,23 @@ body.light-mode {
   transform-style: preserve-3d;
   transition: border-color 0.5s var(--mode-swap-ease),
     color 0.5s var(--mode-swap-ease);
+}
+
+.button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent);
+  opacity: 0.25;
+  border-radius: 32px;
+  transition: clip-path 0.25s ease;
+  clip-path: inset(100% 0 0 0);
+}
+
+.button.hover::after {
+  clip-path: inset(0 0 0 0);
 }
 
 .button div {

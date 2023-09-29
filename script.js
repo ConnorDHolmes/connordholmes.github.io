@@ -204,15 +204,18 @@ startButton.addEventListener("click", function () {
   buttonsRow.classList.add("hide");
   setTimeout(function () {
     room.range.mode = "focused";
-  }, 250);
+  }, 500);
 });
-startButton.addEventListener("mouseenter", function () {
-  this.classList.add("hover");
-  cursor.el.classList.add("clickable");
-});
-startButton.addEventListener("mouseleave", function () {
-  this.classList.remove("hover");
-  cursor.el.classList.remove("clickable");
+
+document.querySelectorAll("#buttons-row a").forEach((button) => {
+  button.addEventListener("mouseenter", function () {
+    this.classList.add("hover");
+    cursor.el.classList.add("clickable");
+  });
+  button.addEventListener("mouseleave", function () {
+    this.classList.remove("hover");
+    cursor.el.classList.remove("clickable");
+  });
 });
 
 window.addEventListener("resize", sizeFrame);
