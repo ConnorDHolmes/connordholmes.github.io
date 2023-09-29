@@ -1,4 +1,5 @@
 const overlay = document.getElementById("overlay");
+const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
 const win = {
@@ -200,7 +201,10 @@ function reveal() {
 }
 
 startButton.addEventListener("click", function () {
-  room.range.mode = "focused";
+  buttonsRow.classList.add("hide");
+  setTimeout(function () {
+    room.range.mode = "focused";
+  }, 250);
 });
 startButton.addEventListener("mouseenter", function () {
   this.classList.add("hover");

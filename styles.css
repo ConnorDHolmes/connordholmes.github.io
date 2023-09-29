@@ -30,7 +30,7 @@ body {
   overflow: hidden;
   user-select: none;
   cursor: none;
-  transition: background-color 1s var(--mode-swap-ease);
+  transition: background-color 0.5s var(--mode-swap-ease);
 }
 
 body.light-mode {
@@ -47,7 +47,7 @@ body.light-mode {
   display: grid;
   place-items: center;
   background-color: var(--void);
-  transition: opacity 2s ease;
+  transition: opacity 1s ease 0.5s;
   pointer-events: auto;
 }
 
@@ -67,8 +67,8 @@ body.light-mode {
   display: flex;
   gap: 32px;
   font-size: 14px;
-  font-weight: 300;
-  letter-spacing: 0.02em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
 }
 
 /* 3D SCENE */
@@ -124,6 +124,37 @@ body.light-mode {
   transform-style: preserve-3d;
 }
 
+#buttons-row {
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  transform: translate3d(-50%, 0, 0);
+  transform-style: preserve-3d;
+  display: flex;
+  gap: 24px;
+  transition: visibility 0s linear 0.25s;
+}
+
+#buttons-row.hide {
+  visibility: hidden;
+}
+
+#buttons-row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(0, 0, 36px) scale(1.5);
+  background-color: var(--void);
+  opacity: 0;
+  transition: opacity 0.25s ease, background-color 0.5s var(--mode-swap-ease);
+}
+
+#buttons-row.hide::after {
+  opacity: 1;
+}
+
 .button {
   pointer-events: auto;
   padding: 12px 18px;
@@ -133,13 +164,10 @@ body.light-mode {
   font-size: 20px;
   line-height: 120%;
   font-weight: 400;
-  position: absolute;
-  left: 50%;
-  bottom: 32px;
-  transform: translate3d(-50%, 0, 0);
   letter-spacing: 0.05em;
-  background-color: var(--void);
   transform-style: preserve-3d;
+  transition: border-color 0.5s var(--mode-swap-ease),
+    color 0.5s var(--mode-swap-ease);
 }
 
 .button div {
@@ -153,7 +181,7 @@ body.light-mode {
   justify-content: center;
   align-items: center;
   color: var(--accent);
-  transition: color 1s var(--mode-swap-ease);
+  transition: color 0.5s var(--mode-swap-ease);
 }
 
 .light-mode .side.right .content {
@@ -186,15 +214,16 @@ body.light-mode {
   height: 512px;
   background-color: var(--accent);
   overflow: hidden;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   pointer-events: auto;
   transform-style: flat;
-  transition: background-color 1s var(--mode-swap-ease);
+  transition: background-color 0.5s var(--mode-swap-ease);
 }
 
 #reflection-wrapper {
-  filter: blur(4px);
+  filter: blur(8px);
   position: absolute;
   top: 608px;
   left: 32px;
