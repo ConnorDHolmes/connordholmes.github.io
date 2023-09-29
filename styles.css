@@ -71,6 +71,14 @@ body.light-mode {
   letter-spacing: 0.05em;
 }
 
+#hud span .key {
+  margin-left: 0.5em;
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 /* 3D SCENE */
 
 #wrapper {
@@ -179,7 +187,7 @@ body.light-mode {
   height: 100%;
   background-color: var(--accent);
   border-radius: 32px;
-  transition: clip-path 0.25s ease;
+  transition: clip-path 0.25s ease, background-color 0.5s ease;
   clip-path: inset(100% 0 0 0);
   opacity: 0.1;
 }
