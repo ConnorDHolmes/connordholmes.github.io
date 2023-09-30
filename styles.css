@@ -170,26 +170,31 @@ body.light-mode {
   border-radius: 32px;
   border: 1px solid var(--accent);
   color: var(--accent);
+  background-color: var(--void);
   font-size: 20px;
   line-height: 120%;
   font-weight: 400;
   letter-spacing: 0.05em;
   transform-style: preserve-3d;
   transition: border-color 0.5s var(--mode-swap-ease),
-    color 0.5s var(--mode-swap-ease);
+    color 0.5s var(--mode-swap-ease),
+    background-color 0.5s var(--mode-swap-ease);
+  transform-style: preserve-3d;
 }
 
 .button::after {
-  content: "";
+  content: attr(data-text);
   position: absolute;
+  padding: inherit;
+  z-index: 1;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  color: var(--void);
   background-color: var(--accent);
   border-radius: 32px;
-  transition: clip-path 0.25s ease, background-color 0.5s ease;
+  transition: clip-path 0.25s ease, background-color 0.5s var(--mode-swap-ease),
+    color 0.5s var(--mode-swap-ease);
   clip-path: inset(100% 0 0 0);
-  opacity: 0.1;
+  opacity: 1;
 }
 
 .button.hover::after {
@@ -197,7 +202,13 @@ body.light-mode {
 }
 
 .button div {
+  transition: clip-path 0.25s ease;
   transform: translate3d(0, -6px, 32px);
+  clip-path: inset(0 0 0 0);
+}
+
+.button.hover div {
+  clip-path: inset(0 0 100% 0);
 }
 
 .side.right {
