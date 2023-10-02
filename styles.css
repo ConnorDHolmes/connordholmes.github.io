@@ -167,7 +167,7 @@ body.light-mode {
   pointer-events: auto;
   position: relative;
   border-radius: 32px;
-  box-shadow: inset 0 0 0 1px var(--accent);
+  box-shadow: inset 0px -0.75px 0 1px var(--accent);
   background-color: var(--void);
   font-size: 20px;
   line-height: 120%;
@@ -190,7 +190,8 @@ body.light-mode {
   color: var(--void);
   background-color: var(--accent);
   border-radius: 32px;
-  transition: clip-path 0.5s ease, background-color 0.5s var(--mode-swap-ease),
+  transition: clip-path 0.5s cubic-bezier(0.86, 0, 0.07, 1),
+    background-color 0.5s var(--mode-swap-ease),
     color 0.5s var(--mode-swap-ease);
   clip-path: inset(100% 0 0 0);
   opacity: 1;
@@ -213,7 +214,8 @@ body.light-mode {
   inset: 0;
   padding: inherit;
   color: var(--accent);
-  transition: clip-path 0.5s ease, color 0.5s var(--mode-swap-ease);
+  transition: clip-path 0.5s cubic-bezier(0.86, 0, 0.07, 1),
+    color 0.5s var(--mode-swap-ease);
   clip-path: inset(0 0 0 0);
 }
 
@@ -227,7 +229,8 @@ body.light-mode {
   inset: 0;
   padding: inherit;
   color: var(--void);
-  transition: clip-path 0.5s ease, color 0.5s var(--mode-swap-ease);
+  transition: clip-path 0.5s cubic-bezier(0.86, 0, 0.07, 1),
+    color 0.5s var(--mode-swap-ease);
   clip-path: inset(100% 0 0 0);
 }
 
