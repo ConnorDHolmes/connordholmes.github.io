@@ -204,6 +204,7 @@ startButton.addEventListener("click", function () {
   buttonsRow.classList.add("hide");
   setTimeout(function () {
     room.range.mode = "focused";
+    document.querySelector("#hud span.hide").classList.remove("hide");
   }, 500);
 });
 

@@ -71,6 +71,14 @@ body.light-mode {
   letter-spacing: 0.05em;
 }
 
+#hud span {
+  transition: opacity 0.5s ease;
+}
+
+#hud span.hide {
+  opacity: 0;
+}
+
 #hud span .key {
   margin-left: 0.5em;
   display: inline-block;
