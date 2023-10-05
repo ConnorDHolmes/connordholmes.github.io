@@ -22,6 +22,7 @@ body {
 body {
   --void: #101010;
   --accent: #ccc;
+  --screen: #303030;
 
   margin: 0;
   background-color: var(--void);
@@ -36,6 +37,7 @@ body {
 body.light-mode {
   --void: #ccc;
   --accent: #101010;
+  --screen: #f3f3f3;
 }
 
 @keyframes noise {
@@ -309,7 +311,7 @@ body.light-mode {
   inset: 32px;
   width: 960px;
   height: 512px;
-  background-color: var(--accent);
+  background-color: var(--screen);
   overflow: hidden;
   border-radius: 8px;
   display: flex;
@@ -336,8 +338,8 @@ body.light-mode {
   width: 960px;
   height: 512px;
   transform: scaleY(-1);
-  mask-image: linear-gradient(to top, black, transparent, transparent);
-  -webkit-mask-image: linear-gradient(to top, black, transparent, transparent);
+  mask-image: url("images/mask.png");
+  -webkit-mask-image: url("images/mask.png");
 }
 
 #cursor {
