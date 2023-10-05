@@ -202,7 +202,7 @@ body.light-mode {
   pointer-events: auto;
   position: relative;
   border-radius: 32px;
-  box-shadow: inset 0px -0.75px 0 1px var(--accent);
+  box-shadow: inset 0px -0.5px 0 1px var(--accent);
   background-color: var(--void);
   font-size: 20px;
   line-height: 120%;
@@ -322,7 +322,7 @@ body.light-mode {
 }
 
 #reflection-wrapper {
-  filter: blur(8px);
+  filter: blur(6px);
   position: absolute;
   top: 608px;
   left: 32px;
@@ -338,8 +338,8 @@ body.light-mode {
   width: 960px;
   height: 512px;
   transform: scaleY(-1);
-  mask-image: url("images/mask.png");
-  -webkit-mask-image: url("images/mask.png");
+  mask-image: linear-gradient(to top, black, transparent, transparent);
+  -webkit-mask-image: linear-gradient(to top, black, transparent, transparent);
 }
 
 #cursor {
