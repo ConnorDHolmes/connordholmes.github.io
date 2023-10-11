@@ -20,7 +20,7 @@ body {
 }
 
 body {
-  --void: #101010;
+  --void: #151515;
   --accent: #ccc;
   --screen: #303030;
 
@@ -36,7 +36,7 @@ body {
 
 body.light-mode {
   --void: #ccc;
-  --accent: #101010;
+  --accent: #151515;
   --screen: #f3f3f3;
 }
 
@@ -328,7 +328,7 @@ body.light-mode {
   left: 32px;
   width: 960px;
   height: 512px;
-  opacity: 0.45;
+  opacity: 0.55;
 }
 
 .reflection {

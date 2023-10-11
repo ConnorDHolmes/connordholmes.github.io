@@ -18,7 +18,7 @@ const win = {
 };
 
 const scene = {
-  el: document.querySelector("#scene"),
+  el: document.getElementById("scene"),
   get h() {
     return scene.el.offsetHeight;
   },
@@ -28,7 +28,7 @@ const scene = {
 };
 
 const cursor = {
-  el: document.querySelector("#cursor"),
+  el: document.getElementById("cursor"),
   x: {
     target: win.midX,
     eased: win.midX,
@@ -48,7 +48,7 @@ cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 544, adj: 0 });
 
 const room = {
-  el: document.querySelector("#room"),
+  el: document.getElementById("room"),
   range: {
     mode: "orbit",
     hor: {
@@ -135,6 +135,18 @@ function refresh() {
   requestAnimationFrame(refresh);
 }
 
+//ADD HOVER LISTENERS
+function addHovers(el) {
+  el.addEventListener("mouseenter", function () {
+    this.classList.add("hover");
+    cursor.el.classList.add("clickable");
+  });
+  el.addEventListener("mouseleave", function () {
+    this.classList.remove("hover");
+    cursor.el.classList.remove("clickable");
+  });
+}
+
 function cloneScreen() {
   const screen = document.querySelector(".screen");
   const reflection = screen.cloneNode(true);
@@ -156,25 +168,20 @@ function cloneScreen() {
       descendant.hasAttribute("data-h")
     ) {
       pairMap.set(descendant, reflection.querySelectorAll("*")[index]);
+      //REMOVE ID FROM CLONED ELEMENTS
+      pairMap.get(descendant).removeAttribute("id");
+
       classObserver.observe(descendant, {
         attributeFilter: ["class"],
       });
       //HOVER HANDLING FOR ALL SCREEN ELEMENTS WITH DATA-H (HOVERABLE) ATTRIBUTE
       if (descendant.hasAttribute("data-h")) {
-        descendant.addEventListener("mouseenter", function () {
-          this.classList.add("hover");
-          cursor.el.classList.add("clickable");
-        });
-        descendant.addEventListener("mouseleave", function () {
-          this.classList.remove("hover");
-          cursor.el.classList.remove("clickable");
-        });
+        addHovers(descendant);
       }
     }
   });
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN
-
   //EXAMPLE:
   document.getElementById("column-1").addEventListener("mouseup", function () {
     this.classList.toggle("red");
@@ -195,10 +202,14 @@ function resetView() {
   cursor.y.target = win.midY;
 }
 
-//GET RID OF INITIAL OVERLAY
+//REMOVE INITIAL OVERLAY
 function reveal() {
   overlay.classList.add("reveal");
 }
+
+document.querySelectorAll("#buttons-row a").forEach((button) => {
+  addHovers(button);
+});
 
 startButton.addEventListener("click", function () {
   buttonsRow.classList.add("hide");
@@ -206,17 +217,6 @@ startButton.addEventListener("click", function () {
     room.range.mode = "focused";
     document.querySelector("#hud span.hide").classList.remove("hide");
   }, 500);
-});
-
-document.querySelectorAll("#buttons-row a").forEach((button) => {
-  button.addEventListener("mouseenter", function () {
-    this.classList.add("hover");
-    cursor.el.classList.add("clickable");
-  });
-  button.addEventListener("mouseleave", function () {
-    this.classList.remove("hover");
-    cursor.el.classList.remove("clickable");
-  });
 });
 
 window.addEventListener("resize", sizeFrame);
@@ -246,7 +246,7 @@ document.addEventListener("keyup", function (event) {
       }
     }
   } else if (event.key === "m") {
-    document.querySelector("body").classList.toggle("light-mode");
+    document.body.classList.toggle("light-mode");
   }
 });
 
