@@ -2,6 +2,8 @@ const overlay = document.getElementById("overlay");
 const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
+let then = window.performance.now();
+
 const win = {
   get w() {
     return window.innerWidth;
@@ -110,6 +112,10 @@ function ease(val) {
 
 room.rotate = 0;
 function refresh() {
+  now = window.performance.now();
+  const diff = now - then;
+  console.log(diff);
+
   //CURSOR EASING
   ease(cursor.x);
   ease(cursor.y);
@@ -131,6 +137,8 @@ function refresh() {
 
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
   room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+
+  then = now;
 
   requestAnimationFrame(refresh);
 }
