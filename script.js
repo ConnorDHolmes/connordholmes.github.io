@@ -2,11 +2,6 @@ const overlay = document.getElementById("overlay");
 const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
-//The target FPS is the fps that all easing functions have been tailored to.
-const targetFps = 60;
-const frameDuration = 1000 / targetFps;
-let then = performance.now();
-
 const win = {
   get w() {
     return window.innerWidth;
@@ -113,38 +108,30 @@ function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
 }
 
-room.rotate = 0;
 function refresh() {
-  now = performance.now();
-  const diff = now - then;
+  //CURSOR EASING
+  ease(cursor.x);
+  ease(cursor.y);
+
+  //ROOM EASING
+  ease(room.x);
+  ease(room.y);
+  ease(room.range.hor);
+  ease(room.range.vert);
+  ease(room.range.zoom);
+  ease(room.range.adj);
+
+  room.pan =
+    -room.range.hor.eased + (room.x.eased / win.w) * room.range.hor.cone;
+  room.pan += room.range.adj.eased;
+
+  room.tilt =
+    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
+
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
 
   requestAnimationFrame(refresh);
-
-  if (diff > frameDuration) {
-    //CURSOR EASING
-    ease(cursor.x);
-    ease(cursor.y);
-
-    //ROOM EASING
-    ease(room.x);
-    ease(room.y);
-    ease(room.range.hor);
-    ease(room.range.vert);
-    ease(room.range.zoom);
-    ease(room.range.adj);
-
-    room.pan =
-      -room.range.hor.eased + (room.x.eased / win.w) * room.range.hor.cone;
-    room.pan += room.range.adj.eased;
-
-    room.tilt =
-      room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
-
-    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-    room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-
-    then = now - (diff % fpsInterval);
-  }
 }
 
 //ADD HOVER LISTENERS

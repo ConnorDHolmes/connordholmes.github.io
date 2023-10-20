@@ -114,6 +114,40 @@ body.light-mode {
   border-radius: 4px;
 }
 
+#cursor {
+  position: absolute;
+  inset: 0;
+  width: 6px;
+  height: 6px;
+  mix-blend-mode: exclusion;
+  z-index: 1000;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+#cursor::after {
+  content: "";
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: transform 0.2s ease;
+}
+
+body:active #cursor::after {
+  transform: scale(0.66);
+}
+
+#cursor.clickable::after {
+  transform: scale(1.5);
+}
+
+body:active #cursor.clickable::after {
+  transform: scale(1);
+}
+
 /* 3D SCENE */
 
 #wrapper {
@@ -339,40 +373,6 @@ body.light-mode {
   -webkit-mask-image: linear-gradient(to top, black, transparent, transparent);
 }
 
-#cursor {
-  position: absolute;
-  inset: 0;
-  width: 6px;
-  height: 6px;
-  mix-blend-mode: exclusion;
-  z-index: 1000;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-#cursor::after {
-  content: "";
-  width: inherit;
-  height: inherit;
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background-color: #ccc;
-  transition: 0.2s ease transform;
-}
-
-body:active #cursor::after {
-  transform: scale(0.66);
-}
-
-#cursor.clickable::after {
-  transform: scale(1.5);
-}
-
-body:active #cursor.clickable::after {
-  transform: scale(1);
-}
-
 /* INSIDE SCREEN */
 
 .screen .inner {
@@ -384,7 +384,7 @@ body:active #cursor.clickable::after {
 .screen .inner .column {
   width: 33.33%;
   height: 100%;
-  transition: 0.25s ease background-color;
+  transition: background-color 0.25s ease;
 }
 
 .screen .inner .column.hover {
