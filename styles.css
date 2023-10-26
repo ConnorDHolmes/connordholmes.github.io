@@ -155,9 +155,8 @@ body:active #cursor.clickable::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-content: center;
   perspective: 1024px;
   transform-style: flat;
   pointer-events: none;
@@ -167,9 +166,8 @@ body:active #cursor.clickable::after {
   width: 576px;
   height: 676px;
   transform-style: preserve-3d;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-content: center;
 }
 
 #room {
@@ -179,7 +177,6 @@ body:active #cursor.clickable::after {
   position: relative;
   transform-style: preserve-3d;
   transform-origin: center center;
-  transform: translate3d(0, 0, 512px) rotateX(0deg) rotateY(0deg);
   flex-shrink: 0;
   backface-visibility: visible;
 }
@@ -258,7 +255,7 @@ body:active #cursor.clickable::after {
   color: var(--void);
   background-color: var(--accent);
   border-radius: 32px;
-  transition: clip-path 0.5s ease, background-color 0.5s var(--mode-swap-ease),
+  transition: clip-path 0.3s ease, background-color 0.5s var(--mode-swap-ease),
     color 0.5s var(--mode-swap-ease);
   clip-path: inset(100% 0 0 0);
 }
@@ -272,6 +269,7 @@ body:active #cursor.clickable::after {
   position: relative;
   color: transparent;
   transform: translate3d(0, -6px, 32px);
+  pointer-events: none;
 }
 
 .button div::before {
@@ -280,7 +278,7 @@ body:active #cursor.clickable::after {
   inset: 0;
   padding: inherit;
   color: var(--accent);
-  transition: clip-path 0.5s ease, color 0.5s var(--mode-swap-ease);
+  transition: clip-path 0.3s ease, color 0.5s var(--mode-swap-ease);
   clip-path: inset(0 0 0 0);
 }
 
@@ -294,7 +292,7 @@ body:active #cursor.clickable::after {
   inset: 0;
   padding: inherit;
   color: var(--void);
-  transition: clip-path 0.5s ease, color 0.5s var(--mode-swap-ease);
+  transition: clip-path 0.3s ease, color 0.5s var(--mode-swap-ease);
   clip-path: inset(100% 0 0 0);
 }
 

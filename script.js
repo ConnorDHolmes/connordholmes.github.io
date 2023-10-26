@@ -1,6 +1,14 @@
+const body = document.body;
 const overlay = document.getElementById("overlay");
 const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
+
+let currentlyHoveredEl = document.body;
+
+const cameraPos = new Map();
+cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
+cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("focused", { hor: 1, vert: 1, zoom: 640, adj: 0 });
 
 const win = {
   get w() {
@@ -41,11 +49,6 @@ const cursor = {
     return cursor.el.offsetWidth / 2;
   },
 };
-
-const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
-cameraPos.set("focused", { hor: 1, vert: 1, zoom: 544, adj: 0 });
 
 const room = {
   el: document.getElementById("room"),
@@ -94,6 +97,18 @@ const room = {
     },
     eased: cursor.y.target,
   },
+  get pan() {
+    return (
+      -room.range.hor.eased +
+      (room.x.eased / win.w) * room.range.hor.cone +
+      room.range.adj.eased
+    );
+  },
+  get tilt() {
+    return (
+      room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
+    );
+  },
 };
 
 cursor.x.ease = cursor.y.ease = 0.25;
@@ -104,46 +119,53 @@ room.range.hor.ease =
   room.range.adj.ease =
     0.05;
 
+//UNIVERSAL EASE HELPER FUNCTION
 function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
+  val.eased = Math.round(val.eased * 1000) / 1000;
+}
+
+//UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
+function updateHoveredEl() {
+  const prevEl = currentlyHoveredEl;
+
+  currentlyHoveredEl = document.elementFromPoint(
+    cursor.x.eased,
+    cursor.y.eased
+  );
+
+  if (prevEl !== currentlyHoveredEl) {
+    prevEl.classList.remove("hover");
+  }
+
+  if (currentlyHoveredEl.hasAttribute("data-h")) {
+    currentlyHoveredEl.classList.add("hover");
+    cursor.el.classList.add("clickable");
+  } else {
+    cursor.el.classList.remove("clickable");
+  }
 }
 
 function refresh() {
-  //CURSOR EASING
-  ease(cursor.x);
-  ease(cursor.y);
+  requestAnimationFrame(refresh);
 
-  //ROOM EASING
-  ease(room.x);
-  ease(room.y);
-  ease(room.range.hor);
-  ease(room.range.vert);
-  ease(room.range.zoom);
-  ease(room.range.adj);
-
-  room.pan =
-    -room.range.hor.eased + (room.x.eased / win.w) * room.range.hor.cone;
-  room.pan += room.range.adj.eased;
-
-  room.tilt =
-    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
+  [
+    cursor.x,
+    cursor.y,
+    room.x,
+    room.y,
+    room.range.hor,
+    room.range.vert,
+    room.range.zoom,
+    room.range.adj,
+  ].forEach((trait) => {
+    ease(trait);
+  });
 
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
   room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
 
-  requestAnimationFrame(refresh);
-}
-
-//ADD HOVER LISTENERS
-function addHovers(el) {
-  el.addEventListener("mouseenter", function () {
-    this.classList.add("hover");
-    cursor.el.classList.add("clickable");
-  });
-  el.addEventListener("mouseleave", function () {
-    this.classList.remove("hover");
-    cursor.el.classList.remove("clickable");
-  });
+  updateHoveredEl();
 }
 
 function cloneScreen() {
@@ -155,7 +177,7 @@ function cloneScreen() {
   const pairMap = new Map();
   //MUTATION OBSERVER AND CALLBACK FUNCTION
   const classObserver = new MutationObserver(onClassListChange);
-  function onClassListChange(changes) {
+  async function onClassListChange(changes) {
     changes.forEach((change) => {
       pairMap.get(change.target).classList = change.target.classList;
     });
@@ -173,10 +195,6 @@ function cloneScreen() {
       classObserver.observe(descendant, {
         attributeFilter: ["class"],
       });
-      //HOVER HANDLING FOR ALL SCREEN ELEMENTS WITH DATA-H (HOVERABLE) ATTRIBUTE
-      if (descendant.hasAttribute("data-h")) {
-        addHovers(descendant);
-      }
     }
   });
 
@@ -205,10 +223,6 @@ function resetView() {
 function reveal() {
   overlay.classList.add("reveal");
 }
-
-document.querySelectorAll("#buttons-row a").forEach((button) => {
-  addHovers(button);
-});
 
 startButton.addEventListener("click", function () {
   buttonsRow.classList.add("hide");
@@ -245,16 +259,34 @@ document.addEventListener("keyup", function (event) {
       }
     }
   } else if (event.key === "m") {
-    document.body.classList.toggle("light-mode");
+    body.classList.toggle("light-mode");
   }
 });
 
+//FADE IN SCENE AFTER ALL CONTENT IS LOADED
 document.addEventListener("readystatechange", function (event) {
   if (event.target.readyState === "complete") {
     reveal();
   }
 });
 
+//WATCH FOR INTERFACE MODE PREFERENCE CHANGE
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", function (event) {
+    if (event.matches) {
+      body.classList.remove("light-mode");
+    } else {
+      body.classList.add("light-mode");
+    }
+  });
+
+//ON LOAD
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  body.classList.remove("light-mode");
+}
+
 sizeFrame();
+
 cloneScreen();
 refresh();
