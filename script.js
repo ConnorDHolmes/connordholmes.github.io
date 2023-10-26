@@ -3,12 +3,16 @@ const overlay = document.getElementById("overlay");
 const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
-let currentlyHoveredEl = document.body;
-
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 640, adj: 0 });
+
+const targetFps = 60;
+const fpsInterval = 1000 / targetFps;
+let then = performance.now();
+
+let currentlyHoveredEl = body;
 
 const win = {
   get w() {
@@ -147,25 +151,33 @@ function updateHoveredEl() {
 }
 
 function refresh() {
+  const now = performance.now();
+  const elapsed = now - then;
+
+  //THROTTLE RAF TO 60FPS
+  if (elapsed > fpsInterval) {
+    then = now - (elapsed % fpsInterval);
+
+    [
+      cursor.x,
+      cursor.y,
+      room.x,
+      room.y,
+      room.range.hor,
+      room.range.vert,
+      room.range.zoom,
+      room.range.adj,
+    ].forEach((trait) => {
+      ease(trait);
+    });
+
+    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+    room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+
+    updateHoveredEl();
+  }
+
   requestAnimationFrame(refresh);
-
-  [
-    cursor.x,
-    cursor.y,
-    room.x,
-    room.y,
-    room.range.hor,
-    room.range.vert,
-    room.range.zoom,
-    room.range.adj,
-  ].forEach((trait) => {
-    ease(trait);
-  });
-
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-
-  updateHoveredEl();
 }
 
 function cloneScreen() {
@@ -174,12 +186,12 @@ function cloneScreen() {
   reflection.classList.add("reflection");
 
   const screenDescendants = screen.querySelectorAll("*");
-  const pairMap = new Map();
+  const pairs = new Map();
   //MUTATION OBSERVER AND CALLBACK FUNCTION
   const classObserver = new MutationObserver(onClassListChange);
   async function onClassListChange(changes) {
     changes.forEach((change) => {
-      pairMap.get(change.target).classList = change.target.classList;
+      pairs.get(change.target).classList = change.target.classList;
     });
   }
   //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE (MUTABLE OR HOVERABLE)
@@ -188,9 +200,9 @@ function cloneScreen() {
       descendant.hasAttribute("data-m") ||
       descendant.hasAttribute("data-h")
     ) {
-      pairMap.set(descendant, reflection.querySelectorAll("*")[index]);
+      pairs.set(descendant, reflection.querySelectorAll("*")[index]);
       //REMOVE ID FROM CLONED ELEMENTS
-      pairMap.get(descendant).removeAttribute("id");
+      pairs.get(descendant).removeAttribute("id");
 
       classObserver.observe(descendant, {
         attributeFilter: ["class"],
@@ -287,6 +299,5 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 }
 
 sizeFrame();
-
 cloneScreen();
 refresh();
