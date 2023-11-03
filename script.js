@@ -8,10 +8,6 @@ cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 640, adj: 0 });
 
-const targetFps = 60;
-const fpsInterval = 1000 / targetFps;
-let then = performance.now();
-
 let currentlyHoveredEl = body;
 
 const win = {
@@ -142,7 +138,10 @@ function updateHoveredEl() {
     prevEl.classList.remove("hover");
   }
 
-  if (currentlyHoveredEl.hasAttribute("data-h")) {
+  if (
+    currentlyHoveredEl !== null &&
+    currentlyHoveredEl.hasAttribute("data-h")
+  ) {
     currentlyHoveredEl.classList.add("hover");
     cursor.el.classList.add("clickable");
   } else {
@@ -151,31 +150,23 @@ function updateHoveredEl() {
 }
 
 function refresh() {
-  const now = performance.now();
-  const elapsed = now - then;
+  [
+    cursor.x,
+    cursor.y,
+    room.x,
+    room.y,
+    room.range.hor,
+    room.range.vert,
+    room.range.zoom,
+    room.range.adj,
+  ].forEach((trait) => {
+    ease(trait);
+  });
 
-  //THROTTLE RAF TO 60FPS
-  if (elapsed > fpsInterval) {
-    then = now - (elapsed % fpsInterval);
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
 
-    [
-      cursor.x,
-      cursor.y,
-      room.x,
-      room.y,
-      room.range.hor,
-      room.range.vert,
-      room.range.zoom,
-      room.range.adj,
-    ].forEach((trait) => {
-      ease(trait);
-    });
-
-    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-    room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-
-    updateHoveredEl();
-  }
+  updateHoveredEl();
 
   requestAnimationFrame(refresh);
 }
