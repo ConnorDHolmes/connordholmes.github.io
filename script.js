@@ -132,14 +132,12 @@ function updateMultiplier() {
     total += sample;
   });
   const average = total / sampleSet.length;
-  console.log(average);
-
   const frameRate = 1000 / average;
-  console.log(frameRate);
-
   const roundedFrameRate = Math.round(frameRate / 10) * 10;
 
-  console.log(roundedFrameRate);
+  if (roundedFrameRate >= 120) {
+    easeMultiplier = 0.5;
+  }
 }
 
 //UNIVERSAL EASE HELPER FUNCTION
