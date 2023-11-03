@@ -134,7 +134,7 @@ function updateHoveredEl() {
     cursor.y.eased
   );
 
-  if (prevEl !== currentlyHoveredEl) {
+  if (prevEl !== currentlyHoveredEl && prevEl !== null) {
     prevEl.classList.remove("hover");
   }
 
