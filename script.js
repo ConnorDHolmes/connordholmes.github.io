@@ -134,13 +134,13 @@ function updateMultiplier() {
   const frameRate = 1000 / average;
   const roundedFrameRate = Math.round(frameRate / 10) * 10;
   if (roundedFrameRate >= 120) {
-    cursor.x.ease = cursor.y.ease = 0.125;
-    room.x.ease = room.y.ease = 0.075;
+    cursor.x.ease = cursor.y.ease = 0.13;
+    room.x.ease = room.y.ease = 0.08;
     room.range.hor.ease =
       room.range.vert.ease =
       room.range.zoom.ease =
       room.range.adj.ease =
-        0.025;
+        0.03;
   }
 }
 
