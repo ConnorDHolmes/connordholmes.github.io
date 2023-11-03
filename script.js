@@ -6,7 +6,6 @@ const startButton = document.getElementById("start-button");
 let currentlyHoveredEl = body;
 
 const refreshBenchmark = 60;
-let easeMultiplier = 1;
 let isSampling = true;
 let now = performance.now();
 const sampleSet = [];
@@ -125,8 +124,8 @@ room.range.hor.ease =
   room.range.adj.ease =
     0.05;
 
+//IF SCREEN REFRESH RATE APPEARS TO BE >= 120HZ, UPDATE THE EASING MULTIPLIER TO DOUBLE EASES
 function updateMultiplier() {
-  console.log(sampleSet);
   let total = 0;
   sampleSet.forEach((sample) => {
     total += sample;
@@ -134,16 +133,20 @@ function updateMultiplier() {
   const average = total / sampleSet.length;
   const frameRate = 1000 / average;
   const roundedFrameRate = Math.round(frameRate / 10) * 10;
-
   if (roundedFrameRate >= 120) {
-    easeMultiplier = 0.5;
+    cursor.x.ease = cursor.y.ease = 0.125;
+    room.x.ease = room.y.ease = 0.075;
+    room.range.hor.ease =
+      room.range.vert.ease =
+      room.range.zoom.ease =
+      room.range.adj.ease =
+        0.025;
   }
 }
 
 //UNIVERSAL EASE HELPER FUNCTION
 function ease(val) {
-  val.eased += (val.target - val.eased) * (val.ease * easeMultiplier);
-  val.eased = Math.round(val.eased * 1000) / 1000;
+  val.eased += (val.target - val.eased) * val.ease;
 }
 
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
@@ -170,17 +173,41 @@ function updateHoveredEl() {
   }
 }
 
-function refresh() {
-  if (isSampling) {
-    then = now;
-    now = performance.now();
-    sampleSet.push(now - then);
-    if (sampleSet.length > 200) {
-      isSampling = false;
-      updateMultiplier();
-    }
+function refreshWithSampling() {
+  then = now;
+  now = performance.now();
+  sampleSet.push(now - then);
+  if (sampleSet.length > 200) {
+    isSampling = false;
+    updateMultiplier();
   }
 
+  [
+    cursor.x,
+    cursor.y,
+    room.x,
+    room.y,
+    room.range.hor,
+    room.range.vert,
+    room.range.zoom,
+    room.range.adj,
+  ].forEach((trait) => {
+    ease(trait);
+  });
+
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+
+  updateHoveredEl();
+
+  if (isSampling) {
+    requestAnimationFrame(refreshWithSampling);
+  } else {
+    requestAnimationFrame(refresh);
+  }
+}
+
+function refresh() {
   [
     cursor.x,
     cursor.y,
@@ -322,4 +349,4 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 
 sizeFrame();
 cloneScreen();
-refresh();
+refreshWithSampling();
