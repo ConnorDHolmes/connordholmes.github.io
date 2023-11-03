@@ -171,7 +171,7 @@ function refresh() {
     then = now;
     now = performance.now();
     sampleSet.push(now - then);
-    if (sampleSet.length > 100) {
+    if (sampleSet.length > 200) {
       isSampling = false;
       updateMultiplier();
     }
