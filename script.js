@@ -3,12 +3,16 @@ const overlay = document.getElementById("overlay");
 const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
+let currentlyHoveredEl = body;
+let easeMultiplier = 1;
+let isSampling = true;
+let now = performance.now();
+const sampleSet = [];
+
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 640, adj: 0 });
-
-let currentlyHoveredEl = body;
 
 const win = {
   get w() {
@@ -119,9 +123,22 @@ room.range.hor.ease =
   room.range.adj.ease =
     0.05;
 
+function updateMultiplier() {
+  console.log(sampleSet);
+  let total = 0;
+  sampleSet.forEach((sample) => {
+    total += sample;
+  });
+  const average = total / sampleSet.length;
+  console.log(average);
+
+  const roundedAverage = Math.round(average);
+  console.log(roundedAverage);
+}
+
 //UNIVERSAL EASE HELPER FUNCTION
 function ease(val) {
-  val.eased += (val.target - val.eased) * val.ease;
+  val.eased += (val.target - val.eased) * (val.ease * easeMultiplier);
   val.eased = Math.round(val.eased * 1000) / 1000;
 }
 
@@ -150,6 +167,16 @@ function updateHoveredEl() {
 }
 
 function refresh() {
+  if (isSampling) {
+    then = now;
+    now = performance.now();
+    sampleSet.push(now - then);
+    if (sampleSet.length > 100) {
+      isSampling = false;
+      updateMultiplier();
+    }
+  }
+
   [
     cursor.x,
     cursor.y,
