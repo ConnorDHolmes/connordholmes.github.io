@@ -132,8 +132,8 @@ function updateMultiplier() {
   const average = total / sampleSet.length;
   console.log(average);
 
-  const roundedAverage = Math.round(average);
-  console.log(roundedAverage);
+  const frameRate = 1000 / average;
+  console.log(frameRate);
 }
 
 //UNIVERSAL EASE HELPER FUNCTION
