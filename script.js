@@ -4,6 +4,8 @@ const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
 let currentlyHoveredEl = body;
+
+const refreshBenchmark = 60;
 let easeMultiplier = 1;
 let isSampling = true;
 let now = performance.now();
@@ -134,6 +136,10 @@ function updateMultiplier() {
 
   const frameRate = 1000 / average;
   console.log(frameRate);
+
+  const roundedFrameRate = Math.round(frameRate / 10) * 10;
+
+  console.log(roundedFrameRate);
 }
 
 //UNIVERSAL EASE HELPER FUNCTION
