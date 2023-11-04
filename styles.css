@@ -380,7 +380,7 @@ body:active #cursor.clickable::after {
 .screen .inner .column {
   width: 33.33%;
   height: 100%;
-  transition: background-color 0.25s ease;
+  /* transition: background-color 0.25s ease; */
 }
 
 .screen .inner .column.hover {

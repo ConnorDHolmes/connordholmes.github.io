@@ -124,7 +124,7 @@ room.range.hor.ease =
   room.range.adj.ease =
     0.05;
 
-//IF SCREEN REFRESH RATE APPEARS TO BE >= 120HZ, UPDATE THE EASING MULTIPLIER TO DOUBLE EASES
+//IF SCREEN REFRESH RATE APPEARS TO BE >= 120HZ, ADJUST ALL EASING VALUES TO COMPENSATE
 function updateMultiplier() {
   let total = 0;
   sampleSet.forEach((sample) => {
@@ -144,7 +144,7 @@ function updateMultiplier() {
   }
 }
 
-//UNIVERSAL EASE HELPER FUNCTION
+//EASING FUNCTION
 function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
 }
@@ -158,7 +158,7 @@ function updateHoveredEl() {
     cursor.y.eased
   );
 
-  if (prevEl !== currentlyHoveredEl && prevEl !== null) {
+  if (prevEl !== null && prevEl !== currentlyHoveredEl) {
     prevEl.classList.remove("hover");
   }
 
