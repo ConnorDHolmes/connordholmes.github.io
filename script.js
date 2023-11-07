@@ -138,6 +138,26 @@ const easedTraits = [
   room.range.adj,
 ];
 
+//ADD CLASS
+function addCl(el, className) {
+  el.classList.add(className);
+}
+
+//REMOVE CLASS
+function removeCl(el, className) {
+  el.classList.remove(className);
+}
+
+//TOGGLE CLASS
+function toggleCl(el, className) {
+  el.classList.toggle(className);
+}
+
+//EASING FUNCTION
+function ease(val) {
+  val.eased += (val.target - val.eased) * val.ease;
+}
+
 //IF SCREEN APPEARS TO HAVE >= 120hz REFRESH RATE, SKIP EASE UPDATES ON EVERY OTHER FRAME
 function handleThrottle() {
   let total = 0;
@@ -154,11 +174,6 @@ function handleThrottle() {
   }
 }
 
-//EASING FUNCTION
-function ease(val) {
-  val.eased += (val.target - val.eased) * val.ease;
-}
-
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
   const prevEl = currentlyHoveredEl;
@@ -169,17 +184,17 @@ function updateHoveredEl() {
   );
 
   if (prevEl !== null && prevEl !== currentlyHoveredEl) {
-    prevEl.classList.remove("hover");
+    removeCl(prevEl, "hover");
   }
 
   if (
     currentlyHoveredEl !== null &&
     currentlyHoveredEl.hasAttribute("data-h")
   ) {
-    currentlyHoveredEl.classList.add("hover");
-    cursor.el.classList.add("clickable");
+    addCl(currentlyHoveredEl, "hover");
+    addCl(cursor.el, "clickable");
   } else {
-    cursor.el.classList.remove("clickable");
+    removeCl(cursor.el, "clickable");
   }
 }
 
@@ -241,7 +256,7 @@ function refreshWithThrottle() {
 function cloneScreen() {
   const screen = document.querySelector(".screen");
   const reflection = screen.cloneNode(true);
-  reflection.classList.add("reflection");
+  addCl(reflection, "reflection");
 
   const screenDescendants = screen.querySelectorAll("*");
   const pairs = new Map();
@@ -271,7 +286,7 @@ function cloneScreen() {
   //ALL JS FUNCTIONALITY WITHIN SCREEN
   //EXAMPLE:
   document.getElementById("column-1").addEventListener("mouseup", function () {
-    this.classList.toggle("red");
+    toggleCl(this, "red");
   });
 
   document.getElementById("reflection-wrapper").append(reflection);
@@ -291,14 +306,14 @@ function resetView() {
 
 //REMOVE INITIAL OVERLAY
 function reveal() {
-  overlay.classList.add("reveal");
+  addCl(overlay, "reveal");
 }
 
 startButton.addEventListener("click", function () {
-  buttonsRow.classList.add("hide");
+  addCl(buttonsRow, "hide");
   setTimeout(function () {
     room.range.mode = "focused";
-    document.querySelector("#hud span.hide").classList.remove("hide");
+    removeCl(document.querySelector("#hud span.hide"), "hide");
   }, 500);
 });
 
@@ -335,7 +350,7 @@ document.addEventListener("keyup", function (event) {
       }
     }
   } else if (event.key === "m") {
-    body.classList.toggle("light-mode");
+    toggleCl(body, "light-mode");
   }
 });
 
@@ -351,15 +366,15 @@ window
   .matchMedia("(prefers-color-scheme: dark)")
   .addEventListener("change", function (event) {
     if (event.matches) {
-      body.classList.remove("light-mode");
+      removeCl(body, "light-mode");
     } else {
-      body.classList.add("light-mode");
+      addCl(body, "light-mode");
     }
   });
 
 //ON LOAD
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  body.classList.remove("light-mode");
+  removeCl(body, "light-mode");
 }
 
 sizeFrame();
