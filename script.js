@@ -161,7 +161,7 @@ function ease(val) {
 //IF SCREEN APPEARS TO HAVE >= 120hz REFRESH RATE, SKIP EASE UPDATES ON EVERY OTHER FRAME
 function handleThrottle() {
   let total = 0;
-  sampleSet.forEach((sample) => {
+  sampleSet.map((sample) => {
     total += sample;
   });
   const average = total / sampleSet.length;
@@ -263,7 +263,7 @@ function cloneScreen() {
   //MUTATION OBSERVER AND CALLBACK FUNCTION
   const classObserver = new MutationObserver(onClassListChange);
   async function onClassListChange(changes) {
-    changes.forEach((change) => {
+    changes.map((change) => {
       pairs.get(change.target).classList = change.target.classList;
     });
   }
