@@ -10,10 +10,6 @@
   backface-visibility: hidden;
 }
 
-html {
-  image-rendering: pixelated;
-}
-
 html,
 body {
   height: 100%;
@@ -170,34 +166,6 @@ body:active #cursor.clickable::after {
   place-content: center;
 }
 
-#room {
-  position: relative;
-  width: 1024px;
-  height: 576px;
-  position: relative;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  flex-shrink: 0;
-  backface-visibility: visible;
-}
-
-.side {
-  width: 1024px;
-  height: 576px;
-  position: absolute;
-  inset: 0;
-  transform-style: flat;
-}
-
-.side.back {
-  transform: translate3d(0, 0, -512px);
-}
-
-.side.outer {
-  transform: rotateY(-90deg) translate3d(0, 0, 512px);
-  transform-style: preserve-3d;
-}
-
 #buttons-row {
   position: absolute;
   left: 50%;
@@ -300,6 +268,34 @@ body:active #cursor.clickable::after {
   clip-path: inset(0 0 0 0);
 }
 
+#room {
+  position: relative;
+  width: 1024px;
+  height: 576px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  flex-shrink: 0;
+  backface-visibility: visible;
+}
+
+.side {
+  width: 1024px;
+  height: 576px;
+  position: absolute;
+  inset: 0;
+  transform-style: flat;
+}
+
+.side.back {
+  transform: translate3d(0, 0, -512px);
+}
+
+.side.outer {
+  transform: rotateY(-90deg) translate3d(0, 0, 512px);
+  transform-style: preserve-3d;
+}
+
 .side.right {
   transform: rotateY(-90deg) translate3d(0, 0, -1024px);
   display: flex;
@@ -317,6 +313,7 @@ body:active #cursor.clickable::after {
 .side.right h1,
 .side.right h2 {
   white-space: nowrap;
+  position: relative;
 }
 
 .side.right h1 {

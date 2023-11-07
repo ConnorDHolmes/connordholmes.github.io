@@ -1,3 +1,4 @@
+const root = document.documentElement;
 const body = document.body;
 const overlay = document.getElementById("overlay");
 const buttonsRow = document.getElementById("buttons-row");
@@ -124,6 +125,18 @@ room.range.hor.ease =
   room.range.adj.ease =
     0.05;
 
+//LIST OF ALL TRAITS TO BE EASED EACH FRAME
+const easedTraits = [
+  cursor.x,
+  cursor.y,
+  room.x,
+  room.y,
+  room.range.hor,
+  room.range.vert,
+  room.range.zoom,
+  room.range.adj,
+];
+
 //IF SCREEN REFRESH RATE APPEARS TO BE >= 120HZ, ADJUST ALL EASING VALUES TO COMPENSATE
 function updateMultiplier() {
   let total = 0;
@@ -173,7 +186,8 @@ function updateHoveredEl() {
   }
 }
 
-function refreshWithSampling() {
+//RAF WITH FRAME-TRACKING INCLUDED
+function refreshAndSample() {
   then = now;
   now = performance.now();
   sampleSet.push(now - then);
@@ -182,47 +196,30 @@ function refreshWithSampling() {
     updateMultiplier();
   }
 
-  [
-    cursor.x,
-    cursor.y,
-    room.x,
-    room.y,
-    room.range.hor,
-    room.range.vert,
-    room.range.zoom,
-    room.range.adj,
-  ].forEach((trait) => {
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+
+  easedTraits.map((trait) => {
     ease(trait);
   });
-
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
 
   updateHoveredEl();
 
   if (isSampling) {
-    requestAnimationFrame(refreshWithSampling);
+    requestAnimationFrame(refreshAndSample);
   } else {
     requestAnimationFrame(refresh);
   }
 }
 
+//RAF
 function refresh() {
-  [
-    cursor.x,
-    cursor.y,
-    room.x,
-    room.y,
-    room.range.hor,
-    room.range.vert,
-    room.range.zoom,
-    room.range.adj,
-  ].forEach((trait) => {
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+
+  easedTraits.map((trait) => {
     ease(trait);
   });
-
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
 
   updateHoveredEl();
 
@@ -293,23 +290,29 @@ startButton.addEventListener("click", function () {
   }, 500);
 });
 
+//SCALE SCENE ON WINDOW RESIZE
 window.addEventListener("resize", sizeFrame);
 
+//RESET VIEW TO CENTER IF WINDOW LOSES FOCUS
 window.addEventListener("blur", resetView);
 
+//UPDATE THE CURSOR
 document.addEventListener("mousemove", function (event) {
   cursor.el.style.visibility = "visible";
   cursor.x.target = event.pageX - cursor.half;
   cursor.y.target = event.pageY - cursor.half;
 });
 
-document.documentElement.addEventListener("mouseleave", resetView);
+//RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
+root.addEventListener("mouseleave", resetView);
 
-document.documentElement.addEventListener("mouseenter", function (event) {
+//HANDLE CURSOR RETURNING TO DOCUMENT
+root.addEventListener("mouseenter", function (event) {
   cursor.x.target = cursor.x.eased = event.pageX;
   cursor.y.target = cursor.y.eased = event.pageY;
 });
 
+//ALL INPUTS
 document.addEventListener("keyup", function (event) {
   if (event.key === "Shift") {
     if (room.range.mode !== "orbit") {
@@ -349,4 +352,4 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 
 sizeFrame();
 cloneScreen();
-refreshWithSampling();
+refreshAndSample();
