@@ -7,11 +7,9 @@ const startButton = document.getElementById("start-button");
 let currentlyHoveredEl = body;
 
 const refreshBenchmark = 60;
-let isSampling = true;
 let now = performance.now();
 const sampleSet = [];
-let throttleEasing = false;
-let canUpdateVals = true;
+let skipFrame = false;
 
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
@@ -119,6 +117,7 @@ const room = {
   },
 };
 
+//ALL EASING VALS
 cursor.x.ease = cursor.y.ease = 0.25;
 room.x.ease = room.y.ease = 0.15;
 room.range.hor.ease =
@@ -139,27 +138,7 @@ const easedTraits = [
   room.range.adj,
 ];
 
-//IF SCREEN REFRESH RATE APPEARS TO BE >= 120HZ, ADJUST ALL EASING VALUES TO COMPENSATE
-function updateMultiplier() {
-  let total = 0;
-  sampleSet.forEach((sample) => {
-    total += sample;
-  });
-  const average = total / sampleSet.length;
-  const frameRate = 1000 / average;
-  const roundedFrameRate = Math.round(frameRate / 10) * 10;
-  if (roundedFrameRate >= 120) {
-    cursor.x.ease = cursor.y.ease = 0.13;
-    room.x.ease = room.y.ease = 0.08;
-    room.range.hor.ease =
-      room.range.vert.ease =
-      room.range.zoom.ease =
-      room.range.adj.ease =
-        0.03;
-  }
-}
-
-//HANDLE THROTTLING
+//IF SCREEN APPEARS TO HAVE >= 120hz REFRESH RATE, SKIP EASE UPDATES ON EVERY OTHER FRAME
 function handleThrottle() {
   let total = 0;
   sampleSet.forEach((sample) => {
@@ -169,7 +148,9 @@ function handleThrottle() {
   const frameRate = 1000 / average;
   const roundedFrameRate = Math.round(frameRate / 10) * 10;
   if (roundedFrameRate >= 120) {
-    throttleEasing = true;
+    requestAnimationFrame(refreshWithThrottle);
+  } else {
+    requestAnimationFrame(refresh);
   }
 }
 
@@ -202,15 +183,11 @@ function updateHoveredEl() {
   }
 }
 
-//RAF AND SAMPLE FRAME UPDATE RATE
+//REFRESH AND SAMPLE FRAME UPDATE RATE
 function refreshAndSample() {
   then = now;
   now = performance.now();
   sampleSet.push(now - then);
-  if (sampleSet.length > 200) {
-    isSampling = false;
-    handleThrottle();
-  }
 
   room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
@@ -221,18 +198,14 @@ function refreshAndSample() {
 
   updateHoveredEl();
 
-  if (isSampling) {
-    requestAnimationFrame(refreshAndSample);
+  if (sampleSet.length > 200) {
+    handleThrottle();
   } else {
-    if (throttleEasing) {
-      requestAnimationFrame(refreshAndThrottle);
-    } else {
-      requestAnimationFrame(refresh);
-    }
+    requestAnimationFrame(refreshAndSample);
   }
 }
 
-//RAF
+//REFRESH (NO THROTTLING)
 function refresh() {
   room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
@@ -246,23 +219,23 @@ function refresh() {
   requestAnimationFrame(refresh);
 }
 
-//THROTTLED RAF
-function refreshAndThrottle() {
+//THROTTLED REFRESH (SKIP EASED VAL UPDATES ON EVERY OTHER FRAME)
+function refreshWithThrottle() {
   room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
 
-  if (canUpdateVals) {
-    canUpdateVals = false;
+  if (skipFrame) {
+    skipFrame = false;
+  } else {
+    skipFrame = true;
     easedTraits.map((trait) => {
       ease(trait);
     });
-  } else {
-    canUpdateVals = true;
   }
 
   updateHoveredEl();
 
-  requestAnimationFrame(refreshAndThrottle);
+  requestAnimationFrame(refreshWithThrottle);
 }
 
 function cloneScreen() {
