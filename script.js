@@ -10,6 +10,8 @@ const refreshBenchmark = 60;
 let isSampling = true;
 let now = performance.now();
 const sampleSet = [];
+let throttleEasing = false;
+let canUpdateVals = true;
 
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
@@ -157,6 +159,20 @@ function updateMultiplier() {
   }
 }
 
+//HANDLE THROTTLING
+function handleThrottle() {
+  let total = 0;
+  sampleSet.forEach((sample) => {
+    total += sample;
+  });
+  const average = total / sampleSet.length;
+  const frameRate = 1000 / average;
+  const roundedFrameRate = Math.round(frameRate / 10) * 10;
+  if (roundedFrameRate >= 120) {
+    throttleEasing = true;
+  }
+}
+
 //EASING FUNCTION
 function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
@@ -186,14 +202,14 @@ function updateHoveredEl() {
   }
 }
 
-//RAF WITH FRAME-TRACKING INCLUDED
+//RAF AND SAMPLE FRAME UPDATE RATE
 function refreshAndSample() {
   then = now;
   now = performance.now();
   sampleSet.push(now - then);
   if (sampleSet.length > 200) {
     isSampling = false;
-    updateMultiplier();
+    handleThrottle();
   }
 
   room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
@@ -208,7 +224,11 @@ function refreshAndSample() {
   if (isSampling) {
     requestAnimationFrame(refreshAndSample);
   } else {
-    requestAnimationFrame(refresh);
+    if (throttleEasing) {
+      requestAnimationFrame(refreshAndThrottle);
+    } else {
+      requestAnimationFrame(refresh);
+    }
   }
 }
 
@@ -224,6 +244,25 @@ function refresh() {
   updateHoveredEl();
 
   requestAnimationFrame(refresh);
+}
+
+//THROTTLED RAF
+function refreshAndThrottle() {
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+
+  if (canUpdateVals) {
+    canUpdateVals = false;
+    easedTraits.map((trait) => {
+      ease(trait);
+    });
+  } else {
+    canUpdateVals = true;
+  }
+
+  updateHoveredEl();
+
+  requestAnimationFrame(refreshAndThrottle);
 }
 
 function cloneScreen() {
