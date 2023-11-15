@@ -157,22 +157,6 @@ function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
 }
 
-//IF SCREEN APPEARS TO HAVE >= 120hz REFRESH RATE, SKIP EASE UPDATES ON EVERY OTHER FRAME
-function handleThrottle() {
-  let total = 0;
-  sampleSet.forEach((sample) => {
-    total += sample;
-  });
-  const average = total / sampleSet.length;
-  const frameRate = 1000 / average;
-  const roundedFrameRate = Math.round(frameRate / 10) * 10;
-  if (roundedFrameRate >= 120) {
-    requestAnimationFrame(refreshWithThrottle);
-  } else {
-    requestAnimationFrame(refresh);
-  }
-}
-
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
   const prevEl = currentlyHoveredEl;

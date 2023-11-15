@@ -123,6 +123,7 @@ body.light-mode {
   z-index: 1000;
   pointer-events: none;
   visibility: hidden;
+  will-change: transform;
 }
 
 #cursor::after {
@@ -160,6 +161,7 @@ body:active #cursor.clickable::after {
   perspective: 1024px;
   transform-style: flat;
   pointer-events: none;
+  will-change: transform;
 }
 
 #scene {
@@ -281,6 +283,7 @@ body:active #cursor.clickable::after {
   transform-origin: center center;
   flex-shrink: 0;
   backface-visibility: visible;
+  will-change: transform;
 }
 
 .side {
@@ -350,7 +353,7 @@ body:active #cursor.clickable::after {
 }
 
 #reflection-wrapper {
-  filter: blur(6px);
+  filter: blur(4px);
   position: absolute;
   top: 608px;
   left: 32px;
