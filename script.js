@@ -6,10 +6,9 @@ const startButton = document.getElementById("start-button");
 
 let currentlyHoveredEl = body;
 
-const refreshBenchmark = 60;
-let now = performance.now();
-const sampleSet = [];
-let skipFrame = false;
+const maxFPS = 60;
+const fpsInterval = 1000 / maxFPS;
+let then = performance.now();
 
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
@@ -161,7 +160,7 @@ function ease(val) {
 //IF SCREEN APPEARS TO HAVE >= 120hz REFRESH RATE, SKIP EASE UPDATES ON EVERY OTHER FRAME
 function handleThrottle() {
   let total = 0;
-  sampleSet.map((sample) => {
+  sampleSet.forEach((sample) => {
     total += sample;
   });
   const average = total / sampleSet.length;
@@ -198,59 +197,26 @@ function updateHoveredEl() {
   }
 }
 
-//REFRESH AND SAMPLE FRAME UPDATE RATE
-function refreshAndSample() {
-  then = now;
-  now = performance.now();
-  sampleSet.push(now - then);
+//REFRESH AT MAX 60FPS
+function refresh(timeStamp) {
+  const diff = timeStamp - then;
+  if (diff > fpsInterval) {
+    then = timeStamp - (diff % fpsInterval);
 
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-
-  easedTraits.map((trait) => {
-    ease(trait);
-  });
-
-  updateHoveredEl();
-
-  if (sampleSet.length > 200) {
-    handleThrottle();
-  } else {
-    requestAnimationFrame(refreshAndSample);
-  }
-}
-
-//REFRESH (NO THROTTLING)
-function refresh() {
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-
-  easedTraits.map((trait) => {
-    ease(trait);
-  });
-
-  updateHoveredEl();
-
-  requestAnimationFrame(refresh);
-}
-
-//THROTTLED REFRESH (SKIP EASED VAL UPDATES ON EVERY OTHER FRAME)
-function refreshWithThrottle() {
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-
-  if (skipFrame) {
-    skipFrame = false;
-  } else {
-    skipFrame = true;
-    easedTraits.map((trait) => {
+    //ONLY UUPDATE EASES IF 16.7ms HAS PASSED
+    easedTraits.forEach((trait) => {
       ease(trait);
     });
   }
 
+  //UPDATE STYLES
+  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+
+  //UPDATE CURRENTLY HOVERED ELEMENT
   updateHoveredEl();
 
-  requestAnimationFrame(refreshWithThrottle);
+  requestAnimationFrame(refresh);
 }
 
 function cloneScreen() {
@@ -263,7 +229,7 @@ function cloneScreen() {
   //MUTATION OBSERVER AND CALLBACK FUNCTION
   const classObserver = new MutationObserver(onClassListChange);
   async function onClassListChange(changes) {
-    changes.map((change) => {
+    changes.forEach((change) => {
       pairs.get(change.target).classList = change.target.classList;
     });
   }
@@ -379,4 +345,4 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 
 sizeFrame();
 cloneScreen();
-refreshAndSample();
+refresh();

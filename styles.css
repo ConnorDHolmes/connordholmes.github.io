@@ -93,6 +93,7 @@ body.light-mode {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.05em;
+  opacity: 0.65;
 }
 
 #hud span {
@@ -105,10 +106,12 @@ body.light-mode {
 
 #hud span .key {
   margin-left: 0.5em;
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
   padding: 2px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  min-width: 2em;
 }
 
 #cursor {
