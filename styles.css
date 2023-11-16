@@ -212,7 +212,7 @@ body:active #cursor.clickable::after {
   pointer-events: auto;
   position: relative;
   border-radius: 32px;
-  box-shadow: inset 0px -0.5px 0 1px var(--accent);
+  box-shadow: inset 0 -0.5px 0 0.75px var(--accent);
   background-color: var(--void);
   font-size: 18px;
   line-height: 120%;

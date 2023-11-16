@@ -16,19 +16,11 @@ cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 640, adj: 0 });
 
 const win = {
-  get w() {
-    return window.innerWidth;
-  },
-  get h() {
-    return window.innerHeight;
-  },
-  get midX() {
-    return win.w / 2;
-  },
-  get midY() {
-    return win.h / 2;
-  },
+  w: 2 * Math.round(window.innerWidth / 2),
+  h: 2 * Math.round(window.innerHeight / 2),
 };
+win.midX = win.w / 2;
+win.midY = win.h / 2;
 
 const scene = {
   el: document.getElementById("scene"),
@@ -185,18 +177,15 @@ function updateHoveredEl() {
 function refresh(timeStamp) {
   requestAnimationFrame(refresh);
   const diff = timeStamp - then;
-  //ONLY UPDATE IF 16.7ms HAS PASSED
+  //ONLY UPDATE VALUES IF 16.7ms HAS PASSED
   if (diff > fpsInterval) {
     then = timeStamp - (diff % fpsInterval);
-
     easedTraits.forEach((trait) => {
       ease(trait);
     });
-
-    room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
   }
-
+  room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
   //UPDATE CURRENTLY HOVERED ELEMENT
   updateHoveredEl();
 }
@@ -240,8 +229,12 @@ function cloneScreen() {
   document.getElementById("reflection-wrapper").append(reflection);
 }
 
-//SCALE THE SCENE TO FIT SCREEN HEIGHT
-function sizeFrame() {
+//SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
+function sizeAndMeasure() {
+  win.w = 2 * Math.round(window.innerWidth / 2);
+  win.h = 2 * Math.round(window.innerHeight / 2);
+  win.midX = win.w / 2;
+  win.midY = win.h / 2;
   scene.el.style.transform = `translate3d(-50%, -50%, 0) scale(${scene.scale})`;
 }
 
@@ -266,7 +259,7 @@ startButton.addEventListener("click", function () {
 });
 
 //SCALE SCENE ON WINDOW RESIZE
-window.addEventListener("resize", sizeFrame);
+window.addEventListener("resize", sizeAndMeasure);
 
 //RESET VIEW TO CENTER IF WINDOW LOSES FOCUS
 window.addEventListener("blur", resetView);
@@ -325,6 +318,6 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   removeCl(body, "light-mode");
 }
 
-sizeFrame();
+sizeAndMeasure();
 cloneScreen();
 refresh();
