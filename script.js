@@ -185,18 +185,17 @@ function updateHoveredEl() {
 function refresh(timeStamp) {
   requestAnimationFrame(refresh);
   const diff = timeStamp - then;
-  //ONLY UPDATE EASES IF 16.7ms HAS PASSED
+  //ONLY UPDATE IF 16.7ms HAS PASSED
   if (diff > fpsInterval) {
     then = timeStamp - (diff % fpsInterval);
 
     easedTraits.forEach((trait) => {
       ease(trait);
     });
-  }
 
-  //UPDATE STYLES
-  room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+    room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  }
 
   //UPDATE CURRENTLY HOVERED ELEMENT
   updateHoveredEl();
