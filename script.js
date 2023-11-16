@@ -183,24 +183,23 @@ function updateHoveredEl() {
 
 //REFRESH AT MAX 60FPS
 function refresh(timeStamp) {
+  requestAnimationFrame(refresh);
   const diff = timeStamp - then;
+  //ONLY UPDATE EASES IF 16.7ms HAS PASSED
   if (diff > fpsInterval) {
     then = timeStamp - (diff % fpsInterval);
 
-    //ONLY UUPDATE EASES IF 16.7ms HAS PASSED
     easedTraits.forEach((trait) => {
       ease(trait);
     });
   }
 
   //UPDATE STYLES
-  room.el.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
 
   //UPDATE CURRENTLY HOVERED ELEMENT
   updateHoveredEl();
-
-  requestAnimationFrame(refresh);
 }
 
 function cloneScreen() {
@@ -244,7 +243,7 @@ function cloneScreen() {
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT
 function sizeFrame() {
-  scene.el.style.transform = `translate3d(0, 0, 0) scale(${scene.scale})`;
+  scene.el.style.transform = `translate3d(-50%, -50%, 0) scale(${scene.scale})`;
 }
 
 //RESET VIEW TO MIDDLE

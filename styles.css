@@ -16,7 +16,7 @@
 
 html,
 body {
-  height: 100%;
+  height: 100dvh;
   background-color: var(--void);
 }
 
@@ -123,7 +123,6 @@ body.light-mode {
   z-index: 1000;
   pointer-events: none;
   visibility: hidden;
-  will-change: transform;
 }
 
 #cursor::after {
@@ -152,24 +151,22 @@ body:active #cursor.clickable::after {
 /* 3D SCENE */
 
 #wrapper {
-  position: absolute;
+  position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  display: grid;
-  place-content: center;
   perspective: 1024px;
   transform-style: flat;
   pointer-events: none;
-  will-change: transform;
 }
 
 #scene {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 576px;
   height: 676px;
   transform-style: preserve-3d;
-  display: grid;
-  place-content: center;
 }
 
 #buttons-row {
@@ -275,15 +272,16 @@ body:active #cursor.clickable::after {
 }
 
 #room {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 1024px;
   height: 576px;
   position: relative;
   transform-style: preserve-3d;
   transform-origin: center center;
-  flex-shrink: 0;
+  /* flex-shrink: 0; */
   backface-visibility: visible;
-  will-change: transform;
 }
 
 .side {
@@ -366,8 +364,6 @@ body:active #cursor.clickable::after {
   pointer-events: none;
   position: absolute;
   inset: 0;
-  width: 960px;
-  height: 512px;
   transform: scaleY(-1);
   mask-image: linear-gradient(to top, black, transparent, transparent);
   -webkit-mask-image: linear-gradient(to top, black, transparent, transparent);
