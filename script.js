@@ -201,13 +201,13 @@ function refresh(timeStamp) {
 
 function refresh(timeStamp) {
   const diff = timeStamp - then;
-  console.log(diff);
-  /*
+  then = timeStamp;
+
   if (diff) {
-    const roundedDiff = Math.round(diff);
-    
+    const multiplier = 16 / Math.floor(diff);
+    console.log(multiplier);
     easedTraits.forEach((trait) => {
-      ease(trait, roundedDiff);
+      ease(trait, multiplier);
     });
 
     room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
@@ -215,9 +215,7 @@ function refresh(timeStamp) {
 
     updateHoveredEl();
   }
-  */
 
-  then = timeStamp;
   requestAnimationFrame(refresh);
 }
 
