@@ -166,6 +166,7 @@ body:active #cursor.clickable::after {
   perspective: 1024px;
   transform-style: flat;
   pointer-events: none;
+  transform: translateZ(0, 0, 0);
 }
 
 #scene {
@@ -344,9 +345,9 @@ body:active #cursor.clickable::after {
 
 .screen {
   position: absolute;
-  inset: 32px;
-  width: 960px;
-  height: 512px;
+  inset: 8px;
+  width: 1008px;
+  height: 560px;
   background-color: var(--screen);
   overflow: hidden;
   border-radius: 8px;
@@ -360,10 +361,10 @@ body:active #cursor.clickable::after {
 #reflection-wrapper {
   filter: blur(4px);
   position: absolute;
-  top: 608px;
-  left: 32px;
-  width: 960px;
-  height: 512px;
+  top: 584px;
+  left: 8px;
+  width: 1008px;
+  height: 560px;
   opacity: 0.55;
 }
 
@@ -385,13 +386,16 @@ body:active #cursor.clickable::after {
 }
 
 .screen .inner .column {
+  opacity: 0;
   width: 33.33%;
   height: 100%;
-  /* transition: background-color 0.25s ease; */
+  background-color: #aaa;
+  transition: opacity 0.25s ease;
+  opacity: 0;
 }
 
 .screen .inner .column.hover {
-  background-color: #aaa;
+  opacity: 1;
 }
 
 .screen .inner .red {

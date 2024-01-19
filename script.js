@@ -13,7 +13,7 @@ let then = performance.now();
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
-cameraPos.set("focused", { hor: 1, vert: 1, zoom: 640, adj: 0 });
+cameraPos.set("focused", { hor: 1, vert: 1, zoom: 600, adj: 0 });
 
 const win = {
   w: 2 * Math.round(window.innerWidth / 2),
@@ -199,7 +199,7 @@ function cloneScreen() {
   const pairs = new Map();
   //MUTATION OBSERVER AND CALLBACK FUNCTION
   const classObserver = new MutationObserver(onClassListChange);
-  async function onClassListChange(changes) {
+  function onClassListChange(changes) {
     changes.forEach((change) => {
       pairs.get(change.target).classList = change.target.classList;
     });
