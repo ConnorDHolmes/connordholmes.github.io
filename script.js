@@ -204,8 +204,8 @@ function refresh(timeStamp) {
   then = timeStamp;
 
   if (diff) {
-    const multiplier = 16 / Math.floor(diff);
-    console.log(multiplier);
+    const multiplier = Math.floor(diff) / 16;
+    // console.log(multiplier);
     easedTraits.forEach((trait) => {
       ease(trait, multiplier);
     });
