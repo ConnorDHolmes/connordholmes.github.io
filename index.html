@@ -32,29 +32,28 @@
 
   <body class="light-mode">
     <div id="noise-frame"><div id="noise-pattern"></div></div>
-    <div id="overlay"></div>
-    <div id="hud">
+    <c-overlay></c-overlay>
+    <c-hud>
       <span class="hide">toggle focus mode<span class="key">shift</span></span>
       <span>toggle theme<span class="key">m</span></span>
-    </div>
+    </c-hud>
 
-    <div id="wrapper">
-      <div id="scene">
-        <div id="room">
-          <div class="side outer">
+    <main>
+      <c-scene>
+        <c-room>
+          <c-plane outer>
             <div id="buttons-row">
               <a class="button" id="start-button" data-h
                 ><div data-text="works">works</div></a
               >
               <a class="button" data-h><div data-text="resume">resume</div></a>
             </div>
-          </div>
-
-          <div class="side right">
+          </c-plane>
+          <c-plane right>
             <h1>connor holmes</h1>
             <h2>frontend engineer and ux problem-solver</h2>
-          </div>
-          <div class="side back">
+          </c-plane>
+          <c-plane back>
             <div class="screen">
               <div class="inner" data-m>
                 <div class="column" data-h id="column-1"></div>
@@ -64,12 +63,12 @@
             </div>
 
             <div id="reflection-wrapper"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </c-plane>
+        </c-room>
+      </c-scene>
+    </main>
 
-    <div id="cursor"></div>
+    <c-cursor></c-cursor>
 
     <script src="script.js"></script>
   </body>

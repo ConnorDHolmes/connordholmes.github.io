@@ -1,13 +1,13 @@
 const root = document.documentElement;
 const body = document.body;
-const overlay = document.getElementById("overlay");
+const overlay = document.querySelector("c-overlay");
 const buttonsRow = document.getElementById("buttons-row");
 const startButton = document.getElementById("start-button");
 
 let currentlyHoveredEl = body;
 
-const maxFPS = 60;
-const fpsInterval = 1000 / maxFPS;
+// const maxFPS = 60;
+// const fpsInterval = 1000 / maxFPS;
 let then = performance.now();
 
 const cameraPos = new Map();
@@ -23,7 +23,7 @@ win.midX = win.w / 2;
 win.midY = win.h / 2;
 
 const scene = {
-  el: document.getElementById("scene"),
+  el: document.querySelector("c-scene"),
   get h() {
     return scene.el.offsetHeight;
   },
@@ -33,7 +33,7 @@ const scene = {
 };
 
 const cursor = {
-  el: document.getElementById("cursor"),
+  el: document.querySelector("c-cursor"),
   x: {
     target: win.midX,
     eased: win.midX,
@@ -48,7 +48,7 @@ const cursor = {
 };
 
 const room = {
-  el: document.getElementById("room"),
+  el: document.querySelector("c-room"),
   range: {
     mode: "orbit",
     hor: {
@@ -144,9 +144,16 @@ function toggleCl(el, className) {
   el.classList.toggle(className);
 }
 
+/*
 //EASING FUNCTION
 function ease(val) {
   val.eased += (val.target - val.eased) * val.ease;
+}
+*/
+
+//EASING FUNCTION
+function ease(val, multiplier) {
+  val.eased += (val.target - val.eased) * (val.ease * multiplier);
 }
 
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
@@ -173,6 +180,7 @@ function updateHoveredEl() {
   }
 }
 
+/*
 //REFRESH AT MAX 60FPS
 function refresh(timeStamp) {
   requestAnimationFrame(refresh);
@@ -188,6 +196,29 @@ function refresh(timeStamp) {
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
   //UPDATE CURRENTLY HOVERED ELEMENT
   updateHoveredEl();
+}
+*/
+
+function refresh(timeStamp) {
+  const diff = timeStamp - then;
+  console.log(diff);
+  /*
+  if (diff) {
+    const roundedDiff = Math.round(diff);
+    
+    easedTraits.forEach((trait) => {
+      ease(trait, roundedDiff);
+    });
+
+    room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+
+    updateHoveredEl();
+  }
+  */
+
+  then = timeStamp;
+  requestAnimationFrame(refresh);
 }
 
 function cloneScreen() {
@@ -254,7 +285,7 @@ startButton.addEventListener("click", function () {
   addCl(buttonsRow, "hide");
   setTimeout(function () {
     room.range.mode = "focused";
-    removeCl(document.querySelector("#hud span.hide"), "hide");
+    removeCl(document.querySelector("c-hud span.hide"), "hide");
   }, 500);
 });
 

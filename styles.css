@@ -71,7 +71,7 @@ body.light-mode {
   animation: 0.5s noise steps(4) infinite;
 }
 
-#overlay {
+c-overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -83,12 +83,12 @@ body.light-mode {
   transition: opacity 1s ease 0.5s;
 }
 
-#overlay.reveal {
+c-overlay.reveal {
   opacity: 0;
   pointer-events: none;
 }
 
-#hud {
+c-hud {
   mix-blend-mode: exclusion;
   color: #ccc;
   padding: 16px;
@@ -104,15 +104,15 @@ body.light-mode {
   opacity: 0.65;
 }
 
-#hud span {
+c-hud span {
   transition: opacity 0.5s ease;
 }
 
-#hud span.hide {
+c-hud span.hide {
   opacity: 0;
 }
 
-#hud span .key {
+c-hud span .key {
   margin-left: 0.5em;
   display: inline-flex;
   justify-content: center;
@@ -122,8 +122,9 @@ body.light-mode {
   min-width: 2em;
 }
 
-#cursor {
+c-cursor {
   position: fixed;
+  display: block;
   inset: 0;
   width: 6px;
   height: 6px;
@@ -133,7 +134,7 @@ body.light-mode {
   visibility: hidden;
 }
 
-#cursor::after {
+c-cursor::after {
   content: "";
   width: inherit;
   height: inherit;
@@ -144,21 +145,21 @@ body.light-mode {
   transition: transform 0.2s ease;
 }
 
-body:active #cursor::after {
+body:active c-cursor::after {
   transform: scale(0.66);
 }
 
-#cursor.clickable::after {
+c-cursor.clickable::after {
   transform: scale(1.5);
 }
 
-body:active #cursor.clickable::after {
+body:active c-cursor.clickable::after {
   transform: scale(1);
 }
 
 /* 3D SCENE */
 
-#wrapper {
+main {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -169,7 +170,8 @@ body:active #cursor.clickable::after {
   transform: translateZ(0, 0, 0);
 }
 
-#scene {
+c-scene {
+  display: block;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -280,8 +282,9 @@ body:active #cursor.clickable::after {
   clip-path: inset(0 0 0 0);
 }
 
-#room {
+c-room {
   position: absolute;
+  display: block;
   left: 50%;
   top: 50%;
   width: 1024px;
@@ -292,7 +295,7 @@ body:active #cursor.clickable::after {
   backface-visibility: visible;
 }
 
-.side {
+c-plane {
   width: 1024px;
   height: 576px;
   position: absolute;
@@ -300,16 +303,16 @@ body:active #cursor.clickable::after {
   transform-style: flat;
 }
 
-.side.back {
+c-plane[back] {
   transform: translate3d(0, 0, -512px);
 }
 
-.side.outer {
+c-plane[outer] {
   transform: rotateY(-90deg) translate3d(0, 0, 512px);
   transform-style: preserve-3d;
 }
 
-.side.right {
+c-plane[right] {
   transform: rotateY(-90deg) translate3d(0, 0, -1024px);
   display: flex;
   flex-direction: column;
@@ -323,20 +326,20 @@ body:active #cursor.clickable::after {
   color: rgba(20, 20, 20, 1);
 }
 
-.side.right h1,
-.side.right h2 {
+h1,
+h2 {
   white-space: nowrap;
   position: relative;
 }
 
-.side.right h1 {
+h1 {
   font-family: "Unbounded";
   font-weight: 400;
   font-size: 128px;
   margin: 0;
 }
 
-.side.right h2 {
+h2 {
   font-weight: 300;
   letter-spacing: 0.02em;
   font-size: 58px;
