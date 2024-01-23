@@ -18,6 +18,9 @@ html,
 body {
   height: 100dvh;
   background-color: var(--void);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -51,16 +54,7 @@ body.light-mode {
   }
 }
 
-#noise-frame {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  width: 100%;
-  height: 100dvh;
-  pointer-events: none;
-}
-
-#noise-pattern {
+c-noise {
   position: absolute;
   top: 0;
   left: 0;
@@ -69,6 +63,7 @@ body.light-mode {
   background-size: 12.5% auto;
   height: 400%;
   animation: 0.5s noise steps(4) infinite;
+  will-change: transform;
 }
 
 c-overlay {
@@ -81,6 +76,8 @@ c-overlay {
   place-items: center;
   background-color: var(--void);
   transition: opacity 1s ease 0.5s;
+  will-change: opacity;
+  pointer-events: auto;
 }
 
 c-overlay.reveal {
@@ -101,7 +98,7 @@ c-hud {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.05em;
-  opacity: 0.65;
+  opacity: 0.75;
 }
 
 c-hud span {
@@ -112,7 +109,7 @@ c-hud span.hide {
   opacity: 0;
 }
 
-c-hud span .key {
+c-hud .key {
   margin-left: 0.5em;
   display: inline-flex;
   justify-content: center;
@@ -129,6 +126,7 @@ c-cursor {
   width: 6px;
   height: 6px;
   mix-blend-mode: exclusion;
+
   z-index: 1000;
   pointer-events: none;
   visibility: hidden;
@@ -149,12 +147,12 @@ body:active c-cursor::after {
   transform: scale(0.66);
 }
 
-c-cursor.clickable::after {
-  transform: scale(1.5);
+c-cursor[clickable]::after {
+  transform: scale(2);
 }
 
-body:active c-cursor.clickable::after {
-  transform: scale(1);
+body:active c-cursor[clickable]::after {
+  transform: scale(1.5);
 }
 
 /* 3D SCENE */
@@ -167,7 +165,7 @@ main {
   perspective: 1024px;
   transform-style: flat;
   pointer-events: none;
-  transform: translateZ(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 c-scene {
@@ -180,22 +178,22 @@ c-scene {
   transform-style: preserve-3d;
 }
 
-#buttons-row {
+c-buttons {
   position: absolute;
   left: 50%;
-  bottom: 32px;
+  bottom: 64px;
+  display: flex;
   transform: translate3d(-50%, 0, 0);
   transform-style: preserve-3d;
-  display: flex;
   gap: 24px;
   transition: visibility 0s linear 0.5s;
 }
 
-#buttons-row.hide {
+c-buttons[hide] {
   visibility: hidden;
 }
 
-#buttons-row::after {
+c-buttons::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -207,27 +205,30 @@ c-scene {
   transition: opacity 0.25s ease, background-color 0.5s var(--mode-swap-ease);
 }
 
-#buttons-row.hide::after {
+c-buttons[hide]::after {
   opacity: 1;
 }
 
-.button {
+c-buttons button {
   pointer-events: auto;
   position: relative;
   border-radius: 32px;
   box-shadow: inset 0 -0.5px 0 0.75px var(--accent);
   background-color: var(--void);
+  border: none;
   font-size: 18px;
   line-height: 120%;
   font-weight: 400;
+  font-family: inherit;
   letter-spacing: 0.05em;
   transform-style: preserve-3d;
   transition: box-shadow 0.5s var(--mode-swap-ease),
     color 0.5s var(--mode-swap-ease),
     background-color 0.5s var(--mode-swap-ease);
+  cursor: none;
 }
 
-.button::after {
+c-buttons button::after {
   content: "";
   position: absolute;
   width: 100%;
@@ -242,11 +243,11 @@ c-scene {
   clip-path: inset(100% 0 0 0);
 }
 
-.button.hover::after {
+c-buttons button.hover::after {
   clip-path: inset(0 0 0 0);
 }
 
-.button div {
+c-buttons button div {
   padding: 10px 16px;
   position: relative;
   color: transparent;
@@ -254,7 +255,7 @@ c-scene {
   pointer-events: none;
 }
 
-.button div::before {
+c-buttons button div::before {
   content: attr(data-text);
   position: absolute;
   inset: 0;
@@ -264,11 +265,11 @@ c-scene {
   clip-path: inset(0 0 0 0);
 }
 
-.button.hover div::before {
+c-buttons button.hover div::before {
   clip-path: inset(0 0 100% 0);
 }
 
-.button div::after {
+c-buttons button div::after {
   content: attr(data-text);
   position: absolute;
   inset: 0;
@@ -278,7 +279,7 @@ c-scene {
   clip-path: inset(100% 0 0 0);
 }
 
-.button.hover div::after {
+c-buttons button.hover div::after {
   clip-path: inset(0 0 0 0);
 }
 
@@ -316,20 +317,18 @@ c-plane[right] {
   transform: rotateY(-90deg) translate3d(0, 0, -1024px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 128px;
   align-items: center;
   color: var(--accent);
   transition: color 0.5s var(--mode-swap-ease);
-}
-
-.light-mode .side.right .content {
-  color: rgba(20, 20, 20, 1);
 }
 
 h1,
 h2 {
   white-space: nowrap;
   position: relative;
+  text-transform: lowercase;
 }
 
 h1 {
@@ -346,22 +345,22 @@ h2 {
   margin: 0;
 }
 
-.screen {
+c-screen {
   position: absolute;
   inset: 8px;
+  display: flex;
+  flex-direction: column;
   width: 1008px;
   height: 560px;
   background-color: var(--screen);
-  overflow: hidden;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
   pointer-events: auto;
   transform-style: flat;
   transition: background-color 0.5s var(--mode-swap-ease);
+  overflow: hidden;
 }
 
-#reflection-wrapper {
+c-reflection {
   filter: blur(4px);
   position: absolute;
   top: 584px;
@@ -371,7 +370,7 @@ h2 {
   opacity: 0.55;
 }
 
-.reflection {
+c-screen[reflection] {
   pointer-events: none;
   position: absolute;
   inset: 0;
@@ -382,13 +381,13 @@ h2 {
 
 /* INSIDE SCREEN */
 
-.screen .inner {
+c-screen .inner {
   display: flex;
   width: 100%;
   height: 100%;
 }
 
-.screen .inner .column {
+c-screen .inner .column {
   opacity: 0;
   width: 33.33%;
   height: 100%;
@@ -397,10 +396,10 @@ h2 {
   opacity: 0;
 }
 
-.screen .inner .column.hover {
+c-screen .inner .column.hover {
   opacity: 1;
 }
 
-.screen .inner .red {
+c-screen .inner .red {
   background-color: red !important;
 }

@@ -1,36 +1,30 @@
 const root = document.documentElement;
 const body = document.body;
 const overlay = document.querySelector("c-overlay");
-const buttonsRow = document.getElementById("buttons-row");
+const buttonsRow = document.querySelector("c-buttons");
 const startButton = document.getElementById("start-button");
 
 let currentlyHoveredEl = body;
 
 // const maxFPS = 60;
 // const fpsInterval = 1000 / maxFPS;
+
+const fpsBenchmark = 60;
+const frameDurationBenchmark = 1000 / fpsBenchmark;
 let then = performance.now();
 
-const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 3, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
-cameraPos.set("focused", { hor: 1, vert: 1, zoom: 600, adj: 0 });
-
 const win = {
-  w: 2 * Math.round(window.innerWidth / 2),
-  h: 2 * Math.round(window.innerHeight / 2),
+  w: Math.round(window.innerWidth * 2) / 2,
+  h: Math.round(window.innerHeight * 2) / 2,
 };
 win.midX = win.w / 2;
 win.midY = win.h / 2;
 
 const scene = {
   el: document.querySelector("c-scene"),
-  get h() {
-    return scene.el.offsetHeight;
-  },
-  get scale() {
-    return win.h / scene.h;
-  },
 };
+scene.h = scene.el.offsetHeight;
+scene.scale = win.h / scene.h;
 
 const cursor = {
   el: document.querySelector("c-cursor"),
@@ -42,10 +36,13 @@ const cursor = {
     target: win.midY,
     eased: win.midY,
   },
-  get half() {
-    return cursor.el.offsetWidth / 2;
-  },
 };
+cursor.half = cursor.el.offsetWidth / 2;
+
+const cameraPos = new Map();
+cameraPos.set("orbit", { hor: 3, vert: 2, zoom: -1024, adj: 90 });
+cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("focused", { hor: 1, vert: 1, zoom: 600, adj: 0 });
 
 const room = {
   el: document.querySelector("c-room"),
@@ -144,6 +141,16 @@ function toggleCl(el, className) {
   el.classList.toggle(className);
 }
 
+//ADD BOOLEAN ATTRIBUTE
+function addBoolAttr(el, attribute) {
+  el.setAttribute(attribute, "");
+}
+
+//REMOVE BOOLEAN ATTRIBUTE
+function removeBoolAttr(el, attribute) {
+  el.removeAttribute(attribute);
+}
+
 /*
 //EASING FUNCTION
 function ease(val) {
@@ -151,9 +158,14 @@ function ease(val) {
 }
 */
 
-//EASING FUNCTION
+//EASING FUNCTION (WITH MULTIPLIER)
 function ease(val, multiplier) {
   val.eased += (val.target - val.eased) * (val.ease * multiplier);
+}
+
+//ROUND TO NEAREST 0.
+function round(num) {
+  return Math.round(num * 100) / 100;
 }
 
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
@@ -174,9 +186,9 @@ function updateHoveredEl() {
     currentlyHoveredEl.hasAttribute("data-h")
   ) {
     addCl(currentlyHoveredEl, "hover");
-    addCl(cursor.el, "clickable");
+    addBoolAttr(cursor.el, "clickable");
   } else {
-    removeCl(cursor.el, "clickable");
+    removeBoolAttr(cursor.el, "clickable");
   }
 }
 
@@ -200,29 +212,30 @@ function refresh(timeStamp) {
 */
 
 function refresh(timeStamp) {
+  requestAnimationFrame(refresh);
   const diff = timeStamp - then;
   then = timeStamp;
 
-  if (diff) {
-    const multiplier = Math.floor(diff) / 16;
-    // console.log(multiplier);
-    easedTraits.forEach((trait) => {
-      ease(trait, multiplier);
-    });
+  const multiplier = diff / frameDurationBenchmark || 1;
+  easedTraits.forEach((trait) => {
+    ease(trait, multiplier);
+  });
 
-    room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-    cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  const roundedZoom = round(room.range.zoom.eased);
+  const roundedTilt = round(room.tilt);
+  const roundedPan = round(room.pan);
 
-    updateHoveredEl();
-  }
+  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  // room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
+  room.el.style.transform = `translate3d(-50%, -50%, ${roundedZoom}px) rotateX(${roundedTilt}deg) rotateY(${roundedPan}deg)`;
 
-  requestAnimationFrame(refresh);
+  updateHoveredEl();
 }
 
 function cloneScreen() {
-  const screen = document.querySelector(".screen");
+  const screen = document.querySelector("c-screen");
   const reflection = screen.cloneNode(true);
-  addCl(reflection, "reflection");
+  addBoolAttr(reflection, "reflection");
 
   const screenDescendants = screen.querySelectorAll("*");
   const pairs = new Map();
@@ -255,15 +268,16 @@ function cloneScreen() {
     toggleCl(this, "red");
   });
 
-  document.getElementById("reflection-wrapper").append(reflection);
+  document.querySelector("c-reflection").append(reflection);
 }
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function sizeAndMeasure() {
-  win.w = 2 * Math.round(window.innerWidth / 2);
-  win.h = 2 * Math.round(window.innerHeight / 2);
+  win.w = Math.round(window.innerWidth * 2) / 2;
+  win.h = Math.round(window.innerHeight * 2) / 2;
   win.midX = win.w / 2;
   win.midY = win.h / 2;
+  scene.scale = win.h / scene.h;
   scene.el.style.transform = `translate3d(-50%, -50%, 0) scale(${scene.scale})`;
 }
 
@@ -280,7 +294,7 @@ function reveal() {
 }
 
 startButton.addEventListener("click", function () {
-  addCl(buttonsRow, "hide");
+  addBoolAttr(buttonsRow, "hide");
   setTimeout(function () {
     room.range.mode = "focused";
     removeCl(document.querySelector("c-hud span.hide"), "hide");

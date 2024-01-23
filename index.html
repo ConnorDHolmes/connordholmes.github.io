@@ -4,14 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <title>Connor Holmes' Portfolio</title>
     <meta
       name="description"
       content="A selection of works developed by Connor Holmes"
     />
     <meta name="author" content="Connor Holmes" />
-
     <meta property="og:title" content="Connor Holmes' Portfolio" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="connorholmes.me" />
@@ -26,12 +24,11 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   -->
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
     <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body class="light-mode">
-    <div id="noise-frame"><div id="noise-pattern"></div></div>
+    <c-noise></c-noise>
     <c-overlay></c-overlay>
     <c-hud>
       <span class="hide">toggle focus mode<span class="key">shift</span></span>
@@ -42,27 +39,26 @@
       <c-scene>
         <c-room>
           <c-plane outer>
-            <div id="buttons-row">
-              <a class="button" id="start-button" data-h
-                ><div data-text="works">works</div></a
-              >
-              <a class="button" data-h><div data-text="resume">resume</div></a>
-            </div>
+            <c-buttons>
+              <button id="start-button" data-h>
+                <div data-text="works">works</div>
+              </button>
+              <button data-h><div data-text="resume">resume</div></button>
+            </c-buttons>
           </c-plane>
           <c-plane right>
-            <h1>connor holmes</h1>
-            <h2>frontend engineer and ux problem-solver</h2>
+            <h1>Connor Holmes</h1>
+            <h2>Frontend Engineer and UX Problem-Solver</h2>
           </c-plane>
           <c-plane back>
-            <div class="screen">
+            <c-screen>
               <div class="inner" data-m>
                 <div class="column" data-h id="column-1"></div>
                 <div class="column" data-h id="column-2"></div>
                 <div class="column" data-h id="column-3"></div>
               </div>
-            </div>
-
-            <div id="reflection-wrapper"></div>
+            </c-screen>
+            <c-reflection></c-reflection>
           </c-plane>
         </c-room>
       </c-scene>
