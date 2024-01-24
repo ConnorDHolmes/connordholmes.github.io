@@ -12,10 +12,11 @@ let currentlyHoveredEl = body;
 const fpsBenchmark = 60;
 const frameDurationBenchmark = 1000 / fpsBenchmark;
 let then = performance.now();
+let multiplier = 1;
 
 const win = {
-  w: Math.round(window.innerWidth * 2) / 2,
-  h: Math.round(window.innerHeight * 2) / 2,
+  w: window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth,
+  h: window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight,
 };
 win.midX = win.w / 2;
 win.midY = win.h / 2;
@@ -91,18 +92,6 @@ const room = {
     },
     eased: cursor.y.target,
   },
-  get pan() {
-    return (
-      -room.range.hor.eased +
-      (room.x.eased / win.w) * room.range.hor.cone +
-      room.range.adj.eased
-    );
-  },
-  get tilt() {
-    return (
-      room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
-    );
-  },
 };
 
 //ALL EASING VALS
@@ -151,21 +140,14 @@ function removeBoolAttr(el, attribute) {
   el.removeAttribute(attribute);
 }
 
-/*
-//EASING FUNCTION
-function ease(val) {
-  val.eased += (val.target - val.eased) * val.ease;
-}
-*/
-
 //EASING FUNCTION (WITH MULTIPLIER)
-function ease(val, multiplier) {
+function ease(val) {
   val.eased += (val.target - val.eased) * (val.ease * multiplier);
 }
 
-//ROUND TO NEAREST 0.
+//ROUND OFF TO 3 DECIMAL PLACES
 function round(num) {
-  return Math.round(num * 100) / 100;
+  return Math.round(num * 1000) / 1000;
 }
 
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
@@ -192,44 +174,38 @@ function updateHoveredEl() {
   }
 }
 
-/*
-//REFRESH AT MAX 60FPS
-function refresh(timeStamp) {
-  requestAnimationFrame(refresh);
-  const diff = timeStamp - then;
-  //ONLY UPDATE VALUES IF 16.7ms HAS PASSED
-  if (diff > fpsInterval) {
-    then = timeStamp - (diff % fpsInterval);
-    easedTraits.forEach((trait) => {
-      ease(trait);
-    });
-  }
-  room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-  //UPDATE CURRENTLY HOVERED ELEMENT
-  updateHoveredEl();
+//CALCULATE VIEW PAN
+function pan() {
+  return round(
+    -room.range.hor.eased +
+      (room.x.eased / win.w) * room.range.hor.cone +
+      room.range.adj.eased
+  );
 }
-*/
+
+//CALCULATE VIEW TILT
+function tilt() {
+  return round(
+    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
+  );
+}
 
 function refresh(timeStamp) {
-  requestAnimationFrame(refresh);
   const diff = timeStamp - then;
   then = timeStamp;
 
-  const multiplier = diff / frameDurationBenchmark || 1;
+  multiplier = round(diff / frameDurationBenchmark) || 1;
   easedTraits.forEach((trait) => {
-    ease(trait, multiplier);
+    ease(trait);
   });
 
-  const roundedZoom = round(room.range.zoom.eased);
-  const roundedTilt = round(room.tilt);
-  const roundedPan = round(room.pan);
-
   cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
-  // room.el.style.transform = `translate3d(-50%, -50%, ${room.range.zoom.eased}px) rotateX(${room.tilt}deg) rotateY(${room.pan}deg)`;
-  room.el.style.transform = `translate3d(-50%, -50%, ${roundedZoom}px) rotateX(${roundedTilt}deg) rotateY(${roundedPan}deg)`;
-
+  room.el.style.transform = `translate3d(-50%, -50%, ${
+    room.range.zoom.eased
+  }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
   updateHoveredEl();
+
+  requestAnimationFrame(refresh);
 }
 
 function cloneScreen() {
@@ -273,8 +249,9 @@ function cloneScreen() {
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function sizeAndMeasure() {
-  win.w = Math.round(window.innerWidth * 2) / 2;
-  win.h = Math.round(window.innerHeight * 2) / 2;
+  win.w = window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth;
+  win.h = window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight;
+  console.log(win.w, win.h);
   win.midX = win.w / 2;
   win.midY = win.h / 2;
   scene.scale = win.h / scene.h;
@@ -319,8 +296,10 @@ root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
 root.addEventListener("mouseenter", function (event) {
-  cursor.x.target = cursor.x.eased = event.pageX;
-  cursor.y.target = cursor.y.eased = event.pageY;
+  requestAnimationFrame(() => {
+    cursor.x.target = cursor.x.eased = event.pageX;
+    cursor.y.target = cursor.y.eased = event.pageY;
+  });
 });
 
 //ALL INPUTS

@@ -3,7 +3,6 @@
 
 :root {
   --mode-swap-ease: ease-in-out;
-
   --void: #151515;
   --accent: #ccc;
   --screen: #303030;
@@ -18,9 +17,6 @@ html,
 body {
   height: 100dvh;
   background-color: var(--void);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -31,6 +27,9 @@ body {
   user-select: none;
   cursor: none;
   transition: background-color 0.5s var(--mode-swap-ease);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body.light-mode {
@@ -63,6 +62,8 @@ c-noise {
   background-size: 12.5% auto;
   height: 400%;
   animation: 0.5s noise steps(4) infinite;
+  z-index: 1000;
+  pointer-events: none;
   will-change: transform;
 }
 
@@ -144,15 +145,15 @@ c-cursor::after {
 }
 
 body:active c-cursor::after {
-  transform: scale(0.66);
+  transform: scale3d(0.66, 0.66, 1);
 }
 
 c-cursor[clickable]::after {
-  transform: scale(2);
+  transform: scale3d(2.5, 2.5, 1);
 }
 
 body:active c-cursor[clickable]::after {
-  transform: scale(1.5);
+  transform: scale(2, 2, 1);
 }
 
 /* 3D SCENE */
@@ -199,7 +200,7 @@ c-buttons::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: translate3d(0, 0, 36px) scale(1.5);
+  transform: translate3d(0, 0, 36px) scale3d(1.5, 1.5, 1);
   background-color: var(--void);
   opacity: 0;
   transition: opacity 0.25s ease, background-color 0.5s var(--mode-swap-ease);
@@ -305,16 +306,16 @@ c-plane {
 }
 
 c-plane[back] {
-  transform: translate3d(0, 0, -512px);
+  transform: translateZ(-512px);
 }
 
 c-plane[outer] {
-  transform: rotateY(-90deg) translate3d(0, 0, 512px);
+  transform: rotateY(-90deg) translateZ(512px);
   transform-style: preserve-3d;
 }
 
 c-plane[right] {
-  transform: rotateY(-90deg) translate3d(0, 0, -1024px);
+  transform: rotateY(-90deg) translateZ(-1024px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
