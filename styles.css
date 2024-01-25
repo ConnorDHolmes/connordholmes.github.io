@@ -3,9 +3,10 @@
 
 :root {
   --mode-swap-ease: ease-in-out;
-  --void: #151515;
+  --void: #111;
   --accent: #ccc;
-  --screen: #303030;
+  --screen: #222;
+  --screen-on: #111;
 }
 
 * {
@@ -35,7 +36,8 @@ body {
 body.light-mode {
   --void: #ccc;
   --accent: #151515;
-  --screen: #f3f3f3;
+  --screen: #ddd;
+  --screen-on: #fafafa;
 }
 
 @keyframes noise {
@@ -121,14 +123,12 @@ c-hud .key {
 }
 
 c-cursor {
-  position: fixed;
+  position: absolute;
   display: block;
   inset: 0;
   width: 6px;
   height: 6px;
   mix-blend-mode: exclusion;
-
-  z-index: 1000;
   pointer-events: none;
   visibility: hidden;
 }
@@ -142,6 +142,7 @@ c-cursor::after {
   border-radius: 50%;
   background-color: #ccc;
   transition: transform 0.2s ease;
+  will-change: transform;
 }
 
 body:active c-cursor::after {
@@ -153,7 +154,7 @@ c-cursor[clickable]::after {
 }
 
 body:active c-cursor[clickable]::after {
-  transform: scale(2, 2, 1);
+  transform: scale3d(1.5, 1.5, 1);
 }
 
 /* 3D SCENE */
@@ -187,7 +188,7 @@ c-buttons {
   transform: translate3d(-50%, 0, 0);
   transform-style: preserve-3d;
   gap: 24px;
-  transition: visibility 0s linear 0.5s;
+  transition: visibility 0s linear 0.25s;
 }
 
 c-buttons[hide] {
@@ -214,7 +215,7 @@ c-buttons button {
   pointer-events: auto;
   position: relative;
   border-radius: 32px;
-  box-shadow: inset 0 -0.5px 0 0.75px var(--accent);
+  box-shadow: inset 0 0.45px 0 0.75px var(--accent);
   background-color: var(--void);
   border: none;
   font-size: 18px;
@@ -227,6 +228,10 @@ c-buttons button {
     color 0.5s var(--mode-swap-ease),
     background-color 0.5s var(--mode-swap-ease);
   cursor: none;
+}
+
+.light-mode c-buttons button {
+  box-shadow: inset 0 -0.5px 0 0.75px var(--accent);
 }
 
 c-buttons button::after {
@@ -368,7 +373,7 @@ c-reflection {
   left: 8px;
   width: 1008px;
   height: 560px;
-  opacity: 0.55;
+  /* opacity: 0.55; */
 }
 
 c-screen[reflection] {
@@ -382,25 +387,9 @@ c-screen[reflection] {
 
 /* INSIDE SCREEN */
 
-c-screen .inner {
+/* c-screen .inner {
   display: flex;
   width: 100%;
   height: 100%;
-}
-
-c-screen .inner .column {
-  opacity: 0;
-  width: 33.33%;
-  height: 100%;
-  background-color: #aaa;
-  transition: opacity 0.25s ease;
-  opacity: 0;
-}
-
-c-screen .inner .column.hover {
-  opacity: 1;
-}
-
-c-screen .inner .red {
-  background-color: red !important;
-}
+  background-color: var(--screen-on);
+} */

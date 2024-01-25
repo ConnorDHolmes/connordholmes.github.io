@@ -2,7 +2,10 @@ const root = document.documentElement;
 const body = document.body;
 const overlay = document.querySelector("c-overlay");
 const buttonsRow = document.querySelector("c-buttons");
-const startButton = document.getElementById("start-button");
+const startButton = buttonsRow.querySelector("#start-button");
+
+const screen = document.querySelector("c-screen");
+const screenInner = screen.querySelector(".inner");
 
 let currentlyHoveredEl = body;
 
@@ -209,7 +212,6 @@ function refresh(timeStamp) {
 }
 
 function cloneScreen() {
-  const screen = document.querySelector("c-screen");
   const reflection = screen.cloneNode(true);
   addBoolAttr(reflection, "reflection");
 
@@ -240,9 +242,9 @@ function cloneScreen() {
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN
   //EXAMPLE:
-  document.getElementById("column-1").addEventListener("mouseup", function () {
-    toggleCl(this, "red");
-  });
+  // document.getElementById("column-1").addEventListener("mouseup", function () {
+  //   toggleCl(this, "red");
+  // });
 
   document.querySelector("c-reflection").append(reflection);
 }
@@ -275,7 +277,7 @@ startButton.addEventListener("click", function () {
   setTimeout(function () {
     room.range.mode = "focused";
     removeCl(document.querySelector("c-hud span.hide"), "hide");
-  }, 500);
+  }, 250);
 });
 
 //SCALE SCENE ON WINDOW RESIZE
