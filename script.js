@@ -5,12 +5,11 @@ const buttonsRow = document.querySelector("c-buttons");
 const startButton = buttonsRow.querySelector("#start-button");
 
 const screen = document.querySelector("c-screen");
-const screenInner = screen.querySelector(".inner");
+
+//gradient shine within screen
+const shine = document.querySelector("c-shine");
 
 let currentlyHoveredEl = body;
-
-// const maxFPS = 60;
-// const fpsInterval = 1000 / maxFPS;
 
 const fpsBenchmark = 60;
 const frameDurationBenchmark = 1000 / fpsBenchmark;
@@ -74,7 +73,7 @@ const room = {
       get target() {
         return cameraPos.get(room.range.mode).zoom;
       },
-      eased: 512,
+      eased: -2048,
     },
     adj: {
       get target() {
@@ -84,15 +83,11 @@ const room = {
     },
   },
   x: {
-    get target() {
-      return cursor.x.target;
-    },
+    target: cursor.x.target,
     eased: cursor.x.target,
   },
   y: {
-    get target() {
-      return cursor.y.target;
-    },
+    target: cursor.y.target,
     eased: cursor.y.target,
   },
 };
@@ -156,16 +151,13 @@ function round(num) {
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
   const prevEl = currentlyHoveredEl;
-
   currentlyHoveredEl = document.elementFromPoint(
     cursor.x.eased,
     cursor.y.eased
   );
-
   if (prevEl !== null && prevEl !== currentlyHoveredEl) {
     removeCl(prevEl, "hover");
   }
-
   if (
     currentlyHoveredEl !== null &&
     currentlyHoveredEl.hasAttribute("data-h")
@@ -193,20 +185,41 @@ function tilt() {
   );
 }
 
+//ANIMATION AND OTHER UPDATES
 function refresh(timeStamp) {
   const diff = timeStamp - then;
   then = timeStamp;
+
+  updateHoveredEl();
 
   multiplier = round(diff / frameDurationBenchmark) || 1;
   easedTraits.forEach((trait) => {
     ease(trait);
   });
 
-  cursor.el.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  cursor.el.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
+    cursor.y.eased - cursor.half
+  }px, 0)`;
   room.el.style.transform = `translate3d(-50%, -50%, ${
     room.range.zoom.eased
   }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
-  updateHoveredEl();
+
+  //screen shine
+  const screenRect = screen.getBoundingClientRect();
+  const screenW = screenRect.width;
+  const screenH = screenRect.height;
+  const screenLeft = screenRect.left;
+  const screenTop = screenRect.top;
+
+  const x1 = cursor.x.eased - screenLeft;
+  const x2 = screenW * (x1 / screenW);
+  const x3 = x2 / (screenW / screen.offsetWidth);
+
+  const y1 = cursor.y.eased - screenTop;
+  const y2 = screenH * (y1 / screenH);
+  const y3 = y2 / (screenH / screen.offsetHeight);
+
+  shine.style.transform = `translate3d(calc(${x3}px - 50%), calc(${y3}px - 50%), 0)`;
 
   requestAnimationFrame(refresh);
 }
@@ -221,7 +234,13 @@ function cloneScreen() {
   const classObserver = new MutationObserver(onClassListChange);
   function onClassListChange(changes) {
     changes.forEach((change) => {
-      pairs.get(change.target).classList = change.target.classList;
+      if (change.attributeName === "class") {
+        pairs.get(change.target).classList = change.target.classList;
+      } else if (change.attributeName === "style") {
+        pairs
+          .get(change.target)
+          .setAttribute("style", change.target.getAttribute("style"));
+      }
     });
   }
   //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE (MUTABLE OR HOVERABLE)
@@ -235,7 +254,7 @@ function cloneScreen() {
       pairs.get(descendant).removeAttribute("id");
 
       classObserver.observe(descendant, {
-        attributeFilter: ["class"],
+        attributeFilter: ["class", "style"],
       });
     }
   });
@@ -250,28 +269,32 @@ function cloneScreen() {
 }
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
-function sizeAndMeasure() {
+function measureAndSize() {
   win.w = window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth;
   win.h = window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight;
-  console.log(win.w, win.h);
   win.midX = win.w / 2;
   win.midY = win.h / 2;
   scene.scale = win.h / scene.h;
-  scene.el.style.transform = `translate3d(-50%, -50%, 0) scale(${scene.scale})`;
+  scene.el.style.transform = `translate(-50%, -50%) scale(${scene.scale})`;
+  resetView();
 }
 
 //RESET VIEW TO MIDDLE
 function resetView() {
   cursor.el.style.visibility = "hidden";
-  cursor.x.target = win.midX;
-  cursor.y.target = win.midY;
+  cursor.x.target = room.x.target = win.midX;
+  cursor.y.target = room.x.target = win.midY;
 }
 
 //REMOVE INITIAL OVERLAY
 function reveal() {
   addCl(overlay, "reveal");
+  setTimeout(function () {
+    overlay.remove();
+  }, 1500);
 }
 
+//ENTER FOCUSED MODE FROM BUTTONS
 startButton.addEventListener("click", function () {
   addBoolAttr(buttonsRow, "hide");
   setTimeout(function () {
@@ -281,27 +304,25 @@ startButton.addEventListener("click", function () {
 });
 
 //SCALE SCENE ON WINDOW RESIZE
-window.addEventListener("resize", sizeAndMeasure);
+window.addEventListener("resize", measureAndSize);
 
 //RESET VIEW TO CENTER IF WINDOW LOSES FOCUS
 window.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
-document.addEventListener("mousemove", function (event) {
+document.addEventListener("mousemove", function (e) {
   cursor.el.style.visibility = "visible";
-  cursor.x.target = event.pageX - cursor.half;
-  cursor.y.target = event.pageY - cursor.half;
+  cursor.x.target = room.x.target = e.pageX;
+  cursor.y.target = room.y.target = e.pageY;
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
 root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
-root.addEventListener("mouseenter", function (event) {
-  requestAnimationFrame(() => {
-    cursor.x.target = cursor.x.eased = event.pageX;
-    cursor.y.target = cursor.y.eased = event.pageY;
-  });
+root.addEventListener("mouseenter", function (e) {
+  cursor.x.eased = e.pageX;
+  cursor.y.eased = e.pageY;
 });
 
 //ALL INPUTS
@@ -342,6 +363,6 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   removeCl(body, "light-mode");
 }
 
-sizeAndMeasure();
+measureAndSize();
 cloneScreen();
 refresh();

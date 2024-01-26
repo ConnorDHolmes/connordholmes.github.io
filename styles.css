@@ -36,7 +36,7 @@ body {
 body.light-mode {
   --void: #ccc;
   --accent: #151515;
-  --screen: #ddd;
+  --screen: #eee;
   --screen-on: #fafafa;
 }
 
@@ -126,8 +126,8 @@ c-cursor {
   position: absolute;
   display: block;
   inset: 0;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   mix-blend-mode: exclusion;
   pointer-events: none;
   visibility: hidden;
@@ -167,7 +167,6 @@ main {
   perspective: 1024px;
   transform-style: flat;
   pointer-events: none;
-  transform: translate3d(0, 0, 0);
 }
 
 c-scene {
@@ -185,7 +184,7 @@ c-buttons {
   left: 50%;
   bottom: 64px;
   display: flex;
-  transform: translate3d(-50%, 0, 0);
+  transform: translate(-50%, 0);
   transform-style: preserve-3d;
   gap: 24px;
   transition: visibility 0s linear 0.25s;
@@ -201,7 +200,7 @@ c-buttons::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: translate3d(0, 0, 36px) scale3d(1.5, 1.5, 1);
+  transform: translate3d(0, 0, 36px) scale(1.5);
   background-color: var(--void);
   opacity: 0;
   transition: opacity 0.25s ease, background-color 0.5s var(--mode-swap-ease);
@@ -354,8 +353,7 @@ h2 {
 c-screen {
   position: absolute;
   inset: 8px;
-  display: flex;
-  flex-direction: column;
+  display: block;
   width: 1008px;
   height: 560px;
   background-color: var(--screen);
@@ -387,9 +385,26 @@ c-screen[reflection] {
 
 /* INSIDE SCREEN */
 
-/* c-screen .inner {
-  display: flex;
+c-shine {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1024px;
+  height: 1024px;
+  background: red;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  filter: blur(32px);
+}
+
+.screen-inner {
   width: 100%;
   height: 100%;
-  background-color: var(--screen-on);
-} */
+}
+
+.screen-inner.hover c-shine {
+  opacity: 1;
+}
