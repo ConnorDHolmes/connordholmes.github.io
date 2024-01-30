@@ -18,19 +18,18 @@ html,
 body {
   height: 100dvh;
   background-color: var(--void);
+  transition: background-color 0.5s var(--mode-swap-ease);
+  overscroll-behavior: none;
+  overflow: hidden;
 }
 
 body {
+  contain: strict;
   margin: 0;
   font-family: "Manrope";
-  overscroll-behavior: none;
-  overflow: hidden;
   user-select: none;
   cursor: none;
-  transition: background-color 0.5s var(--mode-swap-ease);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizeSpeed;
 }
 
 body.light-mode {
@@ -38,6 +37,14 @@ body.light-mode {
   --accent: #151515;
   --screen: #eee;
   --screen-on: #fafafa;
+}
+
+c-cursor,
+c-scene,
+c-room,
+c-plane,
+c-screen {
+  display: block;
 }
 
 @keyframes noise {
@@ -56,6 +63,7 @@ body.light-mode {
 }
 
 c-noise {
+  contain: strict;
   position: absolute;
   top: 0;
   left: 0;
@@ -70,16 +78,15 @@ c-noise {
 }
 
 c-overlay {
+  contain: strict;
+  will-change: opacity;
   position: fixed;
   inset: 0;
   z-index: 100;
   width: 100%;
   height: 100dvh;
-  display: grid;
-  place-items: center;
   background-color: var(--void);
   transition: opacity 1s ease 0.5s;
-  will-change: opacity;
   pointer-events: auto;
 }
 
@@ -89,6 +96,7 @@ c-overlay.reveal {
 }
 
 c-hud {
+  contain: layout paint;
   mix-blend-mode: exclusion;
   color: #ccc;
   padding: 16px;
@@ -123,8 +131,8 @@ c-hud .key {
 }
 
 c-cursor {
+  contain: layout size;
   position: absolute;
-  display: block;
   inset: 0;
   width: 8px;
   height: 8px;
@@ -160,6 +168,7 @@ body:active c-cursor[clickable]::after {
 /* 3D SCENE */
 
 main {
+  contain: strict;
   position: fixed;
   inset: 0;
   width: 100%;
@@ -180,6 +189,7 @@ c-scene {
 }
 
 c-buttons {
+  contain: layout;
   position: absolute;
   left: 50%;
   bottom: 64px;
@@ -289,8 +299,8 @@ c-buttons button.hover div::after {
 }
 
 c-room {
+  contain: layout size;
   position: absolute;
-  display: block;
   left: 50%;
   top: 50%;
   width: 1024px;
@@ -302,6 +312,7 @@ c-room {
 }
 
 c-plane {
+  contain: layout size;
   width: 1024px;
   height: 576px;
   position: absolute;
@@ -351,9 +362,9 @@ h2 {
 }
 
 c-screen {
+  contain: strict;
   position: absolute;
   inset: 8px;
-  display: block;
   width: 1008px;
   height: 560px;
   background-color: var(--screen);
@@ -365,13 +376,13 @@ c-screen {
 }
 
 c-reflection {
-  filter: blur(4px);
+  contain: strict;
+  filter: blur(4px) opacity(0.55);
   position: absolute;
   top: 584px;
   left: 8px;
   width: 1008px;
   height: 560px;
-  /* opacity: 0.55; */
 }
 
 c-screen[reflection] {
@@ -385,26 +396,8 @@ c-screen[reflection] {
 
 /* INSIDE SCREEN */
 
-c-shine {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1024px;
-  height: 1024px;
-  background: red;
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  filter: blur(32px);
-}
-
 .screen-inner {
   width: 100%;
   height: 100%;
-}
-
-.screen-inner.hover c-shine {
-  opacity: 1;
+  /* background: linear-gradient(to bottom right, blue, orange) */
 }

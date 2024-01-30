@@ -190,8 +190,6 @@ function refresh(timeStamp) {
   const diff = timeStamp - then;
   then = timeStamp;
 
-  updateHoveredEl();
-
   multiplier = round(diff / frameDurationBenchmark) || 1;
   easedTraits.forEach((trait) => {
     ease(trait);
@@ -200,26 +198,12 @@ function refresh(timeStamp) {
   cursor.el.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
     cursor.y.eased - cursor.half
   }px, 0)`;
+
   room.el.style.transform = `translate3d(-50%, -50%, ${
     room.range.zoom.eased
   }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
 
-  //screen shine
-  const screenRect = screen.getBoundingClientRect();
-  const screenW = screenRect.width;
-  const screenH = screenRect.height;
-  const screenLeft = screenRect.left;
-  const screenTop = screenRect.top;
-
-  const x1 = cursor.x.eased - screenLeft;
-  const x2 = screenW * (x1 / screenW);
-  const x3 = x2 / (screenW / screen.offsetWidth);
-
-  const y1 = cursor.y.eased - screenTop;
-  const y2 = screenH * (y1 / screenH);
-  const y3 = y2 / (screenH / screen.offsetHeight);
-
-  shine.style.transform = `translate3d(calc(${x3}px - 50%), calc(${y3}px - 50%), 0)`;
+  updateHoveredEl();
 
   requestAnimationFrame(refresh);
 }
@@ -281,9 +265,9 @@ function measureAndSize() {
 
 //RESET VIEW TO MIDDLE
 function resetView() {
-  cursor.el.style.visibility = "hidden";
   cursor.x.target = room.x.target = win.midX;
-  cursor.y.target = room.x.target = win.midY;
+  cursor.y.target = room.y.target = win.midY;
+  cursor.el.style.visibility = "hidden";
 }
 
 //REMOVE INITIAL OVERLAY
