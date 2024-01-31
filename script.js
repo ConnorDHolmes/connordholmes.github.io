@@ -267,7 +267,7 @@ function measureAndSize() {
 function resetView() {
   cursor.x.target = room.x.target = win.midX;
   cursor.y.target = room.y.target = win.midY;
-  cursor.el.style.visibility = "hidden";
+  cursor.el.style.opacity = "0";
 }
 
 //REMOVE INITIAL OVERLAY
@@ -295,7 +295,7 @@ window.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", function (e) {
-  cursor.el.style.visibility = "visible";
+  cursor.el.style.opacity = "1";
   cursor.x.target = room.x.target = e.pageX;
   cursor.y.target = room.y.target = e.pageY;
 });
@@ -311,7 +311,7 @@ root.addEventListener("mouseenter", function (e) {
 
 //ALL INPUTS
 document.addEventListener("keyup", function (event) {
-  if (event.key === "Shift") {
+  if (event.key === "c") {
     if (room.range.mode !== "orbit") {
       if (room.range.mode === "normal") {
         room.range.mode = "focused";
