@@ -43,9 +43,9 @@ const cursor = {
 cursor.half = cursor.el.offsetWidth / 2;
 
 const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 3, vert: 2, zoom: -1024, adj: 90 });
+cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
-cameraPos.set("focused", { hor: 1, vert: 1, zoom: 600, adj: 0 });
+cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 const room = {
   el: document.querySelector("c-room"),
@@ -245,9 +245,17 @@ function cloneScreen() {
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN
   //EXAMPLE:
-  // document.getElementById("column-1").addEventListener("mouseup", function () {
-  //   toggleCl(this, "red");
-  // });
+  const gridSections = document.querySelectorAll("c-screen c-grid section");
+  gridSections.forEach((section) => {
+    section.addEventListener("mouseup", function () {
+      toggleCl(section, "active");
+      gridSections.forEach((otherSection) => {
+        if (otherSection !== section) {
+          toggleCl(otherSection, "hide");
+        }
+      });
+    });
+  });
 
   document.querySelector("c-reflection").append(reflection);
 }
@@ -311,7 +319,7 @@ root.addEventListener("mouseenter", function (e) {
 
 //ALL INPUTS
 document.addEventListener("keyup", function (event) {
-  if (event.key === "c") {
+  if (event.key === "Shift") {
     if (room.range.mode !== "orbit") {
       if (room.range.mode === "normal") {
         room.range.mode = "focused";
