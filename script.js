@@ -3,11 +3,7 @@ const body = document.body;
 const overlay = document.querySelector("c-overlay");
 const buttonsRow = document.querySelector("c-buttons");
 const startButton = buttonsRow.querySelector("#start-button");
-
 const screen = document.querySelector("c-screen");
-
-//gradient shine within screen
-const shine = document.querySelector("c-shine");
 
 let currentlyHoveredEl = body;
 
