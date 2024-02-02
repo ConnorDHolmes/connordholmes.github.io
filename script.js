@@ -243,19 +243,7 @@ function cloneScreen() {
     }
   });
 
-  //ALL JS FUNCTIONALITY WITHIN SCREEN
-  //EXAMPLE:
-  const gridSections = document.querySelectorAll("c-screen c-grid section");
-  gridSections.forEach((section) => {
-    section.addEventListener("mouseup", function () {
-      toggleCl(section, "active");
-      gridSections.forEach((otherSection) => {
-        if (otherSection !== section) {
-          toggleCl(otherSection, "hide");
-        }
-      });
-    });
-  });
+  //ALL JS FUNCTIONALITY WITHIN SCREEN GOES HERE
 
   document.querySelector("c-reflection").append(reflection);
 }
@@ -327,7 +315,7 @@ document.addEventListener("keyup", function (event) {
         room.range.mode = "normal";
       }
     }
-  } else if (event.key === "m") {
+  } else if (event.key === "m" || event.key === "M") {
     toggleCl(body, "light-mode");
   }
 });
