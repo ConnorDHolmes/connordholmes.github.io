@@ -465,13 +465,13 @@ c-list h3 {
   font-weight: 300;
   line-height: 48px;
   transform-origin: left;
-  transform: translate3d(-18px, 0, 0) scale3d(1, 1, 1);
+  transform: translate3d(-19px, 0, 0) scale3d(1, 1, 1);
   transition: transform 0.25s ease;
   opacity: 1;
 }
 
 c-list h3.hide {
-  transform: translate3d(-18px, 0, 0) scale3d(0, 0, 1);
+  transform: translate3d(-19px, 0, 0) scale3d(0, 0, 1);
 }
 
 c-list h3::after {
