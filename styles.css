@@ -6,8 +6,6 @@
   --mode-swap-timing: 0.5s;
   --void: #111;
   --accent: #ccc;
-  --screen: #222;
-  --screen-on: #111;
 }
 
 * {
@@ -44,9 +42,7 @@ c-cursor,
 c-scene,
 c-room,
 c-plane,
-c-screen,
-c-grid,
-c-cell {
+c-screen {
   display: block;
 }
 
@@ -385,6 +381,7 @@ c-reflection {
 c-reflection::before,
 c-reflection::after {
   content: "";
+  contain: strict;
   will-change: opacity;
   position: absolute;
   z-index: 1;
@@ -460,32 +457,48 @@ c-list h3 {
   font-family: "Unbounded";
   margin: 0;
   padding-left: 16px;
+  color: transparent;
   text-transform: lowercase;
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
   transform-origin: left;
-  transform: translate3d(-19px, 0, 0) scale3d(1, 1, 1);
+  transform: translate3d(-18px, 0, 0) scale3d(1, 1, 1);
   transition: transform 0.25s ease;
   opacity: 1;
 }
 
 c-list h3.hide {
-  transform: translate3d(-19px, 0, 0) scale3d(0, 0, 1);
+  transform: translate3d(-18px, 0, 0) scale3d(0, 0, 1);
 }
 
+c-list h3::before,
 c-list h3::after {
   content: attr(data-text);
   will-change: opacity;
   position: absolute;
   padding: inherit;
   inset: 0;
-  opacity: 0;
   color: var(--void);
+  transition: color var(--mode-swap-timing) var(--mode-swap-ease);
+}
+
+c-list h3::before {
+  color: var(--accent);
+  opacity: 1;
+}
+
+c-list h3::after {
+  color: var(--void);
+  opacity: 0;
 }
 
 c-list h3.hover {
   transform: translate3d(-10px, 0, 0) scale3d(1, 1, 1);
+}
+
+c-list h3.hover::before {
+  opacity: 0;
 }
 
 c-list h3.hover::after {

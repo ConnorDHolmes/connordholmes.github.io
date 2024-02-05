@@ -1,3 +1,4 @@
+//MAIN ELEMENTS
 const root = document.documentElement;
 const body = document.body;
 const overlay = document.querySelector("c-overlay");
@@ -9,7 +10,6 @@ const screen = document.querySelector("c-screen");
 const list = document.querySelector("c-list");
 const listEntries = list.querySelectorAll("h3");
 const listCount = listEntries.length;
-///
 
 let currentlyHoveredEl = body;
 
@@ -18,6 +18,7 @@ const frameDurationBenchmark = 1000 / fpsBenchmark;
 let then = performance.now();
 let multiplier = 1;
 
+//WINDOW
 const win = {
   w: window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth,
   h: window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight,
@@ -31,6 +32,7 @@ const scene = {
 scene.h = scene.el.offsetHeight;
 scene.scale = win.h / scene.h;
 
+//CURSOR
 const cursor = {
   el: document.querySelector("c-cursor"),
   x: {
@@ -44,11 +46,13 @@ const cursor = {
 };
 cursor.half = cursor.el.offsetWidth / 2;
 
+//CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
 cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
+//ROOM
 const room = {
   el: document.querySelector("c-room"),
   range: {
