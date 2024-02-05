@@ -25,7 +25,6 @@ body {
 }
 
 body {
-  contain: strict;
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
@@ -112,7 +111,6 @@ c-hud {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.05em;
-  opacity: 0.75;
 }
 
 c-hud span {
@@ -137,6 +135,7 @@ c-hud .key {
 
 c-cursor {
   contain: layout size;
+  will-change: transform, opacity;
   position: absolute;
   inset: 0;
   width: 8px;
@@ -144,7 +143,6 @@ c-cursor {
   mix-blend-mode: exclusion;
   pointer-events: none;
   opacity: 0;
-  will-change: transform, opacity;
 }
 
 c-cursor::after {
@@ -268,7 +266,7 @@ c-buttons button::before {
   inset: 0;
   background-color: var(--accent);
   border-radius: 32px;
-  transition: transform 0.25s ease, background-color 0.5s var(--mode-swap-ease),
+  transition: transform 0.3s ease, background-color 0.5s var(--mode-swap-ease),
     color 0.5s var(--mode-swap-ease);
   transform: scale(0);
 }
@@ -364,21 +362,15 @@ c-screen {
   inset: 8px;
   width: 1008px;
   height: 560px;
-  background: linear-gradient(to bottom right, blue, magenta);
-  background-size: contain;
-
   border-radius: 8px;
   pointer-events: auto;
   transform-style: flat;
-  transition: background-color 0.5s var(--mode-swap-ease);
   overflow: hidden;
 }
 
 c-reflection {
   contain: strict;
-  will-change: filter;
   filter: blur(4px) opacity(0.55);
-  transform: translate3d(0, 0, 0);
   position: absolute;
   top: 584px;
   left: 8px;
@@ -386,13 +378,114 @@ c-reflection {
   height: 560px;
 }
 
+c-reflection::before,
+c-reflection::after {
+  content: "";
+  will-change: opacity;
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 1008px;
+  height: 560px;
+  transition: opacity 0.5s var(--mode-swap-ease);
+}
+
+c-reflection::before {
+  opacity: 1;
+  background: linear-gradient(to top, #111 50%, transparent);
+}
+
+c-reflection::after {
+  opacity: 0;
+  background: linear-gradient(to top, #ccc 50%, transparent);
+}
+
+.light-mode c-reflection::before {
+  opacity: 0;
+}
+
+.light-mode c-reflection::after {
+  opacity: 1;
+}
+
 c-screen[reflection] {
+  will-change: mask-image, -webkit-mask-image;
   pointer-events: none;
   position: absolute;
   inset: 0;
   transform: scaleY(-1);
-  mask-image: linear-gradient(to top, black, transparent, transparent);
-  -webkit-mask-image: linear-gradient(to top, black, transparent, transparent);
 }
 
 /* INSIDE SCREEN */
+
+c-gradient {
+  contain: strict;
+  position: absolute;
+  inset: 0;
+  width: 2016px;
+  height: 1120px;
+  background: linear-gradient(to bottom right, red, magenta, orange);
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.5s var(--mode-swap-ease);
+}
+
+.light-mode c-gradient {
+  transform: translate3d(-50%, -50%, 0);
+}
+
+c-list {
+  --gap: 48px;
+  position: absolute;
+  contain: strict;
+  inset: 0;
+  left: -2px;
+  width: 1008px;
+  height: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gap);
+  color: var(--accent);
+  transition: color 0.5s var(--mode-swap-ease);
+  overflow: hidden;
+}
+
+c-list h3 {
+  contain: paint;
+  will-change: transform, opacity;
+  position: relative;
+  font-family: "Unbounded";
+  margin: 0;
+  text-transform: lowercase;
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 50px;
+  transition: transform 0.25s ease, opacity 0.5s ease;
+  opacity: 1;
+}
+
+c-list h3.hide {
+  opacity: 0;
+}
+
+c-list h3::after {
+  content: attr(data-text);
+  will-change: opacity;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  color: var(--void);
+}
+
+c-list h3.hover {
+  transition: transform 0.25s ease;
+  transform: translate3d(8px, 0, 0);
+}
+
+c-list h3.hover::after {
+  opacity: 1;
+}
+
+c-list h3:last-child {
+  margin-bottom: var(--gap);
+}

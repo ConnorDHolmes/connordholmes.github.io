@@ -5,6 +5,12 @@ const buttonsRow = document.querySelector("c-buttons");
 const startButton = buttonsRow.querySelector("#start-button");
 const screen = document.querySelector("c-screen");
 
+//PROJECT LIST
+const list = document.querySelector("c-list");
+const listEntries = list.querySelectorAll("h3");
+const listCount = listEntries.length;
+///
+
 let currentlyHoveredEl = body;
 
 const fpsBenchmark = 60;
@@ -204,6 +210,14 @@ function refresh(timeStamp) {
   requestAnimationFrame(refresh);
 }
 
+function cloneListEntries() {
+  listEntries.forEach((entry) => {
+    addCl(entry, "hide");
+    const clone = entry.cloneNode(true);
+    list.append(clone);
+  });
+}
+
 function cloneScreen() {
   const reflection = screen.cloneNode(true);
   addBoolAttr(reflection, "reflection");
@@ -241,6 +255,33 @@ function cloneScreen() {
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN GOES HERE
 
+  list.scrollTop = 1;
+  pairs.get(list).scrollTo(1, list.scrollTop);
+
+  const itemHeight = listEntries[0].offsetHeight;
+  const itemsGap = parseInt(
+    getComputedStyle(list).getPropertyValue("--gap").split("p")[0]
+  );
+  const maxScroll = (itemHeight + itemsGap) * listCount;
+
+  list.addEventListener(
+    "wheel",
+    function (e) {
+      requestAnimationFrame(function () {
+        if (list.scrollTop >= maxScroll) {
+          list.scrollTop = 1;
+        } else if (list.scrollTop === 0) {
+          list.scrollTop = maxScroll - 1;
+        } else {
+          list.scrollTop += e.deltaY;
+        }
+        pairs.get(list).scrollTo(0, list.scrollTop);
+      });
+    },
+    { passive: true }
+  );
+
+  //APPEND REFLECTION INTO ROOM
   document.querySelector("c-reflection").append(reflection);
 }
 
@@ -277,6 +318,13 @@ startButton.addEventListener("click", function () {
     room.range.mode = "focused";
     removeCl(document.querySelector("c-hud span.hide"), "hide");
   }, 250);
+  setTimeout(function () {
+    list.querySelectorAll("h3").forEach((header, index) => {
+      setTimeout(function () {
+        removeCl(header, "hide");
+      }, index * 250);
+    });
+  }, 750);
 });
 
 //SCALE SCENE ON WINDOW RESIZE
@@ -339,6 +387,15 @@ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   removeCl(body, "light-mode");
 }
 
+//POPULATE "DATA-TEXT" ATTRIBUTES FOR DIVS THAT HAVE IT
+function populateDataText() {
+  document.querySelectorAll("[data-text]").forEach((el) => {
+    el.setAttribute("data-text", el.innerHTML);
+  });
+}
+
+populateDataText();
 measureAndSize();
+cloneListEntries();
 cloneScreen();
 refresh();
