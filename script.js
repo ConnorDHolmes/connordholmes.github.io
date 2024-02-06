@@ -326,7 +326,7 @@ startButton.addEventListener("click", function () {
     list.querySelectorAll("h3").forEach((header, index) => {
       setTimeout(function () {
         removeCl(header, "hide");
-      }, index * 250);
+      }, index * 200);
     });
   }, 750);
 });
@@ -336,6 +336,9 @@ window.addEventListener("resize", measureAndSize);
 
 //RESET VIEW TO CENTER IF WINDOW LOSES FOCUS
 window.addEventListener("blur", resetView);
+
+//RESET VIEW TO CENTER IF DOCUMENT LOSES FOCUS
+root.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", function (e) {
