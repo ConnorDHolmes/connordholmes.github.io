@@ -429,6 +429,10 @@ c-gradient {
   transition: transform var(--mode-swap-timing) var(--mode-swap-ease);
 }
 
+c-gradient[alternate] {
+  background: linear-gradient(to bottom right, crimson, lightseagreen, gold);
+}
+
 .light-mode c-gradient {
   transform: translate3d(-50%, -50%, 0);
 }

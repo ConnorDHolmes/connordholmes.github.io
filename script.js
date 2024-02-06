@@ -315,7 +315,7 @@ function reveal() {
   }, 1500);
 }
 
-//ENTER FOCUSED MODE FROM BUTTONS
+//ENTER FOCUSED MODE FROM "WORK" BUTTON
 startButton.addEventListener("click", function () {
   addBoolAttr(buttonsRow, "hide");
   setTimeout(function () {
@@ -328,7 +328,7 @@ startButton.addEventListener("click", function () {
         removeCl(header, "hide");
       }, index * 100);
     });
-  }, 750);
+  }, 1000);
 });
 
 //SCALE SCENE ON WINDOW RESIZE
@@ -402,7 +402,7 @@ function populateDataText() {
 }
 
 populateDataText();
-measureAndSize();
 cloneListEntries();
 cloneScreen();
+measureAndSize();
 refresh();
