@@ -326,7 +326,7 @@ startButton.addEventListener("click", function () {
     list.querySelectorAll("h3").forEach((header, index) => {
       setTimeout(function () {
         removeCl(header, "hide");
-      }, index * 200);
+      }, index * 100);
     });
   }, 750);
 });

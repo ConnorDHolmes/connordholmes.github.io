@@ -479,9 +479,13 @@ c-list h3::after {
     transform 0.5s ease;
 }
 
+c-list h3.hide {
+  transform: translate3d(-18px, -75%, 0);
+}
+
 c-list h3.hide::before,
 c-list h3.hide::after {
-  transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, 100%, 0);
 }
 
 c-list h3::before {
