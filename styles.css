@@ -430,7 +430,7 @@ c-gradient {
 }
 
 c-gradient[alternate] {
-  background: linear-gradient(to bottom right, crimson, lightseagreen, gold);
+  background: linear-gradient(to bottom right, red, lightseagreen, orange);
 }
 
 .light-mode c-gradient {
@@ -438,7 +438,7 @@ c-gradient[alternate] {
 }
 
 c-list {
-  --gap: 48px;
+  --gap: 40px;
   contain: strict;
   position: absolute;
   inset: 0;
