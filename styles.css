@@ -11,7 +11,6 @@
 * {
   box-sizing: border-box;
   backface-visibility: hidden;
-  cursor: none !important;
 }
 
 html,
@@ -20,6 +19,7 @@ body {
   background-color: var(--void);
   transition: background-color var(--mode-swap-timing) var(--mode-swap-ease);
   overscroll-behavior: none;
+  cursor: none;
   overflow: hidden;
 }
 
@@ -28,20 +28,16 @@ body {
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
   user-select: none;
-  transform: translate3d(0, 0, 0);
 }
 
 body.light-mode {
   --void: #ccc;
   --accent: #151515;
-  --screen: #eee;
-  --screen-on: #fafafa;
 }
 
 c-cursor,
 c-scene,
 c-room,
-c-plane,
 c-screen {
   display: block;
 }
@@ -94,33 +90,39 @@ c-overlay.reveal {
   pointer-events: none;
 }
 
-c-hud {
+footer {
   contain: layout paint;
   mix-blend-mode: exclusion;
   color: #ccc;
   padding: 16px;
   position: fixed;
   bottom: 0;
-  right: 0;
+  left: 0;
+  width: 100%;
   z-index: 50;
   display: flex;
+  align-items: center;
   gap: 24px;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.05em;
 }
 
-c-hud span {
+footer span {
   will-change: opacity;
   transition: opacity 0.5s ease;
   line-height: 100%;
 }
 
-c-hud span.hide {
+footer span:first-child {
+  margin-right: auto;
+}
+
+footer span.hide {
   opacity: 0;
 }
 
-c-hud .key {
+footer .key {
   margin-left: 0.5em;
   display: inline-flex;
   justify-content: center;
@@ -169,7 +171,7 @@ body:active c-cursor[clickable]::after {
 
 /* 3D SCENE */
 
-main {
+c-wrapper {
   contain: strict;
   position: fixed;
   inset: 0;
@@ -187,6 +189,34 @@ c-scene {
   top: 50%;
   width: 576px;
   height: 676px;
+  transform-style: preserve-3d;
+}
+
+c-room {
+  contain: layout size;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1024px;
+  height: 576px;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  backface-visibility: visible;
+}
+
+nav,
+header,
+main {
+  contain: layout size;
+  position: absolute;
+  inset: 0;
+  width: 1024px;
+  height: 576px;
+  transform-style: flat;
+}
+
+nav {
+  transform: rotateY(-90deg) translateZ(512px);
   transform-style: preserve-3d;
 }
 
@@ -293,67 +323,34 @@ c-buttons button.hover::after {
   filter: invert(1);
 }
 
-c-room {
-  contain: layout size;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1024px;
-  height: 576px;
-  position: relative;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  backface-visibility: visible;
-}
-
-c-plane {
-  contain: layout size;
-  width: 1024px;
-  height: 576px;
-  position: absolute;
-  inset: 0;
-  transform-style: flat;
-}
-
-c-plane[back] {
-  transform: translateZ(-512px);
-}
-
-c-plane[outer] {
-  transform: rotateY(-90deg) translateZ(512px);
-  transform-style: preserve-3d;
-}
-
-c-plane[right] {
-  transform: rotateY(-90deg) translateZ(-1024px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding-top: 128px;
-  align-items: center;
+header {
+  transform: rotateY(-90deg) translateZ(-768px);
   color: var(--accent);
   transition: color var(--mode-swap-timing) var(--mode-swap-ease);
+  padding-top: 144px;
 }
 
 h1,
-h2 {
-  white-space: nowrap;
-  position: relative;
+h2,
+h3 {
+  margin: 0;
   text-transform: lowercase;
 }
 
 h1 {
   font-family: "Unbounded";
+  font-size: 112px;
   font-weight: 400;
-  font-size: 128px;
-  margin: 0;
 }
 
 h2 {
+  font-size: 51px;
   font-weight: 300;
   letter-spacing: 0.02em;
-  font-size: 58px;
-  margin: 0;
+}
+
+main {
+  transform: translateZ(-512px);
 }
 
 c-screen {
@@ -459,10 +456,8 @@ c-list h3 {
   will-change: transform;
   position: relative;
   font-family: "Unbounded";
-  margin: 0;
   padding-left: 16px;
   color: transparent;
-  text-transform: lowercase;
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
@@ -484,6 +479,7 @@ c-list h3::after {
 }
 
 c-list h3.hide {
+  pointer-events: none;
   transform: translate3d(-18px, -75%, 0);
 }
 

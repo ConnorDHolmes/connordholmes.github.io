@@ -320,7 +320,7 @@ startButton.addEventListener("click", function () {
   addBoolAttr(buttonsRow, "hide");
   setTimeout(function () {
     room.range.mode = "focused";
-    removeCl(document.querySelector("c-hud span.hide"), "hide");
+    removeCl(document.querySelector("footer span.hide"), "hide");
   }, 250);
   setTimeout(function () {
     list.querySelectorAll("h3").forEach((header, index) => {

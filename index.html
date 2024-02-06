@@ -29,25 +29,21 @@
   <body class="light-mode">
     <c-noise></c-noise>
     <c-overlay></c-overlay>
-    <c-hud>
-      <span class="hide">camera mode<span class="key">shift</span></span>
-      <span>theme<span class="key">m</span></span>
-    </c-hud>
 
-    <main>
+    <c-wrapper>
       <c-scene>
         <c-room>
-          <c-plane outer>
+          <nav>
             <c-buttons>
               <button id="start-button" data-h data-text>Works</button>
               <button data-h data-text>Resume</button>
             </c-buttons>
-          </c-plane>
-          <c-plane right>
+          </nav>
+          <header>
             <h1>Connor Holmes</h1>
             <h2>Frontend Engineer and UX Problem-Solver</h2>
-          </c-plane>
-          <c-plane back>
+          </header>
+          <main>
             <c-screen>
               <c-gradient></c-gradient>
               <c-list data-m>
@@ -62,13 +58,23 @@
               </c-list>
             </c-screen>
             <c-reflection></c-reflection>
-          </c-plane>
+          </main>
         </c-room>
       </c-scene>
-    </main>
+    </c-wrapper>
+
+    <footer>
+      <span>© connor holmes</span>
+      <span class="hide">camera mode<span class="key">shift</span></span>
+      <span>theme<span class="key">m</span></span>
+    </footer>
 
     <c-cursor></c-cursor>
 
     <script src="script.js"></script>
   </body>
 </html>
+
+<!--
+  Maybe convert <c-plane outer>, <c-plane right>, and <c-plane back> into <nav>, <header> and <main>, respectively
+-->
