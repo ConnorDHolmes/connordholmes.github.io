@@ -49,7 +49,7 @@ cursor.half = cursor.el.offsetWidth / 2;
 //CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 90, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("normal", { hor: 100, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -312,7 +312,7 @@ function reveal() {
   addCl(overlay, "reveal");
   setTimeout(function () {
     overlay.remove();
-  }, 1500);
+  }, 2000);
 }
 
 //ENTER FOCUSED MODE FROM "WORK" BUTTON
@@ -390,8 +390,8 @@ window
   });
 
 //ON LOAD
-if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  removeCl(body, "light-mode");
+if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+  addCl(body, "light-mode");
 }
 
 //POPULATE "DATA-TEXT" ATTRIBUTES FOR DIVS THAT HAVE IT

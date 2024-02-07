@@ -20,6 +20,9 @@ body {
   transition: background-color var(--mode-swap-timing) var(--mode-swap-ease);
   overscroll-behavior: none;
   cursor: none;
+}
+
+html {
   overflow: hidden;
 }
 
@@ -27,6 +30,8 @@ body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
+  perspective: 1024px;
+  pointer-events: none;
   user-select: none;
   /* for safari */
   -webkit-user-select: none;
@@ -35,13 +40,6 @@ body {
 body.light-mode {
   --void: #ccc;
   --accent: #151515;
-}
-
-c-cursor,
-c-scene,
-c-room,
-c-screen {
-  display: block;
 }
 
 @keyframes noise {
@@ -61,6 +59,7 @@ c-screen {
 
 c-noise {
   contain: strict;
+  will-change: transform;
   position: absolute;
   top: 0;
   left: 0;
@@ -71,7 +70,6 @@ c-noise {
   animation: 0.5s noise steps(4) infinite;
   z-index: 1000;
   pointer-events: none;
-  will-change: transform;
 }
 
 c-overlay {
@@ -80,10 +78,9 @@ c-overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
-  width: 100%;
-  height: 100dvh;
   background-color: var(--void);
-  transition: opacity 1s ease 0.5s;
+  opacity: 1;
+  transition: opacity 1s ease;
   pointer-events: auto;
 }
 
@@ -92,100 +89,9 @@ c-overlay.reveal {
   pointer-events: none;
 }
 
-footer {
-  contain: layout paint;
-  mix-blend-mode: exclusion;
-  color: #ccc;
-  padding: 16px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-}
-
-footer span {
-  will-change: opacity;
-  transition: opacity 0.5s ease;
-  line-height: 100%;
-}
-
-footer span:first-child {
-  margin-right: auto;
-}
-
-footer span.hide {
-  opacity: 0;
-}
-
-footer .key {
-  margin-left: 0.5em;
-  display: inline-flex;
-  justify-content: center;
-  padding: 4px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 2em;
-}
-
-c-cursor {
-  contain: layout size;
-  will-change: transform, opacity;
-  position: absolute;
-  inset: 0;
-  width: 8px;
-  height: 8px;
-  mix-blend-mode: exclusion;
-  pointer-events: none;
-  opacity: 0;
-}
-
-c-cursor::after {
-  content: "";
-  contain: strict;
-  width: inherit;
-  height: inherit;
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background-color: #ccc;
-  transition: transform 0.2s ease;
-  will-change: transform;
-}
-
-body:active c-cursor::after {
-  transform: scale3d(0.66, 0.66, 1);
-}
-
-c-cursor[clickable]::after {
-  transform: scale3d(2.5, 2.5, 1);
-}
-
-body:active c-cursor[clickable]::after {
-  transform: scale3d(1.5, 1.5, 1);
-}
-
 /* 3D SCENE */
 
-c-wrapper {
-  contain: strict;
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  perspective: 1024px;
-  transform-style: flat;
-  pointer-events: none;
-}
-
 c-scene {
-  display: block;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -214,7 +120,6 @@ main {
   inset: 0;
   width: 1024px;
   height: 576px;
-  transform-style: flat;
 }
 
 nav {
@@ -326,10 +231,12 @@ c-buttons button.hover::after {
 }
 
 header {
+  transform-style: flat;
   transform: rotateY(-90deg) translateZ(-768px);
+  padding-top: 144px;
   color: var(--accent);
   transition: color var(--mode-swap-timing) var(--mode-swap-ease);
-  padding-top: 144px;
+  text-align: center;
 }
 
 h1,
@@ -352,6 +259,7 @@ h2 {
 }
 
 main {
+  transform-style: flat;
   transform: translateZ(-512px);
 }
 
@@ -481,8 +389,8 @@ c-list h3::after {
 }
 
 c-list h3.hide {
-  pointer-events: none;
   transform: translate3d(-18px, -75%, 0);
+  pointer-events: none;
 }
 
 c-list h3.hide::before,
@@ -514,4 +422,87 @@ c-list h3.hover::after {
 
 c-list h3:last-child {
   margin-bottom: var(--gap);
+}
+
+/* FOOTER */
+
+footer {
+  contain: layout paint;
+  mix-blend-mode: exclusion;
+  color: #ccc;
+  padding: 16px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+footer span {
+  will-change: opacity;
+  transition: opacity 0.5s ease;
+  line-height: 100%;
+}
+
+footer span:first-child {
+  margin-right: auto;
+}
+
+footer span.hide {
+  opacity: 0;
+}
+
+footer .key {
+  margin-left: 0.5em;
+  display: inline-flex;
+  justify-content: center;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 2em;
+}
+
+/* CURSOR */
+
+c-cursor {
+  contain: layout size;
+  will-change: transform, opacity;
+  position: absolute;
+  inset: 0;
+  width: 8px;
+  height: 8px;
+  mix-blend-mode: exclusion;
+  pointer-events: none;
+  opacity: 0;
+}
+
+c-cursor::after {
+  content: "";
+  will-change: transform;
+  contain: strict;
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: transform 0.2s ease;
+}
+
+body:active c-cursor::after {
+  transform: scale3d(0.66, 0.66, 1);
+}
+
+c-cursor[clickable]::after {
+  transform: scale3d(2.5, 2.5, 1);
+}
+
+body:active c-cursor[clickable]::after {
+  transform: scale3d(1.5, 1.5, 1);
 }

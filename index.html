@@ -25,42 +25,40 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body class="light-mode">
+  <body>
     <c-noise></c-noise>
     <c-overlay></c-overlay>
 
-    <c-wrapper>
-      <c-scene>
-        <c-room>
-          <nav>
-            <c-buttons>
-              <button id="start-button" data-h data-text>Works</button>
-              <button data-h data-text>Resume</button>
-            </c-buttons>
-          </nav>
-          <header>
-            <h1>Connor Holmes</h1>
-            <h2>Frontend Engineer and UX Problem-Solver</h2>
-          </header>
-          <main>
-            <c-screen>
-              <c-gradient></c-gradient>
-              <c-list data-m>
-                <h3 data-h data-m data-text>Ares Security Corp</h3>
-                <h3 data-h data-m data-text>Keep Company</h3>
-                <h3 data-h data-m data-text>AI Frontend</h3>
-                <h3 data-h data-m data-text>Inkling Agency</h3>
-                <h3 data-h data-m data-text>Seed AI</h3>
-                <h3 data-h data-m data-text>Personal Eyes</h3>
-                <h3 data-h data-m data-text>No Limits Counseling</h3>
-                <h3 data-h data-m data-text>Dr. Susan Hood</h3>
-              </c-list>
-            </c-screen>
-            <c-reflection></c-reflection>
-          </main>
-        </c-room>
-      </c-scene>
-    </c-wrapper>
+    <c-scene>
+      <c-room>
+        <nav>
+          <c-buttons>
+            <button id="start-button" data-h data-text>Works</button>
+            <button data-h data-text>Resume</button>
+          </c-buttons>
+        </nav>
+        <header>
+          <h1>Connor Holmes</h1>
+          <h2>Frontend Engineer and UX Problem-Solver</h2>
+        </header>
+        <main>
+          <c-screen>
+            <c-gradient></c-gradient>
+            <c-list data-m>
+              <h3 data-h data-m data-text>Ares Security Corp</h3>
+              <h3 data-h data-m data-text>Keep Company</h3>
+              <h3 data-h data-m data-text>AI Frontend</h3>
+              <h3 data-h data-m data-text>Inkling Agency</h3>
+              <h3 data-h data-m data-text>Seed AI</h3>
+              <h3 data-h data-m data-text>Personal Eyes</h3>
+              <h3 data-h data-m data-text>No Limits Counseling</h3>
+              <h3 data-h data-m data-text>Dr. Susan Hood</h3>
+            </c-list>
+          </c-screen>
+          <c-reflection></c-reflection>
+        </main>
+      </c-room>
+    </c-scene>
 
     <footer>
       <span>© connor holmes</span>
@@ -75,5 +73,7 @@
 </html>
 
 <!--
-  Maybe convert <c-plane outer>, <c-plane right>, and <c-plane back> into <nav>, <header> and <main>, respectively
+  * Want to simplify <nav> nesting so that <c-buttons> isn't necessary
+  * Need to create new pair map + mutation observer to watch the list entry clones, to reduce visual glitches with the scroll wrapping
+  * Change body light class to a media query on body for color mode preference (so that color doesn't immediately change on load) OR OTHER SOLUTION
 -->
