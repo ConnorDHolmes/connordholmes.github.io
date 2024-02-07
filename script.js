@@ -49,7 +49,7 @@ cursor.half = cursor.el.offsetWidth / 2;
 //CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 120, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("normal", { hor: 90, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM

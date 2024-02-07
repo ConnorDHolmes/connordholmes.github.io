@@ -28,6 +28,9 @@ body {
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
   user-select: none;
+
+  /* for safari */
+  -webkit-user-select: none;
 }
 
 body.light-mode {
