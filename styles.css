@@ -19,11 +19,11 @@ body {
   background-color: var(--void);
   transition: background-color var(--mode-swap-timing) var(--mode-swap-ease);
   overscroll-behavior: none;
-  cursor: none;
 }
 
 html {
   overflow: hidden;
+  cursor: none;
 }
 
 body {
@@ -32,6 +32,7 @@ body {
   text-rendering: optimizeSpeed;
   perspective: 1024px;
   pointer-events: none;
+  transform-style: flat;
   user-select: none;
   /* for safari */
   -webkit-user-select: none;
@@ -40,6 +41,45 @@ body {
 body.light-mode {
   --void: #ccc;
   --accent: #151515;
+}
+
+/* CURSOR */
+
+c-cursor {
+  contain: layout size;
+  will-change: transform, opacity;
+  position: absolute;
+  inset: 0;
+  width: 8px;
+  height: 8px;
+  mix-blend-mode: exclusion;
+  pointer-events: none;
+  opacity: 0;
+}
+
+c-cursor::after {
+  content: "";
+  will-change: transform;
+  contain: strict;
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: transform 0.2s ease;
+}
+
+html:active c-cursor::after {
+  transform: scale3d(0.66, 0.66, 1);
+}
+
+c-cursor[clickable]::after {
+  transform: scale3d(2.5, 2.5, 1);
+}
+
+html:active c-cursor[clickable]::after {
+  transform: scale3d(1.5, 1.5, 1);
 }
 
 @keyframes noise {
@@ -466,43 +506,4 @@ footer .key {
   border: 1px solid #ccc;
   border-radius: 4px;
   min-width: 2em;
-}
-
-/* CURSOR */
-
-c-cursor {
-  contain: layout size;
-  will-change: transform, opacity;
-  position: absolute;
-  inset: 0;
-  width: 8px;
-  height: 8px;
-  mix-blend-mode: exclusion;
-  pointer-events: none;
-  opacity: 0;
-}
-
-c-cursor::after {
-  content: "";
-  will-change: transform;
-  contain: strict;
-  width: inherit;
-  height: inherit;
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background-color: #ccc;
-  transition: transform 0.2s ease;
-}
-
-body:active c-cursor::after {
-  transform: scale3d(0.66, 0.66, 1);
-}
-
-c-cursor[clickable]::after {
-  transform: scale3d(2.5, 2.5, 1);
-}
-
-body:active c-cursor[clickable]::after {
-  transform: scale3d(1.5, 1.5, 1);
 }
