@@ -56,6 +56,7 @@ c-cursor::after {
   content: "";
   will-change: transform;
   contain: strict;
+  backface-visibility: hidden;
   width: inherit;
   height: inherit;
   position: absolute;
@@ -115,7 +116,7 @@ c-overlay {
   z-index: 100;
   background-color: var(--void);
   opacity: 1;
-  transition: opacity 1s ease;
+  transition: opacity 1s ease 1s;
   pointer-events: auto;
 }
 
@@ -191,6 +192,7 @@ c-buttons[hide] {
 c-buttons::after {
   content: "";
   will-change: opacity;
+  backface-visibility: hidden;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -241,6 +243,7 @@ c-buttons button:focus {
 c-buttons button::before {
   content: "";
   will-change: transform;
+  backface-visibility: hidden;
   position: absolute;
   inset: 0;
   background-color: var(--accent);
@@ -260,6 +263,7 @@ c-buttons button::after {
   will-change: filter;
   box-sizing: border-box;
   position: absolute;
+  backface-visibility: hidden;
   inset: 0;
   padding: inherit;
   color: var(--accent);
@@ -333,6 +337,7 @@ c-reflection::before,
 c-reflection::after {
   content: "";
   contain: strict;
+  backface-visibility: hidden;
   will-change: opacity;
   position: absolute;
   z-index: 1;
@@ -425,6 +430,7 @@ c-list h3::before,
 c-list h3::after {
   content: attr(data-text);
   will-change: opacity, transform;
+  backface-visibility: hidden;
   position: absolute;
   padding: inherit;
   inset: 0;
