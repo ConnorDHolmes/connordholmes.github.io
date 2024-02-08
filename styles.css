@@ -30,8 +30,6 @@ body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
-  perspective: 1024px;
-  pointer-events: none;
   transform-style: flat;
   user-select: none;
   /* for safari */
@@ -70,7 +68,7 @@ c-cursor::after {
   transition: transform 0.2s ease;
 }
 
-html:active c-cursor::after {
+body:active c-cursor::after {
   transform: scale3d(0.66, 0.66, 1);
 }
 
@@ -78,7 +76,7 @@ c-cursor[clickable]::after {
   transform: scale3d(2.5, 2.5, 1);
 }
 
-html:active c-cursor[clickable]::after {
+body:active c-cursor[clickable]::after {
   transform: scale3d(1.5, 1.5, 1);
 }
 
@@ -130,6 +128,17 @@ c-overlay.reveal {
 }
 
 /* 3D SCENE */
+
+c-wrapper {
+  contain: strict;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  perspective: 1024px;
+  transform-style: flat;
+  pointer-events: none;
+}
 
 c-scene {
   position: absolute;
