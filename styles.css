@@ -50,6 +50,7 @@ c-cursor {
   will-change: transform, opacity;
   position: absolute;
   inset: 0;
+  z-index: 100;
   width: 8px;
   height: 8px;
   mix-blend-mode: exclusion;
