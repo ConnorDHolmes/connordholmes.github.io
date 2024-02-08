@@ -18,18 +18,15 @@ body {
   height: 100dvh;
   background-color: var(--void);
   transition: background-color var(--mode-swap-timing) var(--mode-swap-ease);
-  overscroll-behavior: none;
-}
-
-html {
-  contain: strict;
   cursor: none;
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
+  overflow: hidden;
   transform-style: flat;
   user-select: none;
   /* for safari */
