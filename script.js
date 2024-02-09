@@ -216,7 +216,6 @@ function refresh(timeStamp) {
 
 function cloneListEntries() {
   listEntries.forEach((entry) => {
-    addCl(entry, "hide");
     const clone = entry.cloneNode(true);
     list.append(clone);
   });
