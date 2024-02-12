@@ -61,10 +61,10 @@ c-cursor::after {
   content: "";
   will-change: transform;
   contain: strict;
-  width: inherit;
-  height: inherit;
   position: absolute;
   inset: 0;
+  width: inherit;
+  height: inherit;
   border-radius: 50%;
   background-color: #ccc;
   transition: transform 0.2s ease;
@@ -101,8 +101,7 @@ c-noise {
   contain: strict;
   will-change: transform;
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0 auto auto 0;
   width: 400%;
   background-image: url("images/noise_overlay.webp");
   background-size: 12.5% auto;
@@ -157,7 +156,6 @@ c-room {
   width: 1024px;
   height: 576px;
   transform-style: preserve-3d;
-  transform-origin: center;
   backface-visibility: visible;
 }
 
