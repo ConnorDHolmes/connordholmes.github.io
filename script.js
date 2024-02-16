@@ -6,19 +6,20 @@ const buttonsRow = document.querySelector("c-buttons");
 const startButton = buttonsRow.querySelector("#start-button");
 const screen = document.querySelector("c-screen");
 
+let currentlyHoveredEl = body;
+
 //PROJECT LIST
 const list = document.querySelector("c-list");
 const listEntries = list.querySelectorAll("h3");
 const listCount = listEntries.length;
 
-let currentlyHoveredEl = body;
-
+//RAF SPEED CONTROL
 const fpsBenchmark = 60;
 const frameDurationBenchmark = 1000 / fpsBenchmark;
-let then = performance.now();
+let then = document.timeline.currentTime;
 let multiplier = 1;
 
-//WINDOW
+//WINDOW TRAITS
 const win = {
   w: window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth,
   h: window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight,
@@ -119,6 +120,15 @@ const easedTraits = [
   room.range.adj,
 ];
 
+//POPULATE "DATA-TEXT" ATTRIBUTES FOR DIVS THAT HAVE IT
+function populateDataText() {
+  document.querySelectorAll("[data-text]").forEach((el) => {
+    el.setAttribute("data-text", el.innerHTML);
+  });
+}
+
+populateDataText();
+
 //ADD CLASS
 function addCl(el, className) {
   el.classList.add(className);
@@ -144,76 +154,7 @@ function removeBoolAttr(el, attribute) {
   el.removeAttribute(attribute);
 }
 
-//EASING FUNCTION (WITH MULTIPLIER)
-function ease(val) {
-  val.eased += (val.target - val.eased) * (val.ease * multiplier);
-}
-
-//ROUND OFF TO 3 DECIMAL PLACES
-function round(num) {
-  return Math.round(num * 1000) / 1000;
-}
-
-//UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
-function updateHoveredEl() {
-  const prevEl = currentlyHoveredEl;
-  currentlyHoveredEl = document.elementFromPoint(
-    cursor.x.eased,
-    cursor.y.eased
-  );
-  if (prevEl !== null && prevEl !== currentlyHoveredEl) {
-    removeCl(prevEl, "hover");
-  }
-  if (
-    currentlyHoveredEl !== null &&
-    currentlyHoveredEl.hasAttribute("data-h")
-  ) {
-    addCl(currentlyHoveredEl, "hover");
-    addBoolAttr(cursor.el, "clickable");
-  } else {
-    removeBoolAttr(cursor.el, "clickable");
-  }
-}
-
-//CALCULATE VIEW PAN
-function pan() {
-  return round(
-    -room.range.hor.eased +
-      (room.x.eased / win.w) * room.range.hor.cone +
-      room.range.adj.eased
-  );
-}
-
-//CALCULATE VIEW TILT
-function tilt() {
-  return round(
-    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
-  );
-}
-
-//ANIMATION AND OTHER UPDATES
-function refresh(timeStamp) {
-  const diff = timeStamp - then;
-  then = timeStamp;
-
-  multiplier = round(diff / frameDurationBenchmark) || 1;
-  easedTraits.forEach((trait) => {
-    ease(trait);
-  });
-
-  cursor.el.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
-    cursor.y.eased - cursor.half
-  }px, 0)`;
-
-  room.el.style.transform = `translate3d(-50%, -50%, ${
-    room.range.zoom.eased
-  }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
-
-  updateHoveredEl();
-
-  requestAnimationFrame(refresh);
-}
-
+//CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
 function cloneListEntries() {
   listEntries.forEach((entry) => {
     const clone = entry.cloneNode(true);
@@ -221,6 +162,9 @@ function cloneListEntries() {
   });
 }
 
+cloneListEntries();
+
+//CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
   const reflection = screen.cloneNode(true);
   addBoolAttr(reflection, "reflection");
@@ -288,6 +232,78 @@ function cloneScreen() {
   document.querySelector("c-reflection").append(reflection);
 }
 
+cloneScreen();
+
+//EASING FUNCTION (WITH MULTIPLIER)
+function ease(val) {
+  val.eased += (val.target - val.eased) * (val.ease * multiplier);
+}
+
+//ROUND OFF TO 3 DECIMAL PLACES
+function round(num) {
+  return Math.round(num * 1000) / 1000;
+}
+
+//UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
+function updateHoveredEl() {
+  const prevEl = currentlyHoveredEl;
+  currentlyHoveredEl = document.elementFromPoint(
+    cursor.x.eased,
+    cursor.y.eased
+  );
+  if (prevEl !== null && prevEl !== currentlyHoveredEl) {
+    removeCl(prevEl, "hover");
+  }
+  if (
+    currentlyHoveredEl !== null &&
+    currentlyHoveredEl.hasAttribute("data-h")
+  ) {
+    addCl(currentlyHoveredEl, "hover");
+    addBoolAttr(cursor.el, "clickable");
+  } else {
+    removeBoolAttr(cursor.el, "clickable");
+  }
+}
+
+//CALCULATE VIEW PAN
+function pan() {
+  return round(
+    -room.range.hor.eased +
+      (room.x.eased / win.w) * room.range.hor.cone +
+      room.range.adj.eased
+  );
+}
+
+//CALCULATE VIEW TILT
+function tilt() {
+  return round(
+    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
+  );
+}
+
+//ANIMATION AND OTHER UPDATES
+function refresh(timeStamp) {
+  const diff = timeStamp - then;
+  then = timeStamp;
+
+  multiplier = round(diff / frameDurationBenchmark) || 1;
+  easedTraits.forEach((trait) => {
+    ease(trait);
+  });
+
+  cursor.el.style = `transform: translate3d(${
+    cursor.x.eased - cursor.half
+  }px, ${cursor.y.eased - cursor.half}px, 0)`;
+
+  room.el.style = `transform: translate3d(-50%, -50%, ${
+    room.range.zoom.eased
+  }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
+
+  updateHoveredEl();
+
+  requestAnimationFrame(refresh);
+}
+
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function measureAndSize() {
   win.w = window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth;
@@ -303,7 +319,7 @@ function measureAndSize() {
 function resetView() {
   cursor.x.target = room.x.target = win.midX;
   cursor.y.target = room.y.target = win.midY;
-  cursor.el.style.opacity = "0";
+  addBoolAttr(cursor.el, "hide");
 }
 
 //REMOVE INITIAL OVERLAY
@@ -341,9 +357,9 @@ root.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", function (e) {
-  cursor.el.style.opacity = "1";
   cursor.x.target = room.x.target = e.pageX;
   cursor.y.target = room.y.target = e.pageY;
+  removeBoolAttr(cursor.el, "hide");
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
@@ -393,15 +409,5 @@ if (window.matchMedia("(prefers-color-scheme: light)").matches) {
   addCl(body, "light-mode");
 }
 
-//POPULATE "DATA-TEXT" ATTRIBUTES FOR DIVS THAT HAVE IT
-function populateDataText() {
-  document.querySelectorAll("[data-text]").forEach((el) => {
-    el.setAttribute("data-text", el.innerHTML);
-  });
-}
-
-populateDataText();
-cloneListEntries();
-cloneScreen();
 measureAndSize();
-refresh();
+requestAnimationFrame(refresh);
