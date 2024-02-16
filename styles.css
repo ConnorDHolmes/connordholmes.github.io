@@ -17,8 +17,6 @@
 html,
 body {
   height: 100dvh;
-  background-color: var(--bgr);
-  transition: background-color var(--mode-swap);
   cursor: none;
   overscroll-behavior: none;
 }
@@ -53,7 +51,6 @@ footer {
 c-cursor::after,
 c-noise,
 c-overlay,
-c-wrapper,
 c-screen,
 c-reflection,
 c-reflection::before,
@@ -79,6 +76,8 @@ body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
+  background-color: var(--bgr);
+  transition: background-color var(--mode-swap);
   overflow: hidden;
   user-select: none;
   /* for safari */
@@ -94,6 +93,7 @@ body.light-mode {
 
 c-cursor {
   contain: layout size;
+  will-change: transform, opacity;
   inset: 0;
   width: 8px;
   height: 8px;

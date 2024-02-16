@@ -135,22 +135,22 @@ function addCl(el, className) {
 }
 
 //REMOVE CLASS
-function removeCl(el, className) {
+function remCl(el, className) {
   el.classList.remove(className);
 }
 
 //TOGGLE CLASS
-function toggleCl(el, className) {
+function togCl(el, className) {
   el.classList.toggle(className);
 }
 
 //ADD BOOLEAN ATTRIBUTE
-function addBoolAttr(el, attribute) {
+function addBool(el, attribute) {
   el.setAttribute(attribute, "");
 }
 
 //REMOVE BOOLEAN ATTRIBUTE
-function removeBoolAttr(el, attribute) {
+function remBool(el, attribute) {
   el.removeAttribute(attribute);
 }
 
@@ -167,7 +167,7 @@ cloneListEntries();
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
   const reflection = screen.cloneNode(true);
-  addBoolAttr(reflection, "reflection");
+  addBool(reflection, "reflection");
 
   const screenDescendants = screen.querySelectorAll("*");
   const pairs = new Map();
@@ -252,33 +252,31 @@ function updateHoveredEl() {
     cursor.y.eased
   );
   if (prevEl !== null && prevEl !== currentlyHoveredEl) {
-    removeCl(prevEl, "hover");
+    remCl(prevEl, "hover");
   }
   if (
     currentlyHoveredEl !== null &&
     currentlyHoveredEl.hasAttribute("data-h")
   ) {
     addCl(currentlyHoveredEl, "hover");
-    addBoolAttr(cursor.el, "clickable");
+    addBool(cursor.el, "clickable");
   } else {
-    removeBoolAttr(cursor.el, "clickable");
+    remBool(cursor.el, "clickable");
   }
 }
 
 //CALCULATE VIEW PAN
 function pan() {
-  return round(
+  return (
     -room.range.hor.eased +
-      (room.x.eased / win.w) * room.range.hor.cone +
-      room.range.adj.eased
+    (room.x.eased / win.w) * room.range.hor.cone +
+    room.range.adj.eased
   );
 }
 
 //CALCULATE VIEW TILT
 function tilt() {
-  return round(
-    room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
-  );
+  return room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
 }
 
 //ANIMATION AND OTHER UPDATES
@@ -286,18 +284,18 @@ function refresh(timeStamp) {
   const diff = timeStamp - then;
   then = timeStamp;
 
-  multiplier = round(diff / frameDurationBenchmark) || 1;
+  multiplier = diff / frameDurationBenchmark || 1;
   easedTraits.forEach((trait) => {
     ease(trait);
   });
 
-  cursor.el.style = `transform: translate3d(${
-    cursor.x.eased - cursor.half
-  }px, ${cursor.y.eased - cursor.half}px, 0)`;
-
   room.el.style = `transform: translate3d(-50%, -50%, ${
     room.range.zoom.eased
   }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
+
+  cursor.el.style = `transform: translate3d(${
+    cursor.x.eased - cursor.half
+  }px, ${cursor.y.eased - cursor.half}px, 0)`;
 
   updateHoveredEl();
 
@@ -319,7 +317,7 @@ function measureAndSize() {
 function resetView() {
   cursor.x.target = room.x.target = win.midX;
   cursor.y.target = room.y.target = win.midY;
-  addBoolAttr(cursor.el, "hide");
+  addBool(cursor.el, "hide");
 }
 
 //REMOVE INITIAL OVERLAY
@@ -332,15 +330,15 @@ function reveal() {
 
 //ENTER FOCUSED MODE FROM "WORK" BUTTON
 startButton.addEventListener("click", function () {
-  addBoolAttr(buttonsRow, "hide");
+  addBool(buttonsRow, "hide");
   setTimeout(function () {
     room.range.mode = "focused";
-    removeCl(document.querySelector("footer span.hide"), "hide");
+    remCl(document.querySelector("footer span.hide"), "hide");
   }, 250);
   setTimeout(function () {
     list.querySelectorAll("h3").forEach((header, index) => {
       setTimeout(function () {
-        removeCl(header, "hide");
+        remCl(header, "hide");
       }, index * 100);
     });
   }, 1000);
@@ -359,7 +357,7 @@ root.addEventListener("blur", resetView);
 document.addEventListener("mousemove", function (e) {
   cursor.x.target = room.x.target = e.pageX;
   cursor.y.target = room.y.target = e.pageY;
-  removeBoolAttr(cursor.el, "hide");
+  remBool(cursor.el, "hide");
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
@@ -382,7 +380,7 @@ document.addEventListener("keyup", function (event) {
       }
     }
   } else if (event.key === "m" || event.key === "M") {
-    toggleCl(body, "light-mode");
+    togCl(body, "light-mode");
   }
 });
 
@@ -398,7 +396,7 @@ window
   .matchMedia("(prefers-color-scheme: dark)")
   .addEventListener("change", function (event) {
     if (event.matches) {
-      removeCl(body, "light-mode");
+      remCl(body, "light-mode");
     } else {
       addCl(body, "light-mode");
     }
