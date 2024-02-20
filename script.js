@@ -21,21 +21,33 @@ let multiplier = 1;
 
 //WINDOW TRAITS
 const win = {
-  w: window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth,
-  h: window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight,
+  get w() {
+    return window.innerWidth;
+  },
+  get h() {
+    return window.innerHeight;
+  },
+  get midX() {
+    return win.w / 2;
+  },
+  get midY() {
+    return win.h / 2;
+  },
 };
-win.midX = win.w / 2;
-win.midY = win.h / 2;
 
+//SCENE
+const sceneEl = document.querySelector("c-scene");
 const scene = {
-  el: document.querySelector("c-scene"),
+  h: sceneEl.offsetHeight,
+  w: sceneEl.offsetWidth,
+  get scale() {
+    return win.h / scene.h;
+  },
 };
-scene.h = scene.el.offsetHeight;
-scene.scale = win.h / scene.h;
 
 //CURSOR
+const cursorEl = document.querySelector("c-cursor");
 const cursor = {
-  el: document.querySelector("c-cursor"),
   x: {
     target: win.midX,
     eased: win.midX,
@@ -44,8 +56,8 @@ const cursor = {
     target: win.midY,
     eased: win.midY,
   },
+  half: cursorEl.offsetWidth / 2,
 };
-cursor.half = cursor.el.offsetWidth / 2;
 
 //CAMERA CONFIGS
 const cameraPos = new Map();
@@ -54,8 +66,8 @@ cameraPos.set("normal", { hor: 100, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
+const roomEl = document.querySelector("c-room");
 const room = {
-  el: document.querySelector("c-room"),
   range: {
     mode: "orbit",
     hor: {
@@ -97,6 +109,14 @@ const room = {
     target: cursor.y.target,
     eased: cursor.y.target,
   },
+  w: roomEl.offsetWidth,
+  h: roomEl.offsetHeight,
+  get xTrans() {
+    return scene.w * 0.5 - room.w * 0.5;
+  },
+  get yTrans() {
+    return scene.h * 0.5 - room.h * 0.5;
+  },
 };
 
 //ALL EASING VALS
@@ -126,8 +146,6 @@ function populateDataText() {
     el.setAttribute("data-text", el.innerHTML);
   });
 }
-
-populateDataText();
 
 //ADD CLASS
 function addCl(el, className) {
@@ -161,8 +179,6 @@ function cloneListEntries() {
     list.append(clone);
   });
 }
-
-cloneListEntries();
 
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
@@ -232,8 +248,6 @@ function cloneScreen() {
   document.querySelector("c-reflection").append(reflection);
 }
 
-cloneScreen();
-
 //EASING FUNCTION (WITH MULTIPLIER)
 function ease(val) {
   val.eased += (val.target - val.eased) * (val.ease * multiplier);
@@ -259,9 +273,9 @@ function updateHoveredEl() {
     currentlyHoveredEl.hasAttribute("data-h")
   ) {
     addCl(currentlyHoveredEl, "hover");
-    addBool(cursor.el, "clickable");
+    addBool(cursorEl, "clickable");
   } else {
-    remBool(cursor.el, "clickable");
+    remBool(cursorEl, "clickable");
   }
 }
 
@@ -289,13 +303,13 @@ function refresh(timeStamp) {
     ease(trait);
   });
 
-  room.el.style = `transform: translate3d(-50%, -50%, ${
+  roomEl.style = `transform: translate3d(${room.xTrans}px, ${room.yTrans}px, ${
     room.range.zoom.eased
   }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
 
-  cursor.el.style = `transform: translate3d(${
-    cursor.x.eased - cursor.half
-  }px, ${cursor.y.eased - cursor.half}px, 0)`;
+  cursorEl.style = `transform: translate3d(${cursor.x.eased - cursor.half}px, ${
+    cursor.y.eased - cursor.half
+  }px, 0)`;
 
   updateHoveredEl();
 
@@ -304,12 +318,9 @@ function refresh(timeStamp) {
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function measureAndSize() {
-  win.w = window.innerWidth % 2 ? window.innerWidth + 1 : window.innerWidth;
-  win.h = window.innerHeight % 2 ? window.innerHeight + 1 : window.innerHeight;
-  win.midX = win.w / 2;
-  win.midY = win.h / 2;
-  scene.scale = win.h / scene.h;
-  scene.el.style.transform = `translate(-50%, -50%) scale(${scene.scale})`;
+  const xTrans = win.midX - scene.w * 0.5;
+  const yTrans = win.midY - scene.h * 0.5;
+  sceneEl.style.transform = `translate3d(${xTrans}px, ${yTrans}px, 0) scale3d(${scene.scale}, ${scene.scale}, 1)`;
   resetView();
 }
 
@@ -317,7 +328,7 @@ function measureAndSize() {
 function resetView() {
   cursor.x.target = room.x.target = win.midX;
   cursor.y.target = room.y.target = win.midY;
-  addBool(cursor.el, "hide");
+  addBool(cursorEl, "hide");
 }
 
 //REMOVE INITIAL OVERLAY
@@ -357,7 +368,7 @@ root.addEventListener("blur", resetView);
 document.addEventListener("mousemove", function (e) {
   cursor.x.target = room.x.target = e.pageX;
   cursor.y.target = room.y.target = e.pageY;
-  remBool(cursor.el, "hide");
+  remBool(cursorEl, "hide");
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
@@ -407,5 +418,8 @@ if (window.matchMedia("(prefers-color-scheme: light)").matches) {
   addCl(body, "light-mode");
 }
 
+populateDataText();
+cloneListEntries();
+cloneScreen();
 measureAndSize();
 requestAnimationFrame(refresh);

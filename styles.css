@@ -14,6 +14,10 @@
   backface-visibility: hidden;
 }
 
+html {
+  image-rendering: pixelated;
+}
+
 html,
 body {
   height: 100dvh;
@@ -180,15 +184,14 @@ c-wrapper {
 
 c-scene {
   contain: layout size;
-  inset: 50% auto auto 50%;
   width: 576px;
   height: 676px;
+  backface-visibility: visible;
   transform-style: preserve-3d;
 }
 
 c-room {
   contain: layout size;
-  inset: 50% auto auto 50%;
   width: 1024px;
   height: 576px;
   backface-visibility: visible;
@@ -386,7 +389,6 @@ c-screen[reflection] {
 /* INSIDE SCREEN */
 
 c-gradient {
-  inset: 0;
   width: 2016px;
   height: 1120px;
   background: linear-gradient(to bottom right, red, magenta, orange);
@@ -404,7 +406,6 @@ c-gradient[alternate] {
 
 c-list {
   --gap: 40px;
-  inset: 0;
   width: 1008px;
   height: 560px;
   display: flex;
