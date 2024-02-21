@@ -8,6 +8,11 @@ const screen = document.querySelector("c-screen");
 
 let currentlyHoveredEl = body;
 
+//ROUND OFF TO 3 DECIMAL PLACES
+function round(num) {
+  return Math.round(num * 1000) / 1000;
+}
+
 //PROJECT LIST
 const list = document.querySelector("c-list");
 const listEntries = list.querySelectorAll("h3");
@@ -68,7 +73,7 @@ const cursor = {
 //CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 100, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("normal", { hor: 90, vert: 90, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -107,32 +112,36 @@ const room = {
       eased: 90,
     },
     get pan() {
-      return (
+      return round(
         -room.range.hor.eased +
-        (room.x.eased / win.w) * room.range.hor.cone +
-        room.range.adj.eased
+          (room.x.eased / win.w) * room.range.hor.cone +
+          room.range.adj.eased
       );
     },
     get tilt() {
-      return (
+      return round(
         room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
       );
     },
   },
   x: {
-    target: cursor.x.target,
+    get target() {
+      return cursor.x.target;
+    },
     eased: cursor.x.target,
   },
   y: {
-    target: cursor.y.target,
+    get target() {
+      return cursor.y.target;
+    },
     eased: cursor.y.target,
   },
   w: roomEl.offsetWidth,
   h: roomEl.offsetHeight,
-  get xTrans() {
+  get xPos() {
     return scene.w * 0.5 - room.w * 0.5;
   },
-  get yTrans() {
+  get yPos() {
     return scene.h * 0.5 - room.h * 0.5;
   },
 };
@@ -167,27 +176,37 @@ function populateDataText() {
 
 //ADD CLASS
 function addCl(el, className) {
-  el.classList.add(className);
+  requestAnimationFrame(() => {
+    el.classList.add(className);
+  });
 }
 
 //REMOVE CLASS
 function remCl(el, className) {
-  el.classList.remove(className);
+  requestAnimationFrame(() => {
+    el.classList.remove(className);
+  });
 }
 
 //TOGGLE CLASS
 function togCl(el, className) {
-  el.classList.toggle(className);
+  requestAnimationFrame(() => {
+    el.classList.toggle(className);
+  });
 }
 
 //ADD BOOLEAN ATTRIBUTE
 function addBool(el, attribute) {
-  el.setAttribute(attribute, "");
+  requestAnimationFrame(() => {
+    el.setAttribute(attribute, "");
+  });
 }
 
 //REMOVE BOOLEAN ATTRIBUTE
 function remBool(el, attribute) {
-  el.removeAttribute(attribute);
+  requestAnimationFrame(() => {
+    el.removeAttribute(attribute);
+  });
 }
 
 //CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
@@ -247,8 +266,8 @@ function cloneScreen() {
 
   list.addEventListener(
     "wheel",
-    function (e) {
-      requestAnimationFrame(function () {
+    (e) => {
+      requestAnimationFrame(() => {
         if (list.scrollTop >= maxScroll) {
           list.scrollTop = 1;
         } else if (list.scrollTop === 0) {
@@ -269,11 +288,6 @@ function cloneScreen() {
 //EASING FUNCTION (WITH MULTIPLIER)
 function ease(val) {
   val.eased += (val.target - val.eased) * (val.ease * multiplier);
-}
-
-//ROUND OFF TO 3 DECIMAL PLACES
-function round(num) {
-  return Math.round(num * 1000) / 1000;
 }
 
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
@@ -297,20 +311,6 @@ function updateHoveredEl() {
   }
 }
 
-//CALCULATE VIEW PAN
-function pan() {
-  return (
-    -room.range.hor.eased +
-    (room.x.eased / win.w) * room.range.hor.cone +
-    room.range.adj.eased
-  );
-}
-
-//CALCULATE VIEW TILT
-function tilt() {
-  return room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone;
-}
-
 //ANIMATION AND OTHER UPDATES
 function refresh(timeStamp) {
   const diff = timeStamp - then;
@@ -321,7 +321,7 @@ function refresh(timeStamp) {
     ease(trait);
   });
 
-  roomEl.style = `transform: translate3d(${room.xTrans}px, ${room.yTrans}px, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
+  roomEl.style = `transform: translate3d(${room.xPos}px, ${room.yPos}px, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
 
   cursorEl.style = `transform: translate3d(${cursor.x.eased - cursor.half}px, ${
     cursor.y.eased - cursor.half
@@ -340,34 +340,34 @@ function measureAndSize() {
 
 //RESET VIEW TO MIDDLE
 function resetView() {
-  cursor.x.target = room.x.target = win.midX;
-  cursor.y.target = room.y.target = win.midY;
+  cursor.x.target = win.midX;
+  cursor.y.target = win.midY;
   addBool(cursorEl, "hide");
 }
 
 //REMOVE INITIAL OVERLAY
 function reveal() {
   addCl(overlay, "reveal");
-  setTimeout(function () {
+  setTimeout(() => {
     overlay.remove();
   }, 2000);
 }
 
 //ENTER FOCUSED MODE FROM "WORK" BUTTON
-startButton.addEventListener("click", function () {
+function navToScreen() {
   addBool(buttonsRow, "hide");
-  setTimeout(function () {
+  setTimeout(() => {
     room.range.mode = "focused";
     remCl(document.querySelector("footer span.hide"), "hide");
   }, 250);
-  setTimeout(function () {
+  setTimeout(() => {
     list.querySelectorAll("h3").forEach((header, index) => {
-      setTimeout(function () {
+      setTimeout(() => {
         remCl(header, "hide");
       }, index * 100);
     });
   }, 1000);
-});
+}
 
 //SCALE SCENE ON WINDOW RESIZE
 window.addEventListener("resize", measureAndSize);
@@ -379,9 +379,9 @@ window.addEventListener("blur", resetView);
 root.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
-document.addEventListener("mousemove", function (e) {
-  cursor.x.target = room.x.target = e.pageX;
-  cursor.y.target = room.y.target = e.pageY;
+document.addEventListener("mousemove", (e) => {
+  cursor.x.target = e.pageX;
+  cursor.y.target = e.pageY;
   remBool(cursorEl, "hide");
 });
 
@@ -389,14 +389,14 @@ document.addEventListener("mousemove", function (e) {
 root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
-root.addEventListener("mouseenter", function (e) {
+root.addEventListener("mouseenter", (e) => {
   cursor.x.eased = e.pageX;
   cursor.y.eased = e.pageY;
 });
 
 //ALL INPUTS
-document.addEventListener("keyup", function (event) {
-  if (event.key === "Shift") {
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Shift") {
     if (room.range.mode !== "orbit") {
       if (room.range.mode === "normal") {
         room.range.mode = "focused";
@@ -404,14 +404,14 @@ document.addEventListener("keyup", function (event) {
         room.range.mode = "normal";
       }
     }
-  } else if (event.key === "m" || event.key === "M") {
+  } else if (e.key === "m" || e.key === "M") {
     togCl(body, "light-mode");
   }
 });
 
 //FADE IN SCENE AFTER ALL CONTENT IS LOADED
-document.addEventListener("readystatechange", function (event) {
-  if (event.target.readyState === "complete") {
+document.addEventListener("readystatechange", (e) => {
+  if (e.target.readyState === "complete") {
     reveal();
   }
 });
@@ -419,13 +419,22 @@ document.addEventListener("readystatechange", function (event) {
 //WATCH FOR INTERFACE MODE PREFERENCE CHANGE
 window
   .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", function (event) {
-    if (event.matches) {
+  .addEventListener("change", (e) => {
+    if (e.matches) {
       remCl(body, "light-mode");
     } else {
       addCl(body, "light-mode");
     }
   });
+
+//ALL CLICK HANDLERS
+function addAllClickHandlers() {
+  document.addEventListener("click", (e) => {
+    if (e.target === startButton) {
+      navToScreen();
+    }
+  });
+}
 
 //ON LOAD
 if (window.matchMedia("(prefers-color-scheme: light)").matches) {
@@ -435,5 +444,6 @@ if (window.matchMedia("(prefers-color-scheme: light)").matches) {
 populateDataText();
 cloneListEntries();
 cloneScreen();
+addAllClickHandlers();
 measureAndSize();
 requestAnimationFrame(refresh);

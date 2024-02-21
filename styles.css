@@ -14,12 +14,9 @@
   backface-visibility: hidden;
 }
 
-html {
-  image-rendering: pixelated;
-}
-
 html,
 body {
+  height: 100vh;
   height: 100dvh;
   cursor: none;
   overscroll-behavior: none;
@@ -53,13 +50,7 @@ footer {
 }
 
 c-cursor::after,
-c-noise,
-c-overlay,
-c-screen,
 c-reflection,
-c-reflection::before,
-c-reflection::after,
-c-gradient,
 c-list {
   contain: strict;
 }
@@ -137,30 +128,25 @@ body:active c-cursor[clickable]::after {
     transform: translate3d(-15%, -20%, 0);
   }
   50% {
-    transform: translate3d(-60%, -40%, 0);
-  }
-  75% {
-    transform: translate3d(0%, -75%, 0);
+    transform: translate3d(-50%, -40%, 0);
   }
   100% {
-    transform: translate3d(-50%, -10%, 0);
+    transform: translate3d(0%, -50%, 0);
   }
 }
 
 c-noise {
-  will-change: transform;
-  inset: 0 auto auto 0;
-  width: 400%;
-  background-image: url("images/noise_overlay.webp");
-  background-size: 12.5% auto;
-  height: 400%;
+  inset: 0;
+  width: 200%;
+  background-image: url("images/noise_overlay_op.webp");
+  background-size: 25% auto;
+  height: 200%;
   animation: 0.5s noise steps(4) infinite;
   z-index: 1000;
   pointer-events: none;
 }
 
 c-overlay {
-  will-change: opacity;
   inset: 0;
   z-index: 100;
   background-color: var(--bgr);
@@ -208,7 +194,7 @@ main {
 }
 
 nav {
-  transform: rotateY(-90deg) translateZ(512px);
+  transform: rotate3d(0, 1, 0, -90deg) translate3d(0, 0, 512px);
   transform-style: preserve-3d;
 }
 
@@ -218,7 +204,7 @@ c-buttons {
   left: 50%;
   bottom: 64px;
   display: flex;
-  transform: translate(-50%, 0);
+  transform: translate3d(-50%, 0, 0);
   transform-style: preserve-3d;
   gap: 24px;
   transition: visibility 0s linear 0.25s;
@@ -233,7 +219,7 @@ c-buttons::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: translate3d(0, 0, 36px) scale(1.5);
+  transform: translate3d(0, 0, 36px) scale3d(1.5, 1.5, 1);
   background-color: var(--bgr);
   opacity: 0;
   transition: opacity 0.25s ease, background-color var(--mode-swap);
@@ -281,11 +267,11 @@ c-buttons button::before {
   border-radius: 32px;
   transition: transform 0.3s ease, background-color var(--mode-swap),
     color var(--mode-swap);
-  transform: scale(0);
+  transform: scale3d(0, 0, 1);
 }
 
 c-buttons button.hover::before {
-  transform: scale(1);
+  transform: scale3d(1, 1, 1);
 }
 
 c-buttons button::after {
@@ -306,7 +292,7 @@ c-buttons button.hover::after {
 }
 
 header {
-  transform: rotateY(-90deg) translateZ(-768px);
+  transform: rotate3d(0, 1, 0, -90deg) translate3d(0, 0, -768px);
   padding-top: 144px;
   color: var(--acc);
   transition: color var(--mode-swap);
@@ -333,7 +319,7 @@ h2 {
 }
 
 main {
-  transform: translateZ(-512px);
+  transform: translate3d(0, 0, -512px);
 }
 
 c-screen {
@@ -342,7 +328,7 @@ c-screen {
   height: 560px;
   border-radius: 8px;
   pointer-events: auto;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 c-reflection {
@@ -383,7 +369,7 @@ c-reflection::after {
 c-screen[reflection] {
   inset: 0;
   pointer-events: none;
-  transform: scaleY(-1);
+  transform: scale3d(1, -1, 1);
 }
 
 /* INSIDE SCREEN */
@@ -391,7 +377,9 @@ c-screen[reflection] {
 c-gradient {
   width: 2016px;
   height: 1120px;
-  background: linear-gradient(to bottom right, red, magenta, orange);
+  /* background: linear-gradient(to bottom right, red, magenta, orange); */
+  background-image: url("images/background_gradient_op.webp");
+  background-size: 2016px 1120px;
   transform: translate3d(0, 0, 0);
   transition: transform var(--mode-swap);
 }
@@ -405,6 +393,7 @@ c-gradient[alternate] {
 }
 
 c-list {
+  will-change: scroll-position;
   --gap: 40px;
   width: 1008px;
   height: 560px;
