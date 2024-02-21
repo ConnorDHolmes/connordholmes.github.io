@@ -43,6 +43,12 @@ const scene = {
   get scale() {
     return win.h / scene.h;
   },
+  get x() {
+    return win.midX - scene.w * 0.5;
+  },
+  get y() {
+    return win.midY - scene.h * 0.5;
+  },
 };
 
 //CURSOR
@@ -99,6 +105,18 @@ const room = {
         return cameraPos.get(room.range.mode).adj;
       },
       eased: 90,
+    },
+    get pan() {
+      return (
+        -room.range.hor.eased +
+        (room.x.eased / win.w) * room.range.hor.cone +
+        room.range.adj.eased
+      );
+    },
+    get tilt() {
+      return (
+        room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
+      );
     },
   },
   x: {
@@ -297,15 +315,13 @@ function tilt() {
 function refresh(timeStamp) {
   const diff = timeStamp - then;
   then = timeStamp;
-
   multiplier = diff / frameDurationBenchmark || 1;
+
   easedTraits.forEach((trait) => {
     ease(trait);
   });
 
-  roomEl.style = `transform: translate3d(${room.xTrans}px, ${room.yTrans}px, ${
-    room.range.zoom.eased
-  }px) rotate3d(1, 0, 0, ${tilt()}deg) rotate3d(0, 1, 0, ${pan()}deg)`;
+  roomEl.style = `transform: translate3d(${room.xTrans}px, ${room.yTrans}px, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
 
   cursorEl.style = `transform: translate3d(${cursor.x.eased - cursor.half}px, ${
     cursor.y.eased - cursor.half
@@ -318,9 +334,7 @@ function refresh(timeStamp) {
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function measureAndSize() {
-  const xTrans = win.midX - scene.w * 0.5;
-  const yTrans = win.midY - scene.h * 0.5;
-  sceneEl.style.transform = `translate3d(${xTrans}px, ${yTrans}px, 0) scale3d(${scene.scale}, ${scene.scale}, 1)`;
+  sceneEl.style = `transform: translate3d(${scene.x}px, ${scene.y}px, 0) scale3d(${scene.scale}, ${scene.scale}, 1)`;
   resetView();
 }
 
