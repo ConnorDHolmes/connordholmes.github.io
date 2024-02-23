@@ -66,9 +66,22 @@
 
     <footer>
       <span>© connor holmes</span>
-      <span class="hide">toggle view<span class="key">shift</span></span>
-      <span>mode<span class="key">m</span></span>
+      <div class="controls">
+        <span
+          aria-label="Press Shift to toggle between a focused and free-look view."
+          class="hide"
+          >view<span class="key">shift</span></span
+        >
+        <span aria-label="Press E to toggle the noise and reflection effects."
+          >effects<span class="key">e</span></span
+        >
+        <span aria-label="Press M to swap between light and dark mode."
+          >theme<span class="key">m</span></span
+        >
+      </div>
     </footer>
+
+    <c-corner></c-corner>
 
     <c-cursor></c-cursor>
 

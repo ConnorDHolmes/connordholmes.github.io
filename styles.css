@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;600;700;800;900&display=swap");
 
 :root {
-  --mode-swap: 0.5s ease-in-out;
+  --mode-swap: 0.5s ease;
   --bgr: #111;
   --acc: #ccc;
 }
@@ -49,6 +49,7 @@ footer {
   position: absolute;
 }
 
+c-noise,
 c-cursor::after,
 c-reflection,
 c-list {
@@ -62,7 +63,8 @@ c-buttons button::after,
 c-reflection::before,
 c-reflection::after,
 c-list h3::before,
-c-list h3::after {
+c-list h3::after,
+footer .controls span:not(.key)::after {
   content: "";
   backface-visibility: hidden;
 }
@@ -141,9 +143,14 @@ c-noise {
   background-image: url("images/noise_overlay_op.webp");
   background-size: 25% auto;
   height: 200%;
-  animation: 0.5s noise steps(4) infinite;
+  animation: 0.25s noise steps(3) infinite;
   z-index: 1000;
   pointer-events: none;
+}
+
+.performance-mode c-noise {
+  animation: none;
+  opacity: 0;
 }
 
 c-overlay {
@@ -172,7 +179,6 @@ c-scene {
   contain: layout size;
   width: 576px;
   height: 676px;
-  backface-visibility: visible;
   transform-style: preserve-3d;
 }
 
@@ -194,7 +200,7 @@ main {
 }
 
 nav {
-  transform: rotate3d(0, 1, 0, -90deg) translate3d(0, 0, 512px);
+  transform: rotateY(-90deg) translateZ(512px);
   transform-style: preserve-3d;
 }
 
@@ -204,7 +210,7 @@ c-buttons {
   left: 50%;
   bottom: 64px;
   display: flex;
-  transform: translate3d(-50%, 0, 0);
+  transform: translateX(-50%);
   transform-style: preserve-3d;
   gap: 24px;
   transition: visibility 0s linear 0.25s;
@@ -219,7 +225,7 @@ c-buttons::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: translate3d(0, 0, 36px) scale3d(1.5, 1.5, 1);
+  transform: translateZ(36px) scale(1.5);
   background-color: var(--bgr);
   opacity: 0;
   transition: opacity 0.25s ease, background-color var(--mode-swap);
@@ -292,7 +298,7 @@ c-buttons button.hover::after {
 }
 
 header {
-  transform: rotate3d(0, 1, 0, -90deg) translate3d(0, 0, -768px);
+  transform: rotateY(-90deg) translateZ(-768px);
   padding-top: 144px;
   color: var(--acc);
   transition: color var(--mode-swap);
@@ -319,7 +325,7 @@ h2 {
 }
 
 main {
-  transform: translate3d(0, 0, -512px);
+  transform: translateZ(-512px);
 }
 
 c-screen {
@@ -336,6 +342,10 @@ c-reflection {
   inset: 584px auto auto 8px;
   width: 1008px;
   height: 560px;
+}
+
+.performance-mode c-reflection {
+  opacity: 0;
 }
 
 c-reflection::before,
@@ -369,7 +379,7 @@ c-reflection::after {
 c-screen[reflection] {
   inset: 0;
   pointer-events: none;
-  transform: scale3d(1, -1, 1);
+  transform: scaleY(-1);
 }
 
 /* INSIDE SCREEN */
@@ -389,7 +399,7 @@ c-gradient[alternate] {
 }
 
 .light-mode c-gradient {
-  transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-1008px, -560px, 0);
 }
 
 c-list {
@@ -402,7 +412,6 @@ c-list {
   align-items: flex-start;
   gap: var(--gap);
   color: var(--acc);
-  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
   transition: color var(--mode-swap);
   overflow: hidden;
 }
@@ -433,7 +442,7 @@ c-list h3::after {
 }
 
 c-list h3.hide {
-  transform: translate3d(-18px, -75%, 0);
+  transform: translate3d(-18px, -125%, 0);
   pointer-events: none;
 }
 
@@ -471,25 +480,33 @@ c-list h3:last-child {
 /* FOOTER */
 
 footer {
-  contain: layout paint;
+  contain: layout;
   mix-blend-mode: exclusion;
   color: #ccc;
-  padding: 16px;
+  padding: 16px 32px;
   inset: auto auto 0 0;
   width: 100%;
   z-index: 50;
   display: flex;
   align-items: center;
-  gap: 24px;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.05em;
 }
 
 footer span {
+  line-height: 100%;
+}
+
+footer .controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+footer .controls span:first-child {
   will-change: opacity;
   transition: opacity 0.5s ease;
-  line-height: 100%;
 }
 
 footer span:first-child {
@@ -508,4 +525,50 @@ footer .key {
   border: 1px solid #ccc;
   border-radius: 4px;
   min-width: 2em;
+}
+
+footer .controls span {
+  position: relative;
+}
+
+footer .controls span:not(.key)::after {
+  content: attr(aria-label);
+  box-sizing: border-box;
+  position: absolute;
+  padding: 6px;
+  inset: auto auto calc(100% + 12px) -12px;
+  width: calc(100% + 24px);
+  background: #ccc;
+  border-radius: 4px;
+  color: #000;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.025em;
+  text-transform: lowercase;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition: opacity 0.15s ease, transform 0.25s ease;
+}
+
+footer .controls span:not(.key):hover::after {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+c-corner {
+  will-change: opacity;
+  position: absolute;
+  inset: auto -32px -32px auto;
+  width: 480px;
+  height: 192px;
+  border-top-left-radius: 100%;
+  background-color: var(--bgr);
+  filter: blur(64px);
+  transition: opacity 0.25s ease, background-color var(--mode-swap);
+  opacity: 0;
+}
+
+footer:has(.controls:hover) + c-corner {
+  opacity: 1;
 }

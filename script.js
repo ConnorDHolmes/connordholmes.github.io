@@ -7,6 +7,7 @@ const startButton = buttonsRow.querySelector("#start-button");
 const screen = document.querySelector("c-screen");
 
 let currentlyHoveredEl = body;
+let debounceSwitch = true;
 
 //ROUND OFF TO 3 DECIMAL PLACES
 function round(num) {
@@ -73,7 +74,7 @@ const cursor = {
 //CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 90, vert: 90, zoom: 512, adj: 0 });
+cameraPos.set("normal", { hor: 80, vert: 80, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -174,39 +175,31 @@ function populateDataText() {
   });
 }
 
+const domChangeQueue = [];
+
 //ADD CLASS
 function addCl(el, className) {
-  requestAnimationFrame(() => {
-    el.classList.add(className);
-  });
+  domChangeQueue.push([1, el, className]);
 }
 
 //REMOVE CLASS
 function remCl(el, className) {
-  requestAnimationFrame(() => {
-    el.classList.remove(className);
-  });
+  domChangeQueue.push([2, el, className]);
 }
 
 //TOGGLE CLASS
 function togCl(el, className) {
-  requestAnimationFrame(() => {
-    el.classList.toggle(className);
-  });
+  domChangeQueue.push([3, el, className]);
 }
 
 //ADD BOOLEAN ATTRIBUTE
 function addBool(el, attribute) {
-  requestAnimationFrame(() => {
-    el.setAttribute(attribute, "");
-  });
+  domChangeQueue.push([4, el, attribute]);
 }
 
 //REMOVE BOOLEAN ATTRIBUTE
 function remBool(el, attribute) {
-  requestAnimationFrame(() => {
-    el.removeAttribute(attribute);
-  });
+  domChangeQueue.push([5, el, attribute]);
 }
 
 //CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
@@ -305,9 +298,13 @@ function updateHoveredEl() {
     currentlyHoveredEl.hasAttribute("data-h")
   ) {
     addCl(currentlyHoveredEl, "hover");
-    addBool(cursorEl, "clickable");
+    if (!cursorEl.hasAttribute("clickable")) {
+      addBool(cursorEl, "clickable");
+    }
   } else {
-    remBool(cursorEl, "clickable");
+    if (cursorEl.hasAttribute("clickable")) {
+      remBool(cursorEl, "clickable");
+    }
   }
 }
 
@@ -327,14 +324,32 @@ function refresh(timeStamp) {
     cursor.y.eased - cursor.half
   }px, 0)`;
 
-  updateHoveredEl();
+  while (domChangeQueue.length) {
+    change = domChangeQueue.shift();
+    if (change[0] === 1) {
+      change[1].classList.add(change[2]);
+    } else if (change[0] === 2) {
+      change[1].classList.remove(change[2]);
+    } else if (change[0] === 3) {
+      change[1].classList.toggle(change[2]);
+    } else if (change[0] === 4) {
+      change[1].setAttribute(change[2], "");
+    } else if (change[0] === 5) {
+      change[1].removeAttribute(change[2]);
+    }
+  }
+
+  debounceSwitch = !debounceSwitch;
+  if (debounceSwitch) {
+    updateHoveredEl();
+  }
 
   requestAnimationFrame(refresh);
 }
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function measureAndSize() {
-  sceneEl.style = `transform: translate3d(${scene.x}px, ${scene.y}px, 0) scale3d(${scene.scale}, ${scene.scale}, 1)`;
+  sceneEl.style = `transform: translate(${scene.x}px, ${scene.y}px) scale(${scene.scale})`;
   resetView();
 }
 
@@ -359,7 +374,7 @@ function navToScreen() {
   setTimeout(() => {
     room.range.mode = "focused";
     remCl(document.querySelector("footer span.hide"), "hide");
-  }, 250);
+  }, 500);
   setTimeout(() => {
     list.querySelectorAll("h3").forEach((header, index) => {
       setTimeout(() => {
@@ -382,7 +397,9 @@ root.addEventListener("blur", resetView);
 document.addEventListener("mousemove", (e) => {
   cursor.x.target = e.pageX;
   cursor.y.target = e.pageY;
-  remBool(cursorEl, "hide");
+  if (cursorEl.hasAttribute("hide")) {
+    remBool(cursorEl, "hide");
+  }
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
@@ -406,6 +423,8 @@ document.addEventListener("keyup", (e) => {
     }
   } else if (e.key === "m" || e.key === "M") {
     togCl(body, "light-mode");
+  } else if (e.key === "e" || e.key === "E") {
+    togCl(body, "performance-mode");
   }
 });
 
