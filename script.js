@@ -7,11 +7,12 @@ const startButton = buttonsRow.querySelector("#start-button");
 const screen = document.querySelector("c-screen");
 
 let currentlyHoveredEl = body;
+/* use this to skip run an action every other frame */
 let debounceSwitch = true;
 
 //ROUND OFF TO 3 DECIMAL PLACES
 function round(num) {
-  return Math.round(num * 1000) / 1000;
+  return Math.round(num * 1000) * 0.001;
 }
 
 //PROJECT LIST
@@ -68,13 +69,13 @@ const cursor = {
     target: win.midY,
     eased: win.midY,
   },
-  half: cursorEl.offsetWidth / 2,
+  half: cursorEl.offsetWidth * 0.5,
 };
 
 //CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 80, vert: 80, zoom: 512, adj: 0 });
+cameraPos.set("normal", { hor: 90, vert: 60, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -90,6 +91,9 @@ const room = {
       get cone() {
         return room.range.hor.eased * 2;
       },
+      get isInactive() {
+        return Math.abs(this.target - this.eased) < 0.5;
+      },
     },
     vert: {
       get target() {
@@ -99,28 +103,37 @@ const room = {
       get cone() {
         return room.range.vert.eased * 2;
       },
+      get isInactive() {
+        return Math.abs(this.target - this.eased) < 0.5;
+      },
     },
     zoom: {
       get target() {
         return cameraPos.get(room.range.mode).zoom;
       },
       eased: -2048,
+      get isInactive() {
+        return Math.abs(this.target - this.eased) < 0.5;
+      },
     },
     adj: {
       get target() {
         return cameraPos.get(room.range.mode).adj;
       },
       eased: 90,
+      get isInactive() {
+        return Math.abs(this.target - this.eased) < 0.5;
+      },
     },
     get pan() {
-      return round(
+      return (
         -room.range.hor.eased +
-          (room.x.eased / win.w) * room.range.hor.cone +
-          room.range.adj.eased
+        (room.x.eased / win.w) * room.range.hor.cone +
+        room.range.adj.eased
       );
     },
     get tilt() {
-      return round(
+      return (
         room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
       );
     },
@@ -315,6 +328,9 @@ function refresh(timeStamp) {
   multiplier = diff / frameDurationBenchmark || 1;
 
   easedTraits.forEach((trait) => {
+    if (trait.isInactive) {
+      return;
+    }
     ease(trait);
   });
 
@@ -323,6 +339,11 @@ function refresh(timeStamp) {
   cursorEl.style = `transform: translate3d(${cursor.x.eased - cursor.half}px, ${
     cursor.y.eased - cursor.half
   }px, 0)`;
+
+  if (debounceSwitch) {
+    updateHoveredEl();
+  }
+  debounceSwitch = !debounceSwitch;
 
   while (domChangeQueue.length) {
     change = domChangeQueue.shift();
@@ -337,11 +358,6 @@ function refresh(timeStamp) {
     } else if (change[0] === 5) {
       change[1].removeAttribute(change[2]);
     }
-  }
-
-  debounceSwitch = !debounceSwitch;
-  if (debounceSwitch) {
-    updateHoveredEl();
   }
 
   requestAnimationFrame(refresh);
@@ -395,6 +411,15 @@ root.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", (e) => {
+  cursor.x.target = e.pageX;
+  cursor.y.target = e.pageY;
+  if (cursorEl.hasAttribute("hide")) {
+    remBool(cursorEl, "hide");
+  }
+});
+
+//UPDATE THE TOUCH POINTER
+document.addEventListener("touchmove", (e) => {
   cursor.x.target = e.pageX;
   cursor.y.target = e.pageY;
   if (cursorEl.hasAttribute("hide")) {
