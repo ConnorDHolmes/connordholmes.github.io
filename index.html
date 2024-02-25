@@ -33,8 +33,10 @@
       <c-room>
         <nav>
           <c-buttons>
-            <button id="start-button" data-h data-text>Works</button>
-            <button data-h data-text>Resume</button>
+            <button aria-label="See Works" id="start-button" data-h data-text>
+              Works
+            </button>
+            <button aria-label="See Resume" data-h data-text>Resume</button>
           </c-buttons>
         </nav>
         <header>
@@ -43,7 +45,6 @@
         </header>
         <main>
           <c-screen>
-            <c-gradient></c-gradient>
             <c-list data-m>
               <h3 class="hide" data-h data-m data-text>Ares Security Corp</h3>
               <h3 class="hide" data-h data-m data-text>Keep Company</h3>
@@ -64,6 +65,7 @@
       <span>© connor holmes</span>
       <div class="controls">
         <span
+          id="hidden-key"
           aria-label="Press Shift to toggle between a focused and free-look view."
           class="hide"
           >view<span class="key">shift</span></span
@@ -92,5 +94,7 @@
   * Possibly increase room nesting so that one div handles the room rotation adjustment, and one div handles the zoom adjustment.
     Then those could be handled with transitions, not the JS easing.
 
-  * add and remove certain items from the easing queue based on whether the target val is changing
+  * try to leverage webanimations api. There has to be a way.
+  * when hovering h3, ">" becomes visible. On click, it animates to "<".
+  * swap h3 pseudo elements so that it just has ">" as the before, and filter: inverts on hover
 -->

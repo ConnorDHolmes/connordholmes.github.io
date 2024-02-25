@@ -1,9 +1,12 @@
+"use strict";
+
 //MAIN ELEMENTS
 const root = document.documentElement;
 const body = document.body;
 const overlay = document.querySelector("c-overlay");
 const buttonsRow = document.querySelector("c-buttons");
 const startButton = buttonsRow.querySelector("#start-button");
+const hiddenKey = document.querySelector("#hidden-key");
 const screen = document.querySelector("c-screen");
 
 let currentlyHoveredEl = body;
@@ -261,8 +264,8 @@ function cloneScreen() {
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN GOES HERE
 
-  list.scrollTop = 1;
-  pairs.get(list).scrollTo(1, list.scrollTop);
+  const listClone = pairs.get(list);
+  listClone.scrollTop = list.scrollTop = 1;
 
   const itemHeight = listEntries[0].offsetHeight;
   const itemsGap = parseInt(
@@ -275,13 +278,12 @@ function cloneScreen() {
     (e) => {
       requestAnimationFrame(() => {
         if (list.scrollTop >= maxScroll) {
-          list.scrollTop = 1;
+          listClone.scrollTop = list.scrollTop = 1;
         } else if (list.scrollTop === 0) {
-          list.scrollTop = maxScroll - 1;
+          listClone.scrollTop = list.scrollTop = maxScroll - 1;
         } else {
-          list.scrollTop += e.deltaY;
+          listClone.scrollTop = list.scrollTop += e.deltaY;
         }
-        pairs.get(list).scrollTo(0, list.scrollTop);
       });
     },
     { passive: true }
@@ -334,9 +336,9 @@ function refresh(timeStamp) {
     ease(trait);
   });
 
-  roomEl.style = `transform: translate3d(${room.xPos}px, ${room.yPos}px, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
+  roomEl.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
 
-  cursorEl.style = `transform: translate3d(${cursor.x.eased - cursor.half}px, ${
+  cursorEl.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
     cursor.y.eased - cursor.half
   }px, 0)`;
 
@@ -346,7 +348,7 @@ function refresh(timeStamp) {
   debounceSwitch = !debounceSwitch;
 
   while (domChangeQueue.length) {
-    change = domChangeQueue.shift();
+    const change = domChangeQueue.shift();
     if (change[0] === 1) {
       change[1].classList.add(change[2]);
     } else if (change[0] === 2) {
@@ -365,7 +367,7 @@ function refresh(timeStamp) {
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function measureAndSize() {
-  sceneEl.style = `transform: translate(${scene.x}px, ${scene.y}px) scale(${scene.scale})`;
+  sceneEl.style.transform = `scale(${scene.scale})`;
   resetView();
 }
 
@@ -389,7 +391,8 @@ function navToScreen() {
   addBool(buttonsRow, "hide");
   setTimeout(() => {
     room.range.mode = "focused";
-    remCl(document.querySelector("footer span.hide"), "hide");
+    remCl(hiddenKey, "hide");
+    addCl(roomEl, "hide-backface");
   }, 500);
   setTimeout(() => {
     list.querySelectorAll("h3").forEach((header, index) => {
@@ -411,15 +414,6 @@ root.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", (e) => {
-  cursor.x.target = e.pageX;
-  cursor.y.target = e.pageY;
-  if (cursorEl.hasAttribute("hide")) {
-    remBool(cursorEl, "hide");
-  }
-});
-
-//UPDATE THE TOUCH POINTER
-document.addEventListener("touchmove", (e) => {
   cursor.x.target = e.pageX;
   cursor.y.target = e.pageY;
   if (cursorEl.hasAttribute("hide")) {
