@@ -4,9 +4,9 @@
 const root = document.documentElement;
 const body = document.body;
 const overlay = document.querySelector("c-overlay");
-const buttonsRow = document.querySelector("c-buttons");
-const startButton = buttonsRow.querySelector("#start-button");
-const hiddenKey = document.querySelector("#hidden-key");
+const nav = document.querySelector("nav");
+const startButton = document.getElementById("start-button");
+const hiddenKey = document.getElementById("hidden-key");
 const screen = document.querySelector("c-screen");
 
 const domChangeQueue = [];
@@ -79,8 +79,8 @@ const cursor = {
 
 //CAMERA CONFIGS
 const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 4, vert: 3, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 90, vert: 60, zoom: 512, adj: 0 });
+cameraPos.set("orbit", { hor: 3, vert: 2, zoom: -1024, adj: 90 });
+cameraPos.set("normal", { hor: 120, vert: 50, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -168,11 +168,8 @@ const room = {
 //ALL EASING VALS
 cursor.x.ease = cursor.y.ease = 0.25;
 room.x.ease = room.y.ease = 0.15;
-room.range.hor.ease =
-  room.range.vert.ease =
-  room.range.zoom.ease =
-  room.range.adj.ease =
-    0.05;
+room.range.hor.ease = room.range.vert.ease = room.range.adj.ease = 0.05;
+room.range.zoom.ease = 0.035;
 
 //LIST OF ALL TRAITS TO BE EASED EACH FRAME
 const easedTraits = [
@@ -381,19 +378,20 @@ function reveal() {
 
 //ENTER FOCUSED MODE FROM "WORK" BUTTON
 function navToScreen() {
-  addBool(buttonsRow, "hide");
+  addCl(nav, "hide");
   setTimeout(() => {
     room.range.mode = "focused";
     remCl(hiddenKey, "hide");
     addCl(roomEl, "hide-backface");
-  }, 500);
-  setTimeout(() => {
-    list.querySelectorAll("h3").forEach((header, index) => {
-      setTimeout(() => {
-        remCl(header, "hide");
-      }, index * 100);
-    });
-  }, 1000);
+    addCl(nav, "remove");
+  }, 350);
+  // setTimeout(() => {
+  //   list.querySelectorAll("h3").forEach((header, index) => {
+  //     setTimeout(() => {
+  //       remCl(header, "hide");
+  //     }, index * 100);
+  //   });
+  // }, 1000);
 }
 
 //SCALE SCENE ON WINDOW RESIZE

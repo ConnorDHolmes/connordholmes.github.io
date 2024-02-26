@@ -1,6 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300;400;500;600;700;800;900&display=swap");
-
 :root {
   --mode-swap: 0.5s ease;
   --bgr: #111;
@@ -31,7 +28,6 @@ c-overlay,
 nav,
 header,
 main,
-c-buttons,
 c-buttons::after,
 button::before,
 button::after,
@@ -83,8 +79,6 @@ footer .controls span:not(.key)::after {
 c-cursor,
 c-scene,
 c-room,
-nav,
-header,
 main {
   contain: layout size;
 }
@@ -99,6 +93,7 @@ body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
+  color: var(--acc);
   background-color: var(--bgr);
   transition: background-color var(--mode-swap);
   overflow: hidden;
@@ -167,7 +162,7 @@ body::after {
   inset: 0 auto auto 0;
   width: calc(100% + 128px);
   height: calc(100% + 128px);
-  background-image: url("images/noise_overlay_op.webp");
+  background-image: url("images/noise_overlay.webp");
   background-size: 75% auto;
   animation: 0.25s noise steps(3) infinite;
 }
@@ -201,6 +196,8 @@ c-scene {
 c-room {
   width: 1024px;
   height: 576px;
+  /* initial transform setting */
+  transform: translate3d(0, 0, -1024px) rotate3d(0, 1, 0, 90deg);
   backface-visibility: visible;
   transform-style: preserve-3d;
 }
@@ -209,75 +206,40 @@ c-room.hide-backface {
   backface-visibility: hidden;
 }
 
-nav,
-header,
-main {
-  inset: 0;
-  width: 1024px;
-  height: 576px;
-}
-
 nav {
+  contain: layout;
+  inset: auto 384px 129px 384px;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
   transform-style: preserve-3d;
   transform: rotateY(-90deg) translateZ(512px);
 }
 
-c-buttons {
-  contain: layout;
-  will-change: visibility;
-  left: 50%;
-  bottom: 64px;
-  display: flex;
-  transform-style: preserve-3d;
-  transform: translateX(-50%);
-  gap: 24px;
-  transition: visibility 0s linear 0.25s;
-}
-
-c-buttons[hide] {
-  visibility: hidden;
-}
-
-c-buttons::after {
-  will-change: opacity;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: translateZ(36px) scale(1.5);
-  background-color: var(--bgr);
-  opacity: 0;
-  transition: opacity 0.25s ease, background-color var(--mode-swap);
-}
-
-c-buttons[hide]::after {
-  opacity: 1;
-}
-
 button {
   contain: layout;
+  position: relative;
   padding: 12px 18px;
   pointer-events: auto;
-  position: relative;
   border-radius: 32px;
-  box-shadow: inset 0 0.5px 0 1px var(--acc);
   background-color: transparent;
   color: transparent;
   border: none;
+  font-family: inherit;
   font-size: 18px;
   line-height: 120%;
-  font-weight: 400;
-  font-family: inherit;
   text-transform: lowercase;
   letter-spacing: 0.05em;
   transform-style: preserve-3d;
-  transition: box-shadow var(--mode-swap), color var(--mode-swap),
-    background-color var(--mode-swap);
+  box-shadow: inset 0 0.5px 0 1px var(--acc);
+  transition: transform 0.25s ease, box-shadow var(--mode-swap),
+    color var(--mode-swap), background-color var(--mode-swap);
   cursor: none;
 }
 
 button:focus {
-  border: none !important;
-  outline: none !important;
+  border: none;
+  outline: none;
 }
 
 .light-mode button {
@@ -300,28 +262,32 @@ button.hover::before {
 
 button::after {
   content: attr(data-text);
-  will-change: filter;
+  will-change: filter, opacity;
   inset: 0;
   padding: inherit;
   color: var(--acc);
-  transition: filter 0.25s ease, color var(--mode-swap);
-  transform: translate3d(0, -6px, 32px);
   filter: invert(0);
+  transform: translate3d(0, -4px, 32px);
+  transition: filter 0.25s ease, color var(--mode-swap);
 }
 
 button.hover::after {
   filter: invert(1);
 }
 
-c-buttons[hide] button {
-  pointer-events: none;
+nav.hide button {
+  transform: scale3d(0, 0, 0);
+}
+
+nav.remove {
+  display: none;
 }
 
 header {
-  transform: rotateY(-90deg) translate3d(0, 144px, -768px);
-  height: 288px;
+  contain: layout;
+  inset: 144px 0 auto 0;
   text-align: center;
-  color: var(--acc);
+  transform: rotateY(-90deg) translateZ(-768px);
   transition: color var(--mode-swap);
 }
 
@@ -332,8 +298,12 @@ h3 {
   text-transform: lowercase;
 }
 
-h1 {
+h1,
+h3 {
   font-family: "Unbounded";
+}
+
+h1 {
   font-size: 112px;
   font-weight: 400;
 }
@@ -345,6 +315,7 @@ h2 {
 }
 
 main {
+  inset: 0;
   transform: translateZ(-512px);
 }
 
@@ -407,7 +378,6 @@ c-screen::before {
   width: 2016px;
   height: 1120px;
   background: linear-gradient(to bottom right, orangered, magenta, orange);
-  /* background-image: url("images/background_gradient_op.webp"); */
   background-size: 2016px 1120px;
   transform: translate3d(0, 0, 0);
   transition: transform var(--mode-swap);
@@ -426,7 +396,6 @@ c-list {
   align-items: flex-start;
   gap: var(--gap);
   color: var(--acc);
-  transform: translate3d(0, 0, 0);
   transition: color var(--mode-swap);
   overflow: hidden;
 }
@@ -434,14 +403,12 @@ c-list {
 h3 {
   contain: content;
   position: relative;
-  font-family: "Unbounded";
-  color: var(--acc);
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
   transform-origin: left;
   transform: translate3d(0, 0, 0);
-  transition: transform 0.25s ease, color var(--mode-swap);
+  transition: transform 0.25s ease;
   filter: invert(0);
 }
 
@@ -463,7 +430,6 @@ footer {
   padding: 16px 32px;
   align-items: center;
   font-size: 14px;
-  font-weight: 400;
   letter-spacing: 0.05em;
   color: #ccc;
   mix-blend-mode: exclusion;

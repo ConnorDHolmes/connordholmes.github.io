@@ -22,7 +22,15 @@
     <link rel="icon" href="/favicon.ico" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
+    <link rel="preload" as="image" href="images/noise_overlay.webp" />
     <link rel="stylesheet" href="styles.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..400&family=Unbounded:wght@300..400&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
@@ -31,12 +39,10 @@
     <c-scene>
       <c-room>
         <nav>
-          <c-buttons>
-            <button aria-label="See Works" id="start-button" data-h data-text>
-              Works
-            </button>
-            <button aria-label="See Resume" data-h data-text>Resume</button>
-          </c-buttons>
+          <button aria-label="See Works" id="start-button" data-h data-text>
+            Works
+          </button>
+          <button aria-label="See Resume" data-h data-text>Resume</button>
         </nav>
         <header>
           <h1>Connor Holmes</h1>
