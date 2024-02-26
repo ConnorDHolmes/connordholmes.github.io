@@ -9,6 +9,8 @@ const startButton = buttonsRow.querySelector("#start-button");
 const hiddenKey = document.querySelector("#hidden-key");
 const screen = document.querySelector("c-screen");
 
+const domChangeQueue = [];
+
 let currentlyHoveredEl = body;
 /* use this to skip run an action every other frame */
 let debounceSwitch = true;
@@ -114,7 +116,7 @@ const room = {
       get target() {
         return cameraPos.get(room.range.mode).zoom;
       },
-      eased: -2048,
+      eased: -1024,
       get isInactive() {
         return Math.abs(this.target - this.eased) < 0.5;
       },
@@ -191,8 +193,6 @@ function populateDataText() {
   });
 }
 
-const domChangeQueue = [];
-
 //ADD CLASS
 function addCl(el, className) {
   domChangeQueue.push([1, el, className]);
@@ -233,19 +233,14 @@ function cloneScreen() {
 
   const screenDescendants = screen.querySelectorAll("*");
   const pairs = new Map();
-  //MUTATION OBSERVER AND CALLBACK FUNCTION
-  const classObserver = new MutationObserver(onClassListChange);
-  function onClassListChange(changes) {
+  //REFLECTION MUTATION OBSERVER AND CALLBACK
+  function onScreenChange(changes) {
     changes.forEach((change) => {
-      if (change.attributeName === "class") {
-        pairs.get(change.target).classList = change.target.classList;
-      } else if (change.attributeName === "style") {
-        pairs
-          .get(change.target)
-          .setAttribute("style", change.target.getAttribute("style"));
-      }
+      pairs.get(change.target).classList = change.target.classList;
     });
   }
+  const reflectionObserver = new MutationObserver(onScreenChange);
+
   //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE (MUTABLE OR HOVERABLE)
   screenDescendants.forEach((descendant, index) => {
     if (
@@ -253,17 +248,15 @@ function cloneScreen() {
       descendant.hasAttribute("data-h")
     ) {
       pairs.set(descendant, reflection.querySelectorAll("*")[index]);
-      //REMOVE ID FROM CLONED ELEMENTS
-      pairs.get(descendant).removeAttribute("id");
-
-      classObserver.observe(descendant, {
-        attributeFilter: ["class", "style"],
+      reflectionObserver.observe(descendant, {
+        attributeFilter: ["class"],
       });
     }
   });
 
   //ALL JS FUNCTIONALITY WITHIN SCREEN GOES HERE
 
+  //list scrolling and looping
   const listClone = pairs.get(list);
   listClone.scrollTop = list.scrollTop = 1;
 
