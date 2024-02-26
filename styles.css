@@ -55,6 +55,7 @@ c-list {
   contain: strict;
 }
 
+body::after,
 c-cursor::after,
 c-buttons::after,
 button::before,
@@ -163,8 +164,6 @@ body:active c-cursor[clickable]::after {
 }
 
 body::after {
-  content: "";
-  position: absolute;
   inset: 0 auto auto 0;
   width: calc(100% + 128px);
   height: calc(100% + 128px);
