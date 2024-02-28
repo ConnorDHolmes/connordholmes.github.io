@@ -9,8 +9,6 @@ const startButton = document.getElementById("start-button");
 const hiddenKey = document.getElementById("hidden-key");
 const screen = document.querySelector("c-screen");
 
-const domChangeQueue = [];
-
 let currentlyHoveredEl = body;
 /* use this to skip run an action every other frame */
 let debounceSwitch = true;
@@ -192,27 +190,27 @@ function populateDataText() {
 
 //ADD CLASS
 function addCl(el, className) {
-  domChangeQueue.push([1, el, className]);
+  el.classList.add(className);
 }
 
 //REMOVE CLASS
 function remCl(el, className) {
-  domChangeQueue.push([2, el, className]);
+  el.classList.remove(className);
 }
 
 //TOGGLE CLASS
 function togCl(el, className) {
-  domChangeQueue.push([3, el, className]);
+  el.classList.toggle(className);
 }
 
 //ADD BOOLEAN ATTRIBUTE
 function addBool(el, attribute) {
-  domChangeQueue.push([4, el, attribute]);
+  el.setAttribute(attribute, "");
 }
 
 //REMOVE BOOLEAN ATTRIBUTE
 function remBool(el, attribute) {
-  domChangeQueue.push([5, el, attribute]);
+  el.removeAttribute(attribute);
 }
 
 //CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
@@ -336,21 +334,6 @@ function refresh(timeStamp) {
     updateHoveredEl();
   }
   debounceSwitch = !debounceSwitch;
-
-  while (domChangeQueue.length) {
-    const change = domChangeQueue.shift();
-    if (change[0] === 1) {
-      change[1].classList.add(change[2]);
-    } else if (change[0] === 2) {
-      change[1].classList.remove(change[2]);
-    } else if (change[0] === 3) {
-      change[1].classList.toggle(change[2]);
-    } else if (change[0] === 4) {
-      change[1].setAttribute(change[2], "");
-    } else if (change[0] === 5) {
-      change[1].removeAttribute(change[2]);
-    }
-  }
 
   requestAnimationFrame(refresh);
 }
