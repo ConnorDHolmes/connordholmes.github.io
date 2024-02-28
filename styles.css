@@ -39,7 +39,7 @@ c-reflection::after,
 c-list,
 h3::after,
 footer,
-footer .controls span:not(.key)::after {
+c-control::before {
   position: absolute;
 }
 
@@ -61,7 +61,8 @@ c-reflection::before,
 c-reflection::after,
 h3::before,
 h3::after,
-footer .controls span:not(.key)::after {
+c-control::before,
+c-control::after {
   content: "";
   box-sizing: border-box;
   backface-visibility: hidden;
@@ -72,7 +73,7 @@ body::after,
 c-overlay.reveal,
 c-scene,
 c-screen[reflection],
-footer .controls span:not(.key)::after {
+c-control::before {
   pointer-events: none;
 }
 
@@ -387,6 +388,7 @@ c-screen::before {
 }
 
 c-list {
+  will-change: scroll-position;
   --gap: 40px;
   width: 1008px;
   height: 560px;
@@ -423,58 +425,41 @@ h3:last-child {
 
 footer {
   contain: layout;
-  inset: auto 0 0 0;
+  inset: auto 32px 16px 32px;
   z-index: 50;
   display: flex;
-  padding: 16px 32px;
   align-items: center;
+  gap: 24px;
   font-size: 14px;
   letter-spacing: 0.05em;
+  line-height: 110%;
+  text-transform: lowercase;
   color: var(--accent);
   transition: color var(--mode-swap);
 }
 
 footer span {
-  line-height: 110%;
+  margin-right: auto;
 }
 
-footer .controls {
-  display: flex;
-  align-items: center;
-  gap: 24px;
+c-control {
+  position: relative;
+  display: block;
 }
 
-footer .controls span:first-child {
+c-control:nth-child(2) {
   will-change: opacity;
   transition: opacity 0.5s ease;
 }
 
-footer span:first-child {
-  margin-right: auto;
-}
-
-footer span.hide {
+c-control[hide] {
   opacity: 0;
 }
 
-footer .key {
-  margin-left: 0.5em;
-  display: inline-flex;
-  justify-content: center;
-  padding: 4px 8px;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  min-width: 2em;
-}
-
-footer .controls span {
-  position: relative;
-}
-
-footer .controls span:not(.key)::after {
-  will-change: transform, opacity;
+c-control::before {
   content: attr(aria-label);
-  padding: 6px;
+  will-change: transform, opacity;
+  padding: 4px 6px 6px 6px;
   inset: auto auto calc(100% + 12px) -16px;
   width: calc(100% + 32px);
   background-color: var(--acc);
@@ -483,14 +468,26 @@ footer .controls span:not(.key)::after {
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.025em;
-  text-transform: lowercase;
   opacity: 0;
   transform: translate3d(0, 8px, 0);
   transition: opacity 0.15s ease, transform 0.25s ease,
     background-color var(--mode-swap), color var(--mode-swap);
 }
 
-footer .controls span:not(.key):hover::after {
+c-control:hover::before {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+}
+
+/* mode swap transition is acting weird on border color on safari */
+c-control::after {
+  content: attr(data-key);
+  margin-left: 0.5em;
+  display: inline-flex;
+  justify-content: center;
+  padding: 4px 8px;
+  border: 1px solid var(--acc);
+  border-color: inherit;
+  border-radius: 4px;
+  min-width: 2em;
 }

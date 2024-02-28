@@ -6,7 +6,7 @@ const body = document.body;
 const overlay = document.querySelector("c-overlay");
 const nav = document.querySelector("nav");
 const startButton = document.getElementById("start-button");
-const hiddenKey = document.getElementById("hidden-key");
+const hiddenKey = document.querySelector("c-control[hide]");
 const screen = document.querySelector("c-screen");
 
 let currentlyHoveredEl = body;
@@ -364,7 +364,7 @@ function navToScreen() {
   addCl(nav, "hide");
   setTimeout(() => {
     room.range.mode = "focused";
-    remCl(hiddenKey, "hide");
+    remBool(hiddenKey, "hide");
     addCl(roomEl, "hide-backface");
     addCl(nav, "remove");
   }, 350);

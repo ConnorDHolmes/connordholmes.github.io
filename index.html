@@ -68,20 +68,22 @@
 
     <footer>
       <span>© connor holmes</span>
-      <div class="controls">
-        <span
-          id="hidden-key"
-          aria-label="Press Shift to toggle between a focused and free-look view."
-          class="hide"
-          >view<span class="key">shift</span></span
-        >
-        <span aria-label="Press E to toggle the noise and reflection effects."
-          >effects<span class="key">e</span></span
-        >
-        <span aria-label="Press M to swap between light and dark mode."
-          >theme<span class="key">m</span></span
-        >
-      </div>
+      <c-control
+        aria-label="Press Shift to toggle between a focused and free-look view."
+        data-key="Shift"
+        hide
+        >view</c-control
+      >
+      <c-control
+        aria-label="Press E to toggle the noise and reflection effects."
+        data-key="E"
+        >effects</c-control
+      >
+      <c-control
+        aria-label="Press M to swap between light and dark mode."
+        data-key="M"
+        >theme</c-control
+      >
     </footer>
 
     <c-cursor></c-cursor>
@@ -91,15 +93,11 @@
 </html>
 
 <!--
-  * Want to simplify <nav> nesting so that <c-buttons> isn't necessary
   * Need to create new pair map + mutation observer to watch the list entry clones, to reduce visual glitches with the scroll wrapping
   * Change body light class to a media query on body for color mode preference (so that color doesn't immediately change on load) OR OTHER SOLUTION
   * Determine how project info will appear and be displayed
   * Consolidate css classes with overlapping styles
-  * Possibly increase room nesting so that one div handles the room rotation adjustment, and one div handles the zoom adjustment.
-    Then those could be handled with transitions, not the JS easing.
 
-  * try to leverage webanimations api. There has to be a way.
   * when hovering h3, ">" becomes visible. On click, it animates to "<".
   * swap h3 pseudo elements so that it just has ">" as the before, and filter: inverts on hover
 -->
