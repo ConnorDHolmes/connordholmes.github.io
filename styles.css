@@ -115,10 +115,10 @@ body.performance-mode {
 /* CURSOR */
 
 c-cursor {
-  will-change: transform, opacity;
+  will-change: opacity;
   inset: 0;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   mix-blend-mode: exclusion;
   opacity: 1;
 }
@@ -208,7 +208,7 @@ c-room.hide-backface {
 
 nav {
   contain: layout;
-  inset: auto 384px 144px 384px;
+  inset: auto 384px 160px 384px;
   display: flex;
   gap: 24px;
   justify-content: center;
@@ -280,6 +280,7 @@ nav.hide button {
 }
 
 nav.remove {
+  visibility: hidden;
   display: none;
 }
 
@@ -323,7 +324,7 @@ c-screen {
   inset: 8px;
   width: 1008px;
   height: 560px;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   pointer-events: auto;
 }
@@ -425,7 +426,7 @@ h3:last-child {
 
 footer {
   contain: layout;
-  inset: auto 32px 16px 32px;
+  inset: auto 16px 16px 16px;
   z-index: 50;
   display: flex;
   align-items: center;
@@ -458,20 +459,20 @@ c-control[hide] {
 
 c-control::before {
   content: attr(aria-label);
-  will-change: transform, opacity;
+  inset: auto 0 calc(100% + 8px) auto;
+  width: calc(100% + 44px);
   padding: 4px 6px 6px 6px;
-  inset: auto auto calc(100% + 12px) -16px;
-  width: calc(100% + 32px);
-  background-color: var(--acc);
-  border-radius: 4px;
-  color: var(--bgr);
+  background-color: var(--bgr);
+  border: 0.25px solid;
+  border-color: inherit;
+  border-radius: 8px 8px 0 8px;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.025em;
   opacity: 0;
-  transform: translate3d(0, 8px, 0);
+  transform: translate3d(0, 4px, 0);
   transition: opacity 0.15s ease, transform 0.25s ease,
-    background-color var(--mode-swap), color var(--mode-swap);
+    background-color var(--mode-swap);
 }
 
 c-control:hover::before {
@@ -479,14 +480,13 @@ c-control:hover::before {
   transform: translate3d(0, 0, 0);
 }
 
-/* mode swap transition is acting weird on border color on safari */
 c-control::after {
   content: attr(data-key);
-  margin-left: 0.5em;
+  margin-left: 0.4em;
   display: inline-flex;
   justify-content: center;
   padding: 4px 8px;
-  border: 1px solid var(--acc);
+  border: 1px solid;
   border-color: inherit;
   border-radius: 4px;
   min-width: 2em;

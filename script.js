@@ -77,8 +77,8 @@ const cursor = {
 
 //CAMERA CONFIGS
 const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 3, vert: 2, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 120, vert: 50, zoom: 512, adj: 0 });
+cameraPos.set("orbit", { hor: 3, vert: 1, zoom: -1024, adj: 90 });
+cameraPos.set("normal", { hor: 100, vert: 50, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -204,12 +204,12 @@ function togCl(el, className) {
 }
 
 //ADD BOOLEAN ATTRIBUTE
-function addBool(el, attribute) {
+function addBl(el, attribute) {
   el.setAttribute(attribute, "");
 }
 
 //REMOVE BOOLEAN ATTRIBUTE
-function remBool(el, attribute) {
+function remBl(el, attribute) {
   el.removeAttribute(attribute);
 }
 
@@ -224,7 +224,7 @@ function cloneListEntries() {
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
   const reflection = screen.cloneNode(true);
-  addBool(reflection, "reflection");
+  addBl(reflection, "reflection");
 
   const screenDescendants = screen.querySelectorAll("*");
   const pairs = new Map();
@@ -302,11 +302,11 @@ function updateHoveredEl() {
   ) {
     addCl(currentlyHoveredEl, "hover");
     if (!cursorEl.hasAttribute("clickable")) {
-      addBool(cursorEl, "clickable");
+      addBl(cursorEl, "clickable");
     }
   } else {
     if (cursorEl.hasAttribute("clickable")) {
-      remBool(cursorEl, "clickable");
+      remBl(cursorEl, "clickable");
     }
   }
 }
@@ -348,7 +348,7 @@ function measureAndSize() {
 function resetView() {
   cursor.x.target = win.midX;
   cursor.y.target = win.midY;
-  addBool(cursorEl, "hide");
+  addBl(cursorEl, "hide");
 }
 
 //REMOVE INITIAL OVERLAY
@@ -364,7 +364,7 @@ function navToScreen() {
   addCl(nav, "hide");
   setTimeout(() => {
     room.range.mode = "focused";
-    remBool(hiddenKey, "hide");
+    remBl(hiddenKey, "hide");
     addCl(roomEl, "hide-backface");
     addCl(nav, "remove");
   }, 350);
@@ -391,7 +391,7 @@ document.addEventListener("mousemove", (e) => {
   cursor.x.target = e.pageX;
   cursor.y.target = e.pageY;
   if (cursorEl.hasAttribute("hide")) {
-    remBool(cursorEl, "hide");
+    remBl(cursorEl, "hide");
   }
 });
 
