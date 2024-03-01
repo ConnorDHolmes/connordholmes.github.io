@@ -78,7 +78,7 @@ const cursor = {
 //CAMERA CONFIGS
 const cameraPos = new Map();
 cameraPos.set("orbit", { hor: 3, vert: 1, zoom: -1024, adj: 90 });
-cameraPos.set("normal", { hor: 100, vert: 50, zoom: 512, adj: 0 });
+cameraPos.set("normal", { hor: 95, vert: 50, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
 //ROOM
@@ -167,7 +167,7 @@ const room = {
 cursor.x.ease = cursor.y.ease = 0.25;
 room.x.ease = room.y.ease = 0.15;
 room.range.hor.ease = room.range.vert.ease = room.range.adj.ease = 0.05;
-room.range.zoom.ease = 0.035;
+room.range.zoom.ease = 0.04;
 
 //LIST OF ALL TRAITS TO BE EASED EACH FRAME
 const easedTraits = [
@@ -217,6 +217,7 @@ function remBl(el, attribute) {
 function cloneListEntries() {
   listEntries.forEach((entry) => {
     const clone = entry.cloneNode(true);
+
     list.append(clone);
   });
 }
@@ -281,7 +282,7 @@ function cloneScreen() {
   document.querySelector("c-reflection").append(reflection);
 }
 
-//EASING FUNCTION (WITH MULTIPLIER)
+//ANIMATION EASING FUNCTION (WITH MULTIPLIER)
 function ease(val) {
   val.eased += (val.target - val.eased) * (val.ease * multiplier);
 }

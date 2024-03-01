@@ -73,6 +73,7 @@ body::after,
 c-overlay.reveal,
 c-scene,
 c-screen[reflection],
+footer,
 c-control::before {
   pointer-events: none;
 }
@@ -404,7 +405,7 @@ c-list {
 
 h3 {
   contain: content;
-  position: relative;
+  /* position: relative; */
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
@@ -444,24 +445,22 @@ footer span {
 }
 
 c-control {
-  position: relative;
-  display: block;
-}
-
-c-control:nth-child(2) {
   will-change: opacity;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.35s ease;
+  transform: translate3d(0, 0, 0);
+  pointer-events: auto;
 }
 
 c-control[hide] {
+  pointer-events: none;
   opacity: 0;
 }
 
 c-control::before {
   content: attr(aria-label);
   inset: auto 0 calc(100% + 8px) auto;
-  width: calc(100% + 44px);
-  padding: 4px 6px 6px 6px;
+  width: calc(100% + 48px);
+  padding: 6px 8px 8px 8px;
   background-color: var(--bgr);
   border: 0.25px solid;
   border-color: inherit;
@@ -490,4 +489,8 @@ c-control::after {
   border-color: inherit;
   border-radius: 4px;
   min-width: 2em;
+}
+
+footer:hover > c-control:not(:hover):not([hide]) {
+  opacity: 0.5;
 }
