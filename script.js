@@ -3,13 +3,16 @@
 //MAIN ELEMENTS
 const root = document.documentElement;
 const body = document.body;
-const overlay = document.querySelector("c-overlay");
 const nav = document.querySelector("nav");
 const startButton = document.getElementById("start-button");
 const hiddenKey = document.querySelector("c-control[hide]");
 const screen = document.querySelector("c-screen");
 
-let currentlyHoveredEl = body;
+//PROJECT LIST
+const list = document.querySelector("c-list");
+const listEntries = list.querySelectorAll("h3");
+const listCount = listEntries.length;
+
 /* use this to skip run an action every other frame */
 let debounceSwitch = true;
 
@@ -17,11 +20,6 @@ let debounceSwitch = true;
 function round(num) {
   return Math.round(num * 1000) * 0.001;
 }
-
-//PROJECT LIST
-const list = document.querySelector("c-list");
-const listEntries = list.querySelectorAll("h3");
-const listCount = listEntries.length;
 
 //RAF SPEED CONTROL
 const fpsBenchmark = 60;
@@ -77,7 +75,7 @@ const cursor = {
 
 //CAMERA CONFIGS
 const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 3, vert: 1, zoom: -1024, adj: 90 });
+cameraPos.set("orbit", { hor: 3, vert: 1, zoom: -864, adj: 90 });
 cameraPos.set("normal", { hor: 95, vert: 50, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
@@ -217,7 +215,6 @@ function remBl(el, attribute) {
 function cloneListEntries() {
   listEntries.forEach((entry) => {
     const clone = entry.cloneNode(true);
-
     list.append(clone);
   });
 }
@@ -265,15 +262,13 @@ function cloneScreen() {
   list.addEventListener(
     "wheel",
     (e) => {
-      requestAnimationFrame(() => {
-        if (list.scrollTop >= maxScroll) {
-          listClone.scrollTop = list.scrollTop = 1;
-        } else if (list.scrollTop === 0) {
-          listClone.scrollTop = list.scrollTop = maxScroll - 1;
-        } else {
-          listClone.scrollTop = list.scrollTop += e.deltaY;
-        }
-      });
+      if (list.scrollTop >= maxScroll) {
+        listClone.scrollTop = list.scrollTop = 1;
+      } else if (list.scrollTop === 0) {
+        listClone.scrollTop = list.scrollTop = maxScroll - 1;
+      } else {
+        listClone.scrollTop = list.scrollTop += e.deltaY;
+      }
     },
     { passive: true }
   );
@@ -289,26 +284,21 @@ function ease(val) {
 
 //UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
-  const prevEl = currentlyHoveredEl;
-  currentlyHoveredEl = document.elementFromPoint(
-    cursor.x.eased,
-    cursor.y.eased
-  );
-  if (prevEl !== null && prevEl !== currentlyHoveredEl) {
-    remCl(prevEl, "hover");
-  }
-  if (
-    currentlyHoveredEl !== null &&
-    currentlyHoveredEl.hasAttribute("data-h")
-  ) {
-    addCl(currentlyHoveredEl, "hover");
-    if (!cursorEl.hasAttribute("clickable")) {
-      addBl(cursorEl, "clickable");
-    }
+  const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
+  if (hoverableEls.includes(el)) {
+    hoverableEls.forEach((hoverableEl) => {
+      if (hoverableEl === el) {
+        addCl(hoverableEl, "hover");
+      } else {
+        remCl(hoverableEl, "hover");
+      }
+    });
+    addBl(cursorEl, "clickable");
   } else {
-    if (cursorEl.hasAttribute("clickable")) {
-      remBl(cursorEl, "clickable");
-    }
+    hoverableEls.forEach((hoverableEl) => {
+      remCl(hoverableEl, "hover");
+    });
+    remBl(cursorEl, "clickable");
   }
 }
 
@@ -316,7 +306,13 @@ function updateHoveredEl() {
 function refresh(timeStamp) {
   const diff = timeStamp - then;
   then = timeStamp;
-  multiplier = diff / frameDurationBenchmark || 1;
+  multiplier = diff / frameDurationBenchmark;
+
+  roomEl.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
+
+  cursorEl.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
+    cursor.y.eased - cursor.half
+  }px, 0)`;
 
   easedTraits.forEach((trait) => {
     if (trait.isInactive) {
@@ -324,12 +320,6 @@ function refresh(timeStamp) {
     }
     ease(trait);
   });
-
-  roomEl.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
-
-  cursorEl.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
-    cursor.y.eased - cursor.half
-  }px, 0)`;
 
   if (debounceSwitch) {
     updateHoveredEl();
@@ -354,10 +344,7 @@ function resetView() {
 
 //REMOVE INITIAL OVERLAY
 function reveal() {
-  addCl(overlay, "reveal");
-  setTimeout(() => {
-    overlay.remove();
-  }, 2000);
+  remCl(body, "overlay");
 }
 
 //ENTER FOCUSED MODE FROM "WORK" BUTTON
@@ -369,13 +356,6 @@ function navToScreen() {
     addCl(roomEl, "hide-backface");
     addCl(nav, "remove");
   }, 350);
-  // setTimeout(() => {
-  //   list.querySelectorAll("h3").forEach((header, index) => {
-  //     setTimeout(() => {
-  //       remCl(header, "hide");
-  //     }, index * 100);
-  //   });
-  // }, 1000);
 }
 
 //SCALE SCENE ON WINDOW RESIZE
@@ -456,6 +436,8 @@ if (window.matchMedia("(prefers-color-scheme: light)").matches) {
 
 populateDataText();
 cloneListEntries();
+//so that the clones will be included in hoverableEls
+const hoverableEls = [...document.querySelectorAll("[data-h]")];
 cloneScreen();
 addAllClickHandlers();
 measureAndSize();

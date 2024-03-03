@@ -1,6 +1,6 @@
 :root {
   --mode-swap: 0.5s ease;
-  --bgr: #111;
+  --bgr: #121212;
   --acc: #ccc;
 }
 
@@ -13,18 +13,18 @@
 
 html,
 body {
+  contain: none;
   height: 100vh;
   /* use dvh if available */
   height: 100dvh;
-  cursor: none;
+  cursor: none !important;
   overscroll-behavior: none;
 }
 
-c-overlay,
 c-cursor,
 c-cursor::after,
+body::before,
 body::after,
-c-overlay,
 nav,
 header,
 main,
@@ -36,7 +36,6 @@ c-screen::before,
 c-reflection,
 c-reflection::before,
 c-reflection::after,
-c-list,
 h3::after,
 footer,
 c-control::before {
@@ -51,6 +50,7 @@ c-list {
   contain: strict;
 }
 
+body::before,
 body::after,
 c-cursor::after,
 c-buttons::after,
@@ -69,8 +69,8 @@ c-control::after {
 }
 
 c-cursor,
+body::before,
 body::after,
-c-overlay.reveal,
 c-scene,
 c-screen[reflection],
 footer,
@@ -95,22 +95,66 @@ body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
+  overflow: hidden;
   color: var(--acc);
   background-color: var(--bgr);
   transition: background-color var(--mode-swap);
-  overflow: hidden;
   user-select: none;
   /* for safari */
   -webkit-user-select: none;
 }
 
-body.light-mode {
+body::before {
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  background-color: var(--bgr);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 1s ease 1s, visibility 1s ease 1s;
+}
+
+@keyframes noise {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-64px, -128px, 0);
+  }
+  100% {
+    transform: translate3d(-128px, -64px, 0);
+  }
+}
+
+body::after {
+  inset: 0 auto auto 0;
+  width: calc(100% + 128px);
+  height: calc(100% + 128px);
+  background-image: url("images/noise_overlay.webp");
+  background-size: 1200px auto;
+  animation: 0.25s noise steps(3) infinite;
+}
+
+.light-mode {
   --bgr: #ccc;
   --acc: #151515;
 }
 
-body.performance-mode {
+.overlay,
+.performance-mode {
   --mode-swap: 0s linear;
+}
+
+.overlay::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.performance-mode::after {
+  animation: none;
+  display: none;
 }
 
 /* CURSOR */
@@ -145,62 +189,27 @@ c-cursor[clickable]::after {
 }
 
 body:active c-cursor[clickable]::after {
+  transition-duration: 0.1s;
   transform: scale3d(1.5, 1.5, 1);
-}
-
-@keyframes noise {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(-64px, -128px, 0);
-  }
-  100% {
-    transform: translate3d(-128px, -64px, 0);
-  }
-}
-
-body::after {
-  inset: 0 auto auto 0;
-  width: calc(100% + 128px);
-  height: calc(100% + 128px);
-  background-image: url("images/noise_overlay.webp");
-  background-size: 1200px auto;
-  animation: 0.25s noise steps(3) infinite;
-}
-
-.performance-mode::after {
-  animation: none;
-  display: none;
-}
-
-c-overlay {
-  inset: 0;
-  z-index: 100;
-  background-color: var(--bgr);
-  opacity: 1;
-  transition: opacity 1s ease 1s;
-}
-
-c-overlay.reveal {
-  opacity: 0;
 }
 
 /* 3D SCENE */
 
 c-scene {
   width: 576px;
-  height: 676px;
+  /* height: 676px; */
+  height: 740px;
   perspective: 1024px;
 }
 
 c-room {
+  will-change: transform;
   width: 1024px;
   height: 576px;
   backface-visibility: visible;
   transform-style: preserve-3d;
   /* initial transform setting */
-  transform: translate3d(0, 0, -1024px) rotate3d(0, 1, 0, 90deg);
+  transform: translate3d(0, 0, -864px) rotate3d(0, 1, 0, 90deg);
 }
 
 c-room.hide-backface {
@@ -235,7 +244,7 @@ button {
   box-shadow: inset 0 0.5px 0 1px var(--acc);
   transition: transform 0.25s ease, box-shadow var(--mode-swap),
     color var(--mode-swap), background-color var(--mode-swap);
-  cursor: none;
+  cursor: none !important;
 }
 
 button:focus {
@@ -281,8 +290,13 @@ nav.hide button {
 }
 
 nav.remove {
+  transform-style: flat;
   visibility: hidden;
   display: none;
+}
+
+nav.remove button {
+  transform-style: flat;
 }
 
 header {
@@ -332,6 +346,7 @@ c-screen {
 
 c-reflection {
   filter: blur(4px) opacity(0.6);
+  transform: translate3d(0, 0, 0);
   inset: 584px auto auto 8px;
   width: 1008px;
   height: 560px;
@@ -352,12 +367,12 @@ c-reflection::after {
 
 c-reflection::before {
   opacity: 1;
-  background: linear-gradient(to top, #111 50%, transparent);
+  background: linear-gradient(to top, #121212 60%, transparent);
 }
 
 c-reflection::after {
   opacity: 0;
-  background: linear-gradient(to top, #ccc 50%, transparent);
+  background: linear-gradient(to top, #ccc 60%, transparent);
 }
 
 .light-mode c-reflection::before {
@@ -392,8 +407,8 @@ c-screen::before {
 c-list {
   will-change: scroll-position;
   --gap: 40px;
-  width: 1008px;
-  height: 560px;
+  width: inherit;
+  height: inherit;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -405,7 +420,6 @@ c-list {
 
 h3 {
   contain: content;
-  /* position: relative; */
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
