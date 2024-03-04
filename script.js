@@ -12,6 +12,7 @@ const screen = document.querySelector("c-screen");
 const list = document.querySelector("c-list");
 const listEntries = list.querySelectorAll("h3");
 const listCount = listEntries.length;
+const listMap = new Map();
 
 /* use this to skip run an action every other frame */
 let debounceSwitch = true;
@@ -215,6 +216,8 @@ function remBl(el, attribute) {
 function cloneListEntries() {
   listEntries.forEach((entry) => {
     const clone = entry.cloneNode(true);
+    listMap.set(entry, clone);
+    listMap.set(clone, entry);
     list.append(clone);
   });
 }
@@ -287,7 +290,7 @@ function updateHoveredEl() {
   const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
   if (hoverableEls.includes(el)) {
     hoverableEls.forEach((hoverableEl) => {
-      if (hoverableEl === el) {
+      if (hoverableEl === el || hoverableEl === listMap.get(el)) {
         addCl(hoverableEl, "hover");
       } else {
         remCl(hoverableEl, "hover");

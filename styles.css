@@ -425,12 +425,23 @@ h3 {
   line-height: 48px;
   transform-origin: left;
   transform: translate3d(0, 0, 0);
-  transition: transform 0.25s ease;
-  filter: invert(0);
+  transition: transform 0.15s ease;
+}
+
+h3::after {
+  content: attr(data-text);
+  will-change: opacity;
+  inset: 0;
+  color: var(--bgr);
+  opacity: 0;
 }
 
 h3.hover {
-  filter: invert(1);
+  transform: translate3d(4px, 0, 0);
+}
+
+h3.hover::after {
+  opacity: 1;
 }
 
 h3:last-child {
