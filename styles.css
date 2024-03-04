@@ -349,7 +349,7 @@ c-reflection {
   transform: translate3d(0, 0, 0);
   inset: 584px auto auto 8px;
   width: 1008px;
-  height: 560px;
+  height: 216px;
 }
 
 .performance-mode c-reflection {
@@ -360,19 +360,17 @@ c-reflection::before,
 c-reflection::after {
   z-index: 1;
   inset: 0;
-  width: 1008px;
-  height: 560px;
   transition: opacity var(--mode-swap);
 }
 
 c-reflection::before {
   opacity: 1;
-  background: linear-gradient(to top, #121212 60%, transparent);
+  background: linear-gradient(to top, #121212, transparent);
 }
 
 c-reflection::after {
   opacity: 0;
-  background: linear-gradient(to top, #ccc 60%, transparent);
+  background: linear-gradient(to top, #ccc, transparent);
 }
 
 .light-mode c-reflection::before {
