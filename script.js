@@ -9,18 +9,13 @@ const hiddenKey = document.querySelector("c-control[hide]");
 const screen = document.querySelector("c-screen");
 
 //PROJECT LIST
-const list = document.querySelector("c-list");
-const listEntries = list.querySelectorAll("h3");
+const list = document.querySelector("ul");
+const listEntries = list.querySelectorAll("li");
 const listCount = listEntries.length;
 const listMap = new Map();
 
 /* use this to skip run an action every other frame */
 let debounceSwitch = true;
-
-//ROUND OFF TO 3 DECIMAL PLACES
-function round(num) {
-  return Math.round(num * 1000) * 0.001;
-}
 
 //RAF SPEED CONTROL
 const fpsBenchmark = 60;
@@ -76,7 +71,7 @@ const cursor = {
 
 //CAMERA CONFIGS
 const cameraPos = new Map();
-cameraPos.set("orbit", { hor: 3, vert: 1, zoom: -864, adj: 90 });
+cameraPos.set("orbit", { hor: 3, vert: 2, zoom: -864, adj: 90 });
 cameraPos.set("normal", { hor: 95, vert: 50, zoom: 512, adj: 0 });
 cameraPos.set("focused", { hor: 1, vert: 1, zoom: 576, adj: 0 });
 
@@ -89,7 +84,7 @@ const room = {
       get target() {
         return cameraPos.get(room.range.mode).hor;
       },
-      eased: 5,
+      eased: 3,
       get cone() {
         return room.range.hor.eased * 2;
       },
@@ -101,7 +96,7 @@ const room = {
       get target() {
         return cameraPos.get(room.range.mode).vert;
       },
-      eased: 90,
+      eased: 2,
       get cone() {
         return room.range.vert.eased * 2;
       },
@@ -188,28 +183,36 @@ function populateDataText() {
 }
 
 //ADD CLASS
-function addCl(el, className) {
-  el.classList.add(className);
+function addCl(el, cl) {
+  if (!el.classList.contains(cl)) {
+    el.classList.add(cl);
+  }
 }
 
 //REMOVE CLASS
-function remCl(el, className) {
-  el.classList.remove(className);
+function remCl(el, cl) {
+  if (el.classList.contains(cl)) {
+    el.classList.remove(cl);
+  }
 }
 
 //TOGGLE CLASS
-function togCl(el, className) {
-  el.classList.toggle(className);
+function togCl(el, cl) {
+  el.classList.toggle(cl);
 }
 
 //ADD BOOLEAN ATTRIBUTE
-function addBl(el, attribute) {
-  el.setAttribute(attribute, "");
+function addBl(el, attr) {
+  if (!el.hasAttribute(attr)) {
+    el.setAttribute(attr, "");
+  }
 }
 
 //REMOVE BOOLEAN ATTRIBUTE
-function remBl(el, attribute) {
-  el.removeAttribute(attribute);
+function remBl(el, attr) {
+  if (el.hasAttribute(attr)) {
+    el.removeAttribute(attr);
+  }
 }
 
 //CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
@@ -290,6 +293,7 @@ function updateHoveredEl() {
   const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
   if (hoverableEls.includes(el)) {
     hoverableEls.forEach((hoverableEl) => {
+      //account for list entry clones
       if (hoverableEl === el || hoverableEl === listMap.get(el)) {
         addCl(hoverableEl, "hover");
       } else {
@@ -374,9 +378,7 @@ root.addEventListener("blur", resetView);
 document.addEventListener("mousemove", (e) => {
   cursor.x.target = e.pageX;
   cursor.y.target = e.pageY;
-  if (cursorEl.hasAttribute("hide")) {
-    remBl(cursorEl, "hide");
-  }
+  remBl(cursorEl, "hide");
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT

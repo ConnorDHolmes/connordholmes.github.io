@@ -15,12 +15,15 @@
     <meta property="og:url" content="connorholmes.me" />
     <meta
       property="og:description"
-      content="A selection of works developed by Connor Holmes"
+      content="A selection of digital works developed by Connor Holmes, a frontend engineer and UX designer."
     />
     <meta property="og:image" content="" />
 
+    <link rel="preload" href="images/noise_overlay.webp" as="image" />
+    <link rel="preload" href="styles.css" as="style" />
+    <link rel="preload" href="script.js" as="script" />
+
     <link rel="icon" href="/favicon.ico" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <link rel="stylesheet" href="styles.css" />
 
@@ -49,16 +52,16 @@
 
         <main>
           <c-screen>
-            <c-list data-m>
-              <h3 data-h data-m data-text>Ares Security Corp</h3>
-              <h3 data-h data-m data-text>Keep Company</h3>
-              <h3 data-h data-m data-text>AI Frontend</h3>
-              <h3 data-h data-m data-text>Inkling Agency</h3>
-              <h3 data-h data-m data-text>Seed AI</h3>
-              <h3 data-h data-m data-text>Personal Eyes</h3>
-              <h3 data-h data-m data-text>No Limits Counseling</h3>
-              <h3 data-h data-m data-text>Dr. Susan Hood</h3>
-            </c-list>
+            <ul data-m>
+              <li data-h data-text>Ares Security Corp</li>
+              <li data-h data-text>Keep Company</li>
+              <li data-h data-text>AI Frontend</li>
+              <li data-h data-text>Inkling Agency</li>
+              <li data-h data-text>Seed AI</li>
+              <li data-h data-text>Personal Eyes</li>
+              <li data-h data-text>No Limits Counseling</li>
+              <li data-h data-text>Dr. Susan Hood</li>
+            </ul>
           </c-screen>
           <c-reflection></c-reflection>
         </main>
@@ -66,22 +69,22 @@
     </c-scene>
 
     <footer>
-      <span>© connor holmes</span>
+      <span>© Connor Holmes</span>
       <c-control
         aria-label="Press Shift to toggle between a focused and free-look view."
         data-key="Shift"
         hide
-        >view</c-control
+        >View</c-control
       >
       <c-control
         aria-label="Press E to toggle the noise overlay and reflection."
         data-key="E"
-        >effects</c-control
+        >Effects</c-control
       >
       <c-control
         aria-label="Press M to swap between light and dark mode."
         data-key="M"
-        >mode</c-control
+        >Mode</c-control
       >
     </footer>
 
@@ -92,13 +95,6 @@
 </html>
 
 <!--
-  * Need to create new pair map + mutation observer to watch the list entry clones, to reduce visual glitches with the scroll wrapping
-  * Change body light class to a media query on body for color mode preference (so that color doesn't immediately change on load) OR OTHER SOLUTION
   * Determine how project info will appear and be displayed
   * Consolidate css classes with overlapping styles
-
-  * when hovering h3, ">" becomes visible. On click, it animates to "<".
-  * swap h3 pseudo elements so that it just has ">" as the before, and filter: inverts on hover
-
-  *MAYBE putting up walls with improve performance??
 -->

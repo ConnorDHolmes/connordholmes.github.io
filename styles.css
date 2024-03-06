@@ -1,10 +1,10 @@
 :root {
   --mode-swap: 0.5s ease;
-  --bgr: #121212;
+  --bgr: #131313;
   --acc: #ccc;
 }
 
-/* SHARED TRAITS */
+/* shared traits */
 
 * {
   box-sizing: border-box;
@@ -13,7 +13,6 @@
 
 html,
 body {
-  contain: none;
   height: 100vh;
   /* use dvh if available */
   height: 100dvh;
@@ -36,17 +35,29 @@ c-screen::before,
 c-reflection,
 c-reflection::before,
 c-reflection::after,
-h3::after,
+li::after,
 footer,
 c-control::before {
   position: absolute;
+}
+
+body::before,
+c-cursor,
+c-cursor::after,
+main,
+button::before,
+button::after,
+c-reflection::before,
+c-reflection::after,
+c-screen[reflection] {
+  inset: 0;
 }
 
 body::after,
 c-screen,
 c-cursor::after,
 c-reflection,
-c-list {
+ul {
   contain: strict;
 }
 
@@ -59,13 +70,19 @@ button::after,
 c-screen::before,
 c-reflection::before,
 c-reflection::after,
-h3::before,
-h3::after,
+li::before,
+li::after,
 c-control::before,
 c-control::after {
   content: "";
   box-sizing: border-box;
   backface-visibility: hidden;
+}
+
+button,
+c-screen,
+c-control {
+  pointer-events: auto;
 }
 
 c-cursor,
@@ -74,7 +91,8 @@ body::after,
 c-scene,
 c-screen[reflection],
 footer,
-c-control::before {
+c-control::before,
+c-control[hide] {
   pointer-events: none;
 }
 
@@ -86,16 +104,23 @@ main {
 }
 
 body,
+c-screen,
+ul {
+  overflow: hidden;
+}
+
+body,
 c-scene {
   display: grid;
   place-content: center;
 }
 
+/* outer elements */
+
 body {
   margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
-  overflow: hidden;
   color: var(--acc);
   background-color: var(--bgr);
   transition: background-color var(--mode-swap);
@@ -105,14 +130,12 @@ body {
 }
 
 body::before {
-  inset: 0;
-  z-index: 100;
+  z-index: 2;
   display: grid;
   place-content: center;
   background-color: var(--bgr);
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
   transition: opacity 1s ease 1s, visibility 1s ease 1s;
 }
 
@@ -129,6 +152,7 @@ body::before {
 }
 
 body::after {
+  z-index: 1;
   inset: 0 auto auto 0;
   width: calc(100% + 128px);
   height: calc(100% + 128px);
@@ -157,11 +181,10 @@ body::after {
   display: none;
 }
 
-/* CURSOR */
+/* cursor */
 
 c-cursor {
   will-change: opacity;
-  inset: 0;
   width: 10px;
   height: 10px;
   mix-blend-mode: exclusion;
@@ -174,7 +197,6 @@ c-cursor[hide] {
 
 c-cursor::after {
   will-change: transform;
-  inset: 0;
   border-radius: 50%;
   background-color: #ccc;
   transition: transform 0.2s ease;
@@ -193,11 +215,10 @@ body:active c-cursor[clickable]::after {
   transform: scale3d(1.5, 1.5, 1);
 }
 
-/* 3D SCENE */
+/* 3d scene */
 
 c-scene {
   width: 576px;
-  /* height: 676px; */
   height: 740px;
   perspective: 1024px;
 }
@@ -230,7 +251,6 @@ button {
   contain: layout;
   position: relative;
   padding: 12px 18px;
-  pointer-events: auto;
   border-radius: 32px;
   background-color: transparent;
   color: transparent;
@@ -258,7 +278,6 @@ button:focus {
 
 button::before {
   will-change: transform;
-  inset: 0;
   background-color: var(--acc);
   border-radius: 32px;
   transition: transform 0.3s ease, background-color var(--mode-swap),
@@ -273,7 +292,6 @@ button.hover::before {
 button::after {
   content: attr(data-text);
   will-change: filter, opacity;
-  inset: 0;
   padding: inherit;
   color: var(--acc);
   filter: invert(0);
@@ -309,29 +327,28 @@ header {
 
 h1,
 h2,
-h3 {
+li {
   margin: 0;
   text-transform: lowercase;
 }
 
 h1,
-h3 {
+li {
   font-family: "Unbounded";
 }
 
 h1 {
-  font-size: 112px;
+  font-size: 110px;
   font-weight: 400;
 }
 
 h2 {
-  font-size: 51px;
+  font-size: 50px;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
 
 main {
-  inset: 0;
   transform: translateZ(-512px);
 }
 
@@ -340,8 +357,6 @@ c-screen {
   width: 1008px;
   height: 560px;
   border-radius: 12px;
-  overflow: hidden;
-  pointer-events: auto;
 }
 
 c-reflection {
@@ -359,13 +374,12 @@ c-reflection {
 c-reflection::before,
 c-reflection::after {
   z-index: 1;
-  inset: 0;
   transition: opacity var(--mode-swap);
 }
 
 c-reflection::before {
   opacity: 1;
-  background: linear-gradient(to top, #121212, transparent);
+  background: linear-gradient(to top, #131313, transparent);
 }
 
 c-reflection::after {
@@ -382,11 +396,10 @@ c-reflection::after {
 }
 
 c-screen[reflection] {
-  inset: 0;
   transform: scaleY(-1);
 }
 
-/* INSIDE SCREEN */
+/* inside screen */
 
 c-screen::before {
   inset: 0 auto auto 0;
@@ -402,9 +415,11 @@ c-screen::before {
   transform: translate3d(-1008px, -560px, 0);
 }
 
-c-list {
+ul {
   will-change: scroll-position;
-  --gap: 40px;
+  --gap: 34px;
+  margin: 0;
+  padding: 0;
   width: inherit;
   height: inherit;
   display: flex;
@@ -413,45 +428,55 @@ c-list {
   gap: var(--gap);
   color: var(--acc);
   transition: color var(--mode-swap);
-  overflow: hidden;
 }
 
-h3 {
+li {
   contain: content;
+  margin: 0;
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
   transform-origin: left;
-  transform: translate3d(0, 0, 0);
+  transform: translate3d(-2px, 0, 0);
   transition: transform 0.15s ease;
 }
 
-h3::after {
+li::marker {
+  content: none;
+}
+
+li::after {
   content: attr(data-text);
   will-change: opacity;
   inset: 0;
   color: var(--bgr);
+  transition: color var(--mode-swap);
   opacity: 0;
 }
 
-h3.hover {
-  transform: translate3d(4px, 0, 0);
+li.hover {
+  transform: translate3d(2px, 0, 0);
 }
 
-h3.hover::after {
+li.hover::after {
   opacity: 1;
 }
 
-h3:last-child {
-  margin-bottom: var(--gap);
+li:first-child {
+  margin-top: var(--gap);
 }
 
-/* FOOTER */
+h4 {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+}
+
+/* footer */
 
 footer {
   contain: layout;
   inset: auto 16px 16px 16px;
-  z-index: 50;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -471,11 +496,9 @@ c-control {
   will-change: opacity;
   transition: opacity 0.35s ease;
   transform: translate3d(0, 0, 0);
-  pointer-events: auto;
 }
 
 c-control[hide] {
-  pointer-events: none;
   opacity: 0;
 }
 
