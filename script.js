@@ -182,14 +182,14 @@ function populateDataText() {
   });
 }
 
-//ADD CLASS
+//ADD CLASS (IF CLASS DOESN'T EXIST)
 function addCl(el, cl) {
   if (!el.classList.contains(cl)) {
     el.classList.add(cl);
   }
 }
 
-//REMOVE CLASS
+//REMOVE CLASS (IF CLASS EXISTS)
 function remCl(el, cl) {
   if (el.classList.contains(cl)) {
     el.classList.remove(cl);
@@ -201,14 +201,14 @@ function togCl(el, cl) {
   el.classList.toggle(cl);
 }
 
-//ADD BOOLEAN ATTRIBUTE
+//ADD BOOLEAN ATTRIBUTE (IF ATTRIBUTE DOESN'T EXIST)
 function addBl(el, attr) {
   if (!el.hasAttribute(attr)) {
     el.setAttribute(attr, "");
   }
 }
 
-//REMOVE BOOLEAN ATTRIBUTE
+//REMOVE BOOLEAN ATTRIBUTE (IF ATTRIBUTE EXISTS)
 function remBl(el, attr) {
   if (el.hasAttribute(attr)) {
     el.removeAttribute(attr);
@@ -283,12 +283,12 @@ function cloneScreen() {
   document.querySelector("c-reflection").append(reflection);
 }
 
-//ANIMATION EASING FUNCTION (WITH MULTIPLIER)
+//ANIMATION EASING FUNCTION
 function ease(val) {
   val.eased += (val.target - val.eased) * (val.ease * multiplier);
 }
 
-//UPDATE HOVERED ELEMENT (TAKING THE SCENE'S EASING INTO ACCOUNT)
+//UPDATE HOVERED ELEMENT (TAKING THE CURSOR'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
   const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
   if (hoverableEls.includes(el)) {

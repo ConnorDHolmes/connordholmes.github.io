@@ -35,6 +35,7 @@ c-screen::before,
 c-reflection,
 c-reflection::before,
 c-reflection::after,
+ul,
 li::after,
 footer,
 c-control::before {
@@ -49,7 +50,9 @@ button::before,
 button::after,
 c-reflection::before,
 c-reflection::after,
-c-screen[reflection] {
+c-screen[reflection],
+ul,
+li::after {
   inset: 0;
 }
 
@@ -432,7 +435,6 @@ ul {
 
 li {
   contain: content;
-  margin: 0;
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
@@ -448,7 +450,6 @@ li::marker {
 li::after {
   content: attr(data-text);
   will-change: opacity;
-  inset: 0;
   color: var(--bgr);
   transition: color var(--mode-swap);
   opacity: 0;
@@ -464,12 +465,6 @@ li.hover::after {
 
 li:first-child {
   margin-top: var(--gap);
-}
-
-h4 {
-  position: fixed;
-  top: 64px;
-  left: 50%;
 }
 
 /* footer */
@@ -504,6 +499,7 @@ c-control[hide] {
 
 c-control::before {
   content: attr(aria-label);
+  will-change: opacity, transform;
   inset: auto 0 calc(100% + 8px) auto;
   width: calc(100% + 48px);
   padding: 6px 8px 8px 8px;
@@ -526,7 +522,7 @@ c-control:hover::before {
 }
 
 c-control::after {
-  content: attr(data-key);
+  content: attr(key);
   margin-left: 0.4em;
   display: inline-flex;
   justify-content: center;
