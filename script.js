@@ -14,14 +14,14 @@ const listEntries = list.querySelectorAll("li");
 const listCount = listEntries.length;
 const listMap = new Map();
 
-/* use this to skip run an action every other frame */
-let debounceSwitch = true;
-
 //RAF SPEED CONTROL
 const fpsBenchmark = 60;
 const frameDurationBenchmark = 1000 / fpsBenchmark;
 let then = document.timeline.currentTime;
 let multiplier = 1;
+
+//use this to fire something every other frame
+let everyOtherFrame = true;
 
 //WINDOW TRAITS
 const win = {
@@ -43,15 +43,8 @@ const win = {
 const sceneEl = document.querySelector("c-scene");
 const scene = {
   h: sceneEl.offsetHeight,
-  w: sceneEl.offsetWidth,
   get scale() {
     return win.h / scene.h;
-  },
-  get x() {
-    return win.midX - scene.w * 0.5;
-  },
-  get y() {
-    return win.midY - scene.h * 0.5;
   },
 };
 
@@ -122,18 +115,6 @@ const room = {
         return Math.abs(this.target - this.eased) < 0.5;
       },
     },
-    get pan() {
-      return (
-        -room.range.hor.eased +
-        (room.x.eased / win.w) * room.range.hor.cone +
-        room.range.adj.eased
-      );
-    },
-    get tilt() {
-      return (
-        room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
-      );
-    },
   },
   x: {
     get target() {
@@ -147,13 +128,17 @@ const room = {
     },
     eased: cursor.y.target,
   },
-  w: roomEl.offsetWidth,
-  h: roomEl.offsetHeight,
-  get xPos() {
-    return scene.w * 0.5 - room.w * 0.5;
+  get pan() {
+    return (
+      -room.range.hor.eased +
+      (room.x.eased / win.w) * room.range.hor.cone +
+      room.range.adj.eased
+    );
   },
-  get yPos() {
-    return scene.h * 0.5 - room.h * 0.5;
+  get tilt() {
+    return (
+      room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
+    );
   },
 };
 
@@ -228,7 +213,6 @@ function cloneListEntries() {
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
   const reflection = screen.cloneNode(true);
-  addBl(reflection, "reflection");
 
   const screenDescendants = screen.querySelectorAll("*");
   const pairs = new Map();
@@ -252,8 +236,6 @@ function cloneScreen() {
       });
     }
   });
-
-  //ALL JS FUNCTIONALITY WITHIN SCREEN GOES HERE
 
   //list scrolling and looping
   const listClone = pairs.get(list);
@@ -315,11 +297,8 @@ function refresh(timeStamp) {
   then = timeStamp;
   multiplier = diff / frameDurationBenchmark;
 
-  roomEl.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.range.tilt}deg) rotate3d(0, 1, 0, ${room.range.pan}deg)`;
-
-  cursorEl.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
-    cursor.y.eased - cursor.half
-  }px, 0)`;
+  roomEl.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.tilt}deg) rotate3d(0, 1, 0, ${room.pan}deg)`;
+  cursorEl.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
 
   easedTraits.forEach((trait) => {
     if (trait.isInactive) {
@@ -328,10 +307,10 @@ function refresh(timeStamp) {
     ease(trait);
   });
 
-  if (debounceSwitch) {
+  if (everyOtherFrame) {
     updateHoveredEl();
   }
-  debounceSwitch = !debounceSwitch;
+  everyOtherFrame = !everyOtherFrame;
 
   requestAnimationFrame(refresh);
 }
@@ -360,7 +339,7 @@ function navToScreen() {
   setTimeout(() => {
     room.range.mode = "focused";
     remBl(hiddenKey, "hide");
-    addCl(roomEl, "hide-backface");
+    remBl(roomEl, "backface");
     addCl(nav, "remove");
   }, 350);
 }
@@ -376,8 +355,8 @@ root.addEventListener("blur", resetView);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", (e) => {
-  cursor.x.target = e.pageX;
-  cursor.y.target = e.pageY;
+  cursor.x.target = e.pageX - cursor.half;
+  cursor.y.target = e.pageY - cursor.half;
   remBl(cursorEl, "hide");
 });
 
@@ -386,8 +365,8 @@ root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
 root.addEventListener("mouseenter", (e) => {
-  cursor.x.eased = e.pageX;
-  cursor.y.eased = e.pageY;
+  cursor.x.eased = e.pageX - cursor.half;
+  cursor.y.eased = e.pageY - cursor.half;
 });
 
 //ALL INPUTS
@@ -426,7 +405,7 @@ window
   });
 
 //ALL CLICK HANDLERS
-function addAllClickHandlers() {
+function allClickHandlers() {
   document.addEventListener("click", (e) => {
     if (e.target === startButton) {
       navToScreen();
@@ -438,12 +417,11 @@ function addAllClickHandlers() {
 if (window.matchMedia("(prefers-color-scheme: light)").matches) {
   addCl(body, "light-mode");
 }
-
 populateDataText();
 cloneListEntries();
 //so that the clones will be included in hoverableEls
 const hoverableEls = [...document.querySelectorAll("[data-h]")];
 cloneScreen();
-addAllClickHandlers();
+allClickHandlers();
 measureAndSize();
 requestAnimationFrame(refresh);

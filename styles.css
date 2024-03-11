@@ -16,8 +16,13 @@ body {
   height: 100vh;
   /* use dvh if available */
   height: 100dvh;
-  cursor: none !important;
   overscroll-behavior: none;
+}
+
+html,
+body,
+button {
+  cursor: none !important;
 }
 
 c-cursor,
@@ -50,7 +55,7 @@ button::before,
 button::after,
 c-reflection::before,
 c-reflection::after,
-c-screen[reflection],
+c-reflection c-screen,
 ul,
 li::after {
   inset: 0;
@@ -92,7 +97,7 @@ c-cursor,
 body::before,
 body::after,
 c-scene,
-c-screen[reflection],
+c-reflection c-screen,
 footer,
 c-control::before,
 c-control[hide] {
@@ -106,8 +111,40 @@ main {
   contain: layout size;
 }
 
+c-room,
+nav,
+button {
+  transform-style: preserve-3d;
+}
+
 body,
-c-screen,
+h1,
+h2,
+ul,
+li {
+  margin: 0;
+}
+
+nav,
+ul,
+footer {
+  display: flex;
+}
+
+h1,
+h2,
+button,
+li,
+footer {
+  text-transform: lowercase;
+}
+
+h1,
+li {
+  font-family: "Unbounded";
+}
+
+body,
 ul {
   overflow: hidden;
 }
@@ -121,7 +158,6 @@ c-scene {
 /* outer elements */
 
 body {
-  margin: 0;
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
   color: var(--acc);
@@ -230,23 +266,19 @@ c-room {
   will-change: transform;
   width: 1024px;
   height: 576px;
-  backface-visibility: visible;
-  transform-style: preserve-3d;
   /* initial transform setting */
   transform: translate3d(0, 0, -864px) rotate3d(0, 1, 0, 90deg);
 }
 
-c-room.hide-backface {
-  backface-visibility: hidden;
+c-room[backface] {
+  backface-visibility: visible;
 }
 
 nav {
   contain: layout;
-  inset: auto 384px 160px 384px;
-  display: flex;
+  inset: auto 0 176px 0;
   gap: 24px;
   justify-content: center;
-  transform-style: preserve-3d;
   transform: rotateY(-90deg) translateZ(512px);
 }
 
@@ -254,24 +286,23 @@ button {
   contain: layout;
   position: relative;
   padding: 12px 18px;
-  border-radius: 32px;
   background-color: transparent;
   color: transparent;
-  border: none;
   font-family: inherit;
   font-size: 18px;
   line-height: 120%;
-  text-transform: lowercase;
   letter-spacing: 0.05em;
-  transform-style: preserve-3d;
   box-shadow: inset 0 0.5px 0 1px var(--acc);
   transition: transform 0.25s ease, box-shadow var(--mode-swap),
     color var(--mode-swap), background-color var(--mode-swap);
-  cursor: none !important;
+}
+
+button,
+button:focus {
+  border: none;
 }
 
 button:focus {
-  border: none;
   outline: none;
 }
 
@@ -279,10 +310,14 @@ button:focus {
   box-shadow: inset 0 -0.5px 0 1px var(--acc);
 }
 
+button,
+button::before {
+  border-radius: 32px;
+}
+
 button::before {
   will-change: transform;
   background-color: var(--acc);
-  border-radius: 32px;
   transition: transform 0.3s ease, background-color var(--mode-swap),
     color var(--mode-swap);
   transform: scale3d(0, 0, 1);
@@ -317,27 +352,16 @@ nav.remove {
 }
 
 nav.remove button {
+  transform: none;
   transform-style: flat;
 }
 
 header {
-  contain: layout;
-  inset: 144px 0 auto 0;
+  contain: content;
+  inset: 128px 0 auto 0;
   text-align: center;
   transform: rotateY(-90deg) translateZ(-768px);
   transition: color var(--mode-swap);
-}
-
-h1,
-h2,
-li {
-  margin: 0;
-  text-transform: lowercase;
-}
-
-h1,
-li {
-  font-family: "Unbounded";
 }
 
 h1 {
@@ -398,7 +422,7 @@ c-reflection::after {
   opacity: 1;
 }
 
-c-screen[reflection] {
+c-reflection c-screen {
   transform: scaleY(-1);
 }
 
@@ -421,11 +445,9 @@ c-screen::before {
 ul {
   will-change: scroll-position;
   --gap: 34px;
-  margin: 0;
   padding: 0;
   width: inherit;
   height: inherit;
-  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--gap);
@@ -438,7 +460,6 @@ li {
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
-  transform-origin: left;
   transform: translate3d(-2px, 0, 0);
   transition: transform 0.15s ease;
 }
@@ -472,13 +493,11 @@ li:first-child {
 footer {
   contain: layout;
   inset: auto 16px 16px 16px;
-  display: flex;
   align-items: center;
   gap: 24px;
   font-size: 14px;
   letter-spacing: 0.05em;
   line-height: 110%;
-  text-transform: lowercase;
   color: var(--accent);
   transition: color var(--mode-swap);
 }
@@ -525,12 +544,10 @@ c-control::after {
   content: attr(key);
   margin-left: 0.4em;
   display: inline-flex;
-  justify-content: center;
   padding: 4px 8px;
   border: 1px solid;
   border-color: inherit;
   border-radius: 4px;
-  min-width: 2em;
 }
 
 footer:hover > c-control:not(:hover):not([hide]) {

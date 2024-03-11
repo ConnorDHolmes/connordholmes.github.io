@@ -23,7 +23,7 @@
     <link rel="preload" href="styles.css" as="style" />
     <link rel="preload" href="script.js" as="script" />
 
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="favicon.ico" />
 
     <link rel="stylesheet" href="styles.css" />
 
@@ -37,12 +37,19 @@
 
   <body class="overlay">
     <c-scene>
-      <c-room>
+      <c-room backface>
         <nav>
-          <button aria-label="See Works" id="start-button" data-h data-text>
+          <button
+            aria-label="Click Here to View Selected Works"
+            id="start-button"
+            data-h
+            data-text
+          >
             Works
           </button>
-          <button aria-label="See Resume" data-h data-text>Resume</button>
+          <button aria-label="Click here to View Resume" data-h data-text>
+            Resume
+          </button>
         </nav>
 
         <header>
