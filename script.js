@@ -160,13 +160,6 @@ const easedTraits = [
   room.range.adj,
 ];
 
-//POPULATE "DATA-TEXT" ATTRIBUTES FOR DIVS THAT HAVE IT
-function populateDataText() {
-  document.querySelectorAll("[data-text]").forEach((el) => {
-    el.setAttribute("data-text", el.innerHTML);
-  });
-}
-
 //ADD CLASS (IF CLASS DOESN'T EXIST)
 function addCl(el, cl) {
   if (!el.classList.contains(cl)) {
@@ -272,22 +265,24 @@ function ease(val) {
 
 //UPDATE HOVERED ELEMENT (TAKING THE CURSOR'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
-  const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
-  if (hoverableEls.includes(el)) {
-    hoverableEls.forEach((hoverableEl) => {
-      //account for list entry clones
-      if (hoverableEl === el || hoverableEl === listMap.get(el)) {
-        addCl(hoverableEl, "hover");
-      } else {
+  if (!cursorEl.hasAttribute("hide")) {
+    const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
+    if (hoverableEls.includes(el)) {
+      hoverableEls.forEach((hoverableEl) => {
+        //account for list entry clones
+        if (hoverableEl === el || hoverableEl === listMap.get(el)) {
+          addCl(hoverableEl, "hover");
+        } else {
+          remCl(hoverableEl, "hover");
+        }
+      });
+      addBl(cursorEl, "clickable");
+    } else {
+      hoverableEls.forEach((hoverableEl) => {
         remCl(hoverableEl, "hover");
-      }
-    });
-    addBl(cursorEl, "clickable");
-  } else {
-    hoverableEls.forEach((hoverableEl) => {
-      remCl(hoverableEl, "hover");
-    });
-    remBl(cursorEl, "clickable");
+      });
+      remBl(cursorEl, "clickable");
+    }
   }
 }
 
@@ -326,22 +321,6 @@ function resetView() {
   cursor.x.target = win.midX;
   cursor.y.target = win.midY;
   addBl(cursorEl, "hide");
-}
-
-//REMOVE INITIAL OVERLAY
-function reveal() {
-  remCl(body, "overlay");
-}
-
-//ENTER FOCUSED MODE FROM "WORK" BUTTON
-function navToScreen() {
-  addCl(nav, "hide");
-  setTimeout(() => {
-    room.range.mode = "focused";
-    remBl(hiddenKey, "hide");
-    remBl(roomEl, "backface");
-    addCl(nav, "remove");
-  }, 350);
 }
 
 //SCALE SCENE ON WINDOW RESIZE
@@ -389,7 +368,7 @@ document.addEventListener("keyup", (e) => {
 //FADE IN SCENE AFTER ALL CONTENT IS LOADED
 document.addEventListener("readystatechange", (e) => {
   if (e.target.readyState === "complete") {
-    reveal();
+    remCl(body, "overlay");
   }
 });
 
@@ -405,23 +384,31 @@ window
   });
 
 //ALL CLICK HANDLERS
-function allClickHandlers() {
-  document.addEventListener("click", (e) => {
-    if (e.target === startButton) {
-      navToScreen();
-    }
-  });
-}
+document.addEventListener("click", (e) => {
+  //enter focused mode from "work button"
+  if (e.target === startButton) {
+    addCl(nav, "hide");
+    setTimeout(() => {
+      room.range.mode = "focused";
+      remBl(hiddenKey, "hide");
+      remBl(roomEl, "backface");
+      addCl(nav, "remove");
+    }, 350);
+  }
+});
 
 //ON LOAD
+//change color mode if needed
 if (window.matchMedia("(prefers-color-scheme: light)").matches) {
   addCl(body, "light-mode");
 }
-populateDataText();
+//update "data-text" attributes where needed
+document.querySelectorAll("[data-text]").forEach((el) => {
+  el.setAttribute("data-text", el.innerHTML);
+});
 cloneListEntries();
-//so that the clones will be included in hoverableEls
+//include list clones in hoverableEls
 const hoverableEls = [...document.querySelectorAll("[data-h]")];
 cloneScreen();
-allClickHandlers();
 measureAndSize();
 requestAnimationFrame(refresh);
