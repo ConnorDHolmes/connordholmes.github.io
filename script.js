@@ -17,7 +17,6 @@ const list = document.querySelector("ul");
 const listEntries = list.querySelectorAll("li");
 const listPairs = new Map();
 const sections = document.querySelectorAll("section");
-let canScroll = true;
 
 //RAF SPEED CONTROL
 const fpsBenchmark = 60;
@@ -211,16 +210,6 @@ function cloneListEntries() {
   });
 }
 
-// document.querySelectorAll("section").forEach((section) => {
-//   addEventListener("click", () => {
-//     if (section.classList.contains("show")) {
-//       remCl(section, "show");
-//       remCl(list, "hide");
-//       canScroll = true;
-//     }
-//   });
-// });
-
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
   const reflection = screen.cloneNode(true);
@@ -262,14 +251,12 @@ function cloneScreen() {
   list.addEventListener(
     "wheel",
     (e) => {
-      if (canScroll) {
-        if (list.scrollTop >= maxScroll) {
-          listClone.scrollTop = list.scrollTop = 1;
-        } else if (list.scrollTop === 0) {
-          listClone.scrollTop = list.scrollTop = maxScroll - 1;
-        } else {
-          listClone.scrollTop = list.scrollTop += e.deltaY;
-        }
+      if (list.scrollTop >= maxScroll) {
+        listClone.scrollTop = list.scrollTop = 1;
+      } else if (list.scrollTop === 0) {
+        listClone.scrollTop = list.scrollTop = maxScroll - 1;
+      } else {
+        listClone.scrollTop = list.scrollTop += e.deltaY;
       }
     },
     { passive: true }
@@ -405,10 +392,10 @@ window
     }
   });
 
-//ALL CLICK HANDLERS
-document.addEventListener("click", (e) => {
-  const listItem = liToSections.get(e.target);
-  if (e.target === startButton) {
+//ALL CLICK ACTIONS
+document.addEventListener("click", () => {
+  const canClick = document.querySelector(".hover");
+  if (canClick === startButton) {
     //enter focused mode from "work button"
     addCl(nav, "hide");
     setTimeout(() => {
@@ -417,10 +404,17 @@ document.addEventListener("click", (e) => {
       remBl(roomEl, "backface");
       addCl(nav, "remove");
     }, 350);
-  } else if (listItem) {
-    addCl(listItem, "show");
-    addCl(list, "hide");
+  } else if (liToSections.get(canClick)) {
+    console.log("section!");
   }
+
+  // sections.forEach((section) => {
+  //   if (section === listItem) {
+  //     togCl(section, "show");
+  //   } else {
+  //     remCl(section, "show");
+  //   }
+  // });
 });
 
 //ON LOAD

@@ -4,7 +4,7 @@
   --acc: #ccc;
 }
 
-/* shared traits */
+/* SHARED */
 
 * {
   box-sizing: border-box;
@@ -16,7 +16,6 @@ body {
   height: 100vh;
   /* use dvh if available */
   height: 100dvh;
-  overscroll-behavior: none;
 }
 
 html,
@@ -32,7 +31,6 @@ body::after,
 nav,
 header,
 main,
-c-buttons::after,
 button::before,
 button::after,
 c-screen,
@@ -41,7 +39,9 @@ c-reflection,
 c-reflection::before,
 c-reflection::after,
 ul,
+li::before,
 li::after,
+section,
 footer,
 c-control::before {
   position: absolute;
@@ -56,8 +56,8 @@ button::after,
 c-reflection::before,
 c-reflection::after,
 c-reflection c-screen,
-ul,
-li::after {
+section,
+ul {
   inset: 0;
 }
 
@@ -72,12 +72,12 @@ ul {
 body::before,
 body::after,
 c-cursor::after,
-c-buttons::after,
 button::before,
 button::after,
 c-screen::before,
 c-reflection::before,
 c-reflection::after,
+li::before,
 li::after,
 c-control::before,
 c-control::after {
@@ -110,6 +110,12 @@ main {
   contain: layout size;
 }
 
+nav,
+button,
+footer {
+  contain: layout;
+}
+
 c-room,
 nav,
 button {
@@ -119,6 +125,7 @@ button {
 body,
 h1,
 h2,
+h3,
 ul,
 li {
   margin: 0;
@@ -130,15 +137,41 @@ footer {
   display: flex;
 }
 
+.overlay::before,
+c-cursor,
+c-reflection::before,
+.light-mode c-reflection::after,
+li::before,
+li.hover::after,
+section.show,
+c-control:hover::before {
+  opacity: 1;
+}
+
+body::before,
+c-cursor[hide],
+c-reflection::after,
+.light-mode c-reflection::before,
+li.hover::before,
+li::after,
+section,
+c-control[hide],
+c-control::before {
+  opacity: 0;
+}
+
 h1,
 h2,
 button,
 li,
+h3,
+section span,
 footer {
   text-transform: lowercase;
 }
 
 h1,
+h3,
 li {
   font-family: "Unbounded";
 }
@@ -148,19 +181,36 @@ ul {
   overflow: hidden;
 }
 
+button,
+li {
+  color: transparent;
+}
+
 body,
 c-scene {
   display: grid;
   place-content: center;
 }
 
-/* outer elements */
+body,
+button::after {
+  color: var(--acc);
+}
+
+body,
+c-control::before {
+  background-color: var(--bgr);
+}
+
+/* OUTER */
+
+html {
+  overscroll-behavior: none;
+}
 
 body {
   font-family: "Manrope";
   text-rendering: optimizeSpeed;
-  color: var(--acc);
-  background-color: var(--bgr);
   transition: background-color var(--mode-swap);
   user-select: none;
   /* for safari */
@@ -171,8 +221,7 @@ body::before {
   z-index: 2;
   display: grid;
   place-content: center;
-  background-color: var(--bgr);
-  opacity: 0;
+  background-color: inherit;
   visibility: hidden;
   transition: opacity 1s ease 1s, visibility 1s ease 1s;
 }
@@ -210,7 +259,6 @@ body::after {
 }
 
 .overlay::before {
-  opacity: 1;
   visibility: visible;
 }
 
@@ -226,11 +274,6 @@ c-cursor {
   width: 10px;
   height: 10px;
   mix-blend-mode: exclusion;
-  opacity: 1;
-}
-
-c-cursor[hide] {
-  opacity: 0;
 }
 
 c-cursor::after {
@@ -253,7 +296,7 @@ body:active c-cursor[clickable]::after {
   transform: scale3d(1.5, 1.5, 1);
 }
 
-/* 3d scene */
+/* 3D SCENE */
 
 c-scene {
   width: 576px;
@@ -274,7 +317,6 @@ c-room[backface] {
 }
 
 nav {
-  contain: layout;
   inset: auto 0 176px 0;
   gap: 24px;
   justify-content: center;
@@ -282,11 +324,9 @@ nav {
 }
 
 button {
-  contain: layout;
   position: relative;
   padding: 12px 18px;
   background-color: transparent;
-  color: transparent;
   font-family: inherit;
   font-size: 18px;
   line-height: 120%;
@@ -330,7 +370,6 @@ button::after {
   content: attr(data-text);
   will-change: filter, opacity;
   padding: inherit;
-  color: var(--acc);
   filter: invert(0);
   transform: translate3d(0, -4px, 32px);
   transition: filter 0.25s ease, color var(--mode-swap);
@@ -364,12 +403,12 @@ header {
 }
 
 h1 {
-  font-size: 110px;
+  font-size: 108px;
   font-weight: 400;
 }
 
 h2 {
-  font-size: 50px;
+  font-size: 52px;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
@@ -404,34 +443,24 @@ c-reflection::after {
 }
 
 c-reflection::before {
-  opacity: 1;
   background: linear-gradient(to top, #131313, transparent);
 }
 
 c-reflection::after {
-  opacity: 0;
   background: linear-gradient(to top, #ccc, transparent);
-}
-
-.light-mode c-reflection::before {
-  opacity: 0;
-}
-
-.light-mode c-reflection::after {
-  opacity: 1;
 }
 
 c-reflection c-screen {
   transform: scaleY(-1);
 }
 
-/* inside screen */
+/* SCREEN */
 
 c-screen::before {
   inset: 0 auto auto 0;
   width: 2016px;
   height: 1120px;
-  background: linear-gradient(to bottom right, orangered, magenta, orange);
+  background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff9f1c);
   background-size: 2016px 1120px;
   transform: translate3d(0, 0, 0);
   transition: transform var(--mode-swap);
@@ -450,111 +479,75 @@ ul {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--gap);
-  color: var(--acc);
-  opacity: 1;
-  transition: color var(--mode-swap), opacity 0.25s ease;
-}
-
-ul.hide {
-  opacity: 0;
+  transition: color var(--mode-swap);
 }
 
 li {
   will-change: transform;
   contain: content;
-  font-size: 40px;
+  font-size: 28px;
   font-weight: 300;
-  line-height: 48px;
+  line-height: 38px;
   padding-left: 4px;
   transform: translate3d(-6px, 0, 0);
   transition: transform 0.15s ease;
-}
-
-ul.hide li {
-  transition-duration: 0.25s;
-  transform: translate3d(-6px, 16px, 0);
 }
 
 li::marker {
   content: none;
 }
 
+li::before,
 li::after {
   content: attr(data-text);
   will-change: opacity;
-  padding-left: inherit;
-  color: var(--bgr);
+  inset: 0 0 0 auto;
   transition: color var(--mode-swap);
-  opacity: 0;
+}
+
+li::before {
+  color: var(--acc);
+}
+
+li::after {
+  color: var(--bgr);
 }
 
 li.hover {
   transform: translate3d(-2px, 0, 0);
 }
 
-li.hover::after {
-  opacity: 1;
-}
-
 li:first-child {
   margin-top: var(--gap);
 }
 
-c-fading-wrapper {
-  will-change: transform, opacity;
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transform: translate3d(0, -16px, 0);
-  transition: transform 0.25s ease, opacity 0.25s ease;
-  pointer-events: none;
-}
-
-ul.hide + c-fading-wrapper {
-  transition-delay: 0.25s;
-  transform: translate3d(0, 0, 0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
 section {
-  will-change: visibility;
-  position: absolute;
-  inset: 0;
+  will-change: opacity;
   display: flex;
+  padding-right: 16px;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 32px;
+  align-items: flex-end;
+  justify-content: center;
   gap: 16px;
-  justify-content: flex-end;
-  visibility: hidden;
-}
-
-section.show {
-  visibility: visible;
+  pointer-events: none;
+  transition: color var(--mode-swap);
 }
 
 h3 {
   font-size: 56px;
-  margin: 0;
   font-weight: 300;
   line-height: 60%;
-  text-transform: lowercase;
-  font-family: "Unbounded";
 }
 
 section span {
-  text-transform: lowercase;
-  font-size: 20px;
+  font-size: 16px;
   letter-spacing: 0.025em;
-  font-weight: 500;
-  padding-left: 4px;
+  font-weight: 300;
 }
 
-/* footer */
+/* FOOTER */
 
 footer {
-  contain: layout;
   inset: auto 16px 16px 16px;
   align-items: center;
   gap: 24px;
@@ -575,31 +568,24 @@ c-control {
   transform: translate3d(0, 0, 0);
 }
 
-c-control[hide] {
-  opacity: 0;
-}
-
 c-control::before {
   content: attr(aria-label);
   will-change: opacity, transform;
   inset: auto 0 calc(100% + 8px) auto;
   width: calc(100% + 48px);
   padding: 6px 8px 8px 8px;
-  background-color: var(--bgr);
   border: 0.25px solid;
   border-color: inherit;
   border-radius: 8px 8px 0 8px;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.025em;
-  opacity: 0;
   transform: translate3d(0, 4px, 0);
   transition: opacity 0.15s ease, transform 0.25s ease,
     background-color var(--mode-swap);
 }
 
 c-control:hover::before {
-  opacity: 1;
   transform: translate3d(0, 0, 0);
 }
 
