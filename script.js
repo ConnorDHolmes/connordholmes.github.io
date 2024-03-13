@@ -8,11 +8,16 @@ const startButton = document.getElementById("start-button");
 const hiddenKey = document.querySelector("c-control[hide]");
 const screen = document.querySelector("c-screen");
 
+const liToSections = new Map();
+
+const hoverableEls = [...document.querySelectorAll("[data-h]")];
+
 //PROJECT LIST
 const list = document.querySelector("ul");
 const listEntries = list.querySelectorAll("li");
-const listCount = listEntries.length;
-const listMap = new Map();
+const listPairs = new Map();
+const sections = document.querySelectorAll("section");
+let canScroll = true;
 
 //RAF SPEED CONTROL
 const fpsBenchmark = 60;
@@ -195,13 +200,26 @@ function remBl(el, attr) {
 
 //CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
 function cloneListEntries() {
-  listEntries.forEach((entry) => {
+  listEntries.forEach((entry, index) => {
     const clone = entry.cloneNode(true);
-    listMap.set(entry, clone);
-    listMap.set(clone, entry);
+    hoverableEls.push(clone);
+    listPairs.set(entry, clone);
+    listPairs.set(clone, entry);
+    liToSections.set(entry, sections[index]);
+    liToSections.set(clone, sections[index]);
     list.append(clone);
   });
 }
+
+// document.querySelectorAll("section").forEach((section) => {
+//   addEventListener("click", () => {
+//     if (section.classList.contains("show")) {
+//       remCl(section, "show");
+//       remCl(list, "hide");
+//       canScroll = true;
+//     }
+//   });
+// });
 
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
@@ -234,21 +252,24 @@ function cloneScreen() {
   const listClone = pairs.get(list);
   listClone.scrollTop = list.scrollTop = 1;
 
-  const itemHeight = listEntries[0].offsetHeight;
-  const itemsGap = parseInt(
-    getComputedStyle(list).getPropertyValue("--gap").split("p")[0]
-  );
-  const maxScroll = (itemHeight + itemsGap) * listCount;
+  const maxScroll =
+    (listEntries[0].offsetHeight +
+      parseInt(
+        getComputedStyle(list).getPropertyValue("--gap").split("p")[0]
+      )) *
+    listEntries.length;
 
   list.addEventListener(
     "wheel",
     (e) => {
-      if (list.scrollTop >= maxScroll) {
-        listClone.scrollTop = list.scrollTop = 1;
-      } else if (list.scrollTop === 0) {
-        listClone.scrollTop = list.scrollTop = maxScroll - 1;
-      } else {
-        listClone.scrollTop = list.scrollTop += e.deltaY;
+      if (canScroll) {
+        if (list.scrollTop >= maxScroll) {
+          listClone.scrollTop = list.scrollTop = 1;
+        } else if (list.scrollTop === 0) {
+          listClone.scrollTop = list.scrollTop = maxScroll - 1;
+        } else {
+          listClone.scrollTop = list.scrollTop += e.deltaY;
+        }
       }
     },
     { passive: true }
@@ -270,7 +291,7 @@ function updateHoveredEl() {
     if (hoverableEls.includes(el)) {
       hoverableEls.forEach((hoverableEl) => {
         //account for list entry clones
-        if (hoverableEl === el || hoverableEl === listMap.get(el)) {
+        if (hoverableEl === el || hoverableEl === listPairs.get(el)) {
           addCl(hoverableEl, "hover");
         } else {
           remCl(hoverableEl, "hover");
@@ -286,7 +307,7 @@ function updateHoveredEl() {
   }
 }
 
-//ANIMATION AND OTHER UPDATES
+//UPDATES FOR EACH FRAME
 function refresh(timeStamp) {
   const diff = timeStamp - then;
   then = timeStamp;
@@ -368,6 +389,7 @@ document.addEventListener("keyup", (e) => {
 //FADE IN SCENE AFTER ALL CONTENT IS LOADED
 document.addEventListener("readystatechange", (e) => {
   if (e.target.readyState === "complete") {
+    //fade out the screen overlay
     remCl(body, "overlay");
   }
 });
@@ -385,8 +407,9 @@ window
 
 //ALL CLICK HANDLERS
 document.addEventListener("click", (e) => {
-  //enter focused mode from "work button"
+  const listItem = liToSections.get(e.target);
   if (e.target === startButton) {
+    //enter focused mode from "work button"
     addCl(nav, "hide");
     setTimeout(() => {
       room.range.mode = "focused";
@@ -394,6 +417,9 @@ document.addEventListener("click", (e) => {
       remBl(roomEl, "backface");
       addCl(nav, "remove");
     }, 350);
+  } else if (listItem) {
+    addCl(listItem, "show");
+    addCl(list, "hide");
   }
 });
 
@@ -406,9 +432,8 @@ if (window.matchMedia("(prefers-color-scheme: light)").matches) {
 document.querySelectorAll("[data-text]").forEach((el) => {
   el.setAttribute("data-text", el.innerHTML);
 });
+
 cloneListEntries();
-//include list clones in hoverableEls
-const hoverableEls = [...document.querySelectorAll("[data-h]")];
 cloneScreen();
 measureAndSize();
 requestAnimationFrame(refresh);

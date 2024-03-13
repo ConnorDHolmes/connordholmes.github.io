@@ -78,7 +78,6 @@ button::after,
 c-screen::before,
 c-reflection::before,
 c-reflection::after,
-li::before,
 li::after,
 c-control::before,
 c-control::after {
@@ -443,7 +442,7 @@ c-screen::before {
 }
 
 ul {
-  will-change: scroll-position;
+  will-change: scroll-position, opacity;
   --gap: 34px;
   padding: 0;
   width: inherit;
@@ -452,16 +451,28 @@ ul {
   align-items: flex-start;
   gap: var(--gap);
   color: var(--acc);
-  transition: color var(--mode-swap);
+  opacity: 1;
+  transition: color var(--mode-swap), opacity 0.25s ease;
+}
+
+ul.hide {
+  opacity: 0;
 }
 
 li {
+  will-change: transform;
   contain: content;
   font-size: 40px;
   font-weight: 300;
   line-height: 48px;
-  transform: translate3d(-2px, 0, 0);
+  padding-left: 4px;
+  transform: translate3d(-6px, 0, 0);
   transition: transform 0.15s ease;
+}
+
+ul.hide li {
+  transition-duration: 0.25s;
+  transform: translate3d(-6px, 16px, 0);
 }
 
 li::marker {
@@ -471,13 +482,14 @@ li::marker {
 li::after {
   content: attr(data-text);
   will-change: opacity;
+  padding-left: inherit;
   color: var(--bgr);
   transition: color var(--mode-swap);
   opacity: 0;
 }
 
 li.hover {
-  transform: translate3d(2px, 0, 0);
+  transform: translate3d(-2px, 0, 0);
 }
 
 li.hover::after {
@@ -486,6 +498,57 @@ li.hover::after {
 
 li:first-child {
   margin-top: var(--gap);
+}
+
+c-fading-wrapper {
+  will-change: transform, opacity;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translate3d(0, -16px, 0);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  pointer-events: none;
+}
+
+ul.hide + c-fading-wrapper {
+  transition-delay: 0.25s;
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+section {
+  will-change: visibility;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  gap: 16px;
+  justify-content: flex-end;
+  visibility: hidden;
+}
+
+section.show {
+  visibility: visible;
+}
+
+h3 {
+  font-size: 56px;
+  margin: 0;
+  font-weight: 300;
+  line-height: 60%;
+  text-transform: lowercase;
+  font-family: "Unbounded";
+}
+
+section span {
+  text-transform: lowercase;
+  font-size: 20px;
+  letter-spacing: 0.025em;
+  font-weight: 500;
+  padding-left: 4px;
 }
 
 /* footer */
