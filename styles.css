@@ -212,6 +212,7 @@ c-control {
 
 c-cursor::after,
 c-room,
+button,
 button::before,
 li {
   will-change: transform;
@@ -337,6 +338,7 @@ button {
   line-height: 120%;
   letter-spacing: 0.05em;
   box-shadow: inset 0 0.5px 0 1px var(--acc);
+  transform: scale3d(1, 1, 1);
   transition: transform 0.25s ease, box-shadow var(--mode-swap),
     color var(--mode-swap), background-color var(--mode-swap);
 }
@@ -384,7 +386,7 @@ button.hover::after {
 }
 
 nav.hide button {
-  transform: scale3d(0, 0, 0);
+  transform: scale3d(0, 0, 1);
 }
 
 nav.remove {
