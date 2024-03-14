@@ -1,7 +1,8 @@
 :root {
   --mode-swap: 0.5s ease;
-  --bgr: #131313;
-  --acc: #ccc;
+  /* previously #131313 and #ccc */
+  --bgr: #131310;
+  --acc: #f2f3e2;
 }
 
 /* SHARED */
@@ -262,8 +263,8 @@ body::after {
 }
 
 .light-mode {
-  --bgr: #ccc;
-  --acc: #151515;
+  --bgr: #f2f3e2;
+  --acc: #131310;
 }
 
 .overlay,
@@ -409,11 +410,13 @@ header {
 }
 
 h1 {
+  contain-intrinsic-height: 134px;
   font-size: 108px;
   font-weight: 400;
 }
 
 h2 {
+  contain-intrinsic-height: 71px;
   font-size: 52px;
   font-weight: 300;
   letter-spacing: 0.02em;
@@ -449,11 +452,11 @@ c-reflection::after {
 }
 
 c-reflection::before {
-  background: linear-gradient(to top, #131313, transparent);
+  background: linear-gradient(to top, #131310, transparent);
 }
 
 c-reflection::after {
-  background: linear-gradient(to top, #ccc, transparent);
+  background: linear-gradient(to top, #f3f4e3, transparent);
 }
 
 c-reflection c-screen {
@@ -491,7 +494,7 @@ ul {
 li {
   contain: content;
   font-size: 28px;
-  font-weight: 300;
+  font-weight: 250;
   line-height: 38px;
   padding-left: 4px;
   transform: translate3d(-6px, 0, 0);
