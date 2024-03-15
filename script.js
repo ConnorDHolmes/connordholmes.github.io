@@ -1,5 +1,4 @@
 "use strict";
-
 const root = document.documentElement,
   //MAIN
   body = document.body,
@@ -14,37 +13,32 @@ const root = document.documentElement,
   entryCount = listEntries.length,
   listPairs = new Map(),
   //RAF SPEED CONTROL
-  frameDurationBenchmark = 1000 / 60;
-let then = document.timeline.currentTime,
-  everyOtherFrame;
-
-//WINDOW TRAITS
-const win = {
-  get w() {
-    return window.innerWidth;
+  frameDurationBenchmark = 1000 / 60,
+  //WINDOW TRAITS
+  win = {
+    get w() {
+      return window.innerWidth;
+    },
+    get h() {
+      return window.innerHeight;
+    },
+    get midX() {
+      return win.w / 2;
+    },
+    get midY() {
+      return win.h / 2;
+    },
   },
-  get h() {
-    return window.innerHeight;
-  },
-  get midX() {
-    return win.w / 2;
-  },
-  get midY() {
-    return win.h / 2;
-  },
-};
-
-//SCENE
-const sceneEl = document.querySelector("c-scene"),
+  //SCENE
+  sceneEl = document.querySelector("c-scene"),
   scene = {
     h: sceneEl.offsetHeight,
     get scale() {
       return win.h / scene.h;
     },
-  };
-
-//CURSOR
-const cursorEl = document.querySelector("c-cursor"),
+  },
+  //CURSOR
+  cursorEl = document.querySelector("c-cursor"),
   cursor = {
     x: {
       target: win.midX,
@@ -55,16 +49,15 @@ const cursorEl = document.querySelector("c-cursor"),
       eased: win.midY,
     },
     half: cursorEl.offsetWidth * 0.5,
-  };
-
-const camera = new Map([
-  ["orbit", { hor: 3, vert: 2, zoom: -864, adj: 90 }],
-  ["normal", { hor: 95, vert: 50, zoom: 512, adj: 0 }],
-  ["focused", { hor: 1, vert: 1, zoom: 576, adj: 0 }],
-]);
-
-//ROOM
-const roomEl = document.querySelector("c-room"),
+  },
+  //CAMERA MODE OPTIONS
+  camera = new Map([
+    ["orbit", { hor: 3, vert: 2, zoom: -864, adj: 90 }],
+    ["normal", { hor: 95, vert: 50, zoom: 512, adj: 0 }],
+    ["focused", { hor: 1, vert: 1, zoom: 576, adj: 0 }],
+  ]),
+  //ROOM
+  roomEl = document.querySelector("c-room"),
   room = {
     range: {
       mode: "orbit",
@@ -135,25 +128,45 @@ const roomEl = document.querySelector("c-room"),
         room.range.vert.eased - (room.y.eased / win.h) * room.range.vert.cone
       );
     },
-  };
-
+  },
+  //LIST OF ALL TRAITS TO BE EASED EACH FRAME
+  easedTraits = [
+    cursor.x,
+    cursor.y,
+    room.x,
+    room.y,
+    room.range.hor,
+    room.range.vert,
+    room.range.zoom,
+    room.range.adj,
+  ],
+  //ALL CLICK ACTIONS
+  actions = new Map([
+    [
+      startButton,
+      () => {
+        addCl(nav, "hide");
+        setTimeout(() => {
+          room.range.mode = "focused";
+          remBl(hiddenKey, "hide");
+          remBl(roomEl, "backface");
+          addCl(nav, "remove");
+          [...listPairs.keys()].forEach((entry, index) =>
+            setTimeout(() => remCl(entry, "hide"), (index + 4) * 125)
+          );
+        }, 350);
+      },
+    ],
+    [resButton, () => window.open("resume_placeholder.pdf", "_blank")],
+  ]);
 //ALL EASING VALS
 cursor.x.ease = cursor.y.ease = 0.25;
 room.x.ease = room.y.ease = 0.15;
 room.range.hor.ease = room.range.vert.ease = room.range.adj.ease = 0.05;
 room.range.zoom.ease = 0.04;
 
-//LIST OF ALL TRAITS TO BE EASED EACH FRAME
-const easedTraits = [
-  cursor.x,
-  cursor.y,
-  room.x,
-  room.y,
-  room.range.hor,
-  room.range.vert,
-  room.range.zoom,
-  room.range.adj,
-];
+let then = document.timeline.currentTime,
+  everyOtherFrame;
 
 //ADD CLASS (IF CLASS DOESN'T EXIST)
 function addCl(el, cl) {
@@ -180,59 +193,52 @@ function remBl(el, attr) {
   el.hasAttribute(attr) && el.removeAttribute(attr);
 }
 
-//CLICK ACTIONS
-const actions = new Map();
-actions.set(startButton, () => {
-  addCl(nav, "hide");
-  setTimeout(() => {
-    room.range.mode = "focused";
-    remBl(hiddenKey, "hide");
-    remBl(roomEl, "backface");
-    addCl(nav, "remove");
-  }, 350);
-});
-actions.set(resButton, () => {
-  console.log("resume button clicked");
-});
-
-//CLONE THE PROJECT LIST TO CREATE SEAMLESS WRAPPING
+//CLONE THE PROJECT LIST ITEMS (TO CREATE SEAMLESS WRAPPING) AND BIND THEM TO ACTIONS
 function cloneListEntries() {
   const sections = document.querySelectorAll("section");
-  listEntries.forEach((entry, index) => {
-    const entryIndex = index;
+  listEntries.forEach((entry, entryIndex) => {
     const clone = entry.cloneNode(true);
-    hoverables.push(clone);
     listPairs.set(entry, clone).set(clone, entry);
+    hoverables.push(clone);
 
     actions
-      .set(entry, () =>
+      .set(entry, () => {
         sections.forEach((section, index) =>
           index === entryIndex ? togCl(section, "show") : remCl(section, "show")
-        )
-      )
-      .set(clone, () =>
+        );
+        [...listPairs.keys()].forEach((key) =>
+          key === entry || key === clone
+            ? togCl(key, "selected")
+            : remCl(key, "selected")
+        );
+      })
+      .set(clone, () => {
         sections.forEach((section, index) =>
           index === entryIndex + entryCount
             ? togCl(section, "show")
             : remCl(section, "show")
-        )
-      );
+        );
+        [...listPairs.keys()].forEach((key) =>
+          key === entry || key === clone
+            ? togCl(key, "selected")
+            : remCl(key, "selected")
+        );
+      });
     list.append(clone);
   });
 }
 
 //CLONE THE SCREEN TO MAKE A REFLECTION
 function cloneScreen() {
-  const screen = document.querySelector("c-screen");
-  const reflection = screen.cloneNode(true);
-  const pairs = new Map();
-
-  const observer = new MutationObserver((changes) => {
-    changes.forEach(
-      (change) => (pairs.get(change.target).classList = change.target.classList)
+  const screen = document.querySelector("c-screen"),
+    reflection = screen.cloneNode(true),
+    pairs = new Map(),
+    observer = new MutationObserver((changes) =>
+      changes.forEach(
+        (change) =>
+          (pairs.get(change.target).classList = change.target.classList)
+      )
     );
-  });
-
   //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE (MUTABLE OR HOVERABLE)
   const reflectionMutables = [
     ...reflection.querySelectorAll("[data-m], [data-h]"),
@@ -288,11 +294,11 @@ function ease(val, mult) {
 function updateHoveredEl() {
   const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
   if (hoverables.includes(el)) {
-    hoverables.forEach((h) => {
+    hoverables.forEach((h) =>
       h === el || h === listPairs.get(el)
         ? addCl(h, "hover")
-        : remCl(h, "hover");
-    });
+        : remCl(h, "hover")
+    );
     addBl(cursorEl, "clickable");
   } else {
     hoverables.forEach((h) => remCl(h, "hover"));
@@ -371,39 +377,33 @@ document.addEventListener("keyup", (e) => {
 });
 
 //FADE IN SCENE AFTER ALL CONTENT IS LOADED
-document.addEventListener("readystatechange", (e) => {
-  if (e.target.readyState === "complete") {
-    remCl(body, "overlay");
-  }
-});
+document.addEventListener(
+  "readystatechange",
+  (e) => e.target.readyState === "complete" && remCl(body, "overlay")
+);
 
 //WATCH FOR INTERFACE MODE PREFERENCE CHANGE
 window
   .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", (e) => {
-    if (e.matches) {
-      remCl(body, "light-mode");
-    } else {
-      addCl(body, "light-mode");
-    }
-  });
+  .addEventListener("change", (e) =>
+    e.matches ? remCl(body, "light-mode") : addCl(body, "light-mode")
+  );
 
 //ALL CLICK ACTIONS
-document.addEventListener("click", () => {
-  const clickableEl = document.querySelector(".hover");
-  actions.get(clickableEl) && actions.get(clickableEl)();
-});
+document.addEventListener("click", () =>
+  actions.get(document.querySelector(".hover"))?.()
+);
 
 //ON LOAD
 
 //change color mode if needed
-if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+window.matchMedia("(prefers-color-scheme: light)").matches &&
   addCl(body, "light-mode");
-}
+
 //update "data-text" attributes where needed
-document.querySelectorAll("[data-text]").forEach((el) => {
-  el.setAttribute("data-text", el.innerHTML);
-});
+document
+  .querySelectorAll("[data-text]")
+  .forEach((el) => el.setAttribute("data-text", el.innerHTML));
 
 cloneListEntries();
 cloneScreen();

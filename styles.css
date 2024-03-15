@@ -117,6 +117,11 @@ footer {
   contain: layout;
 }
 
+header,
+li {
+  contain: content;
+}
+
 c-room,
 nav,
 button {
@@ -143,7 +148,7 @@ c-cursor,
 c-reflection::before,
 .light-mode c-reflection::after,
 li::before,
-li.hover::after,
+li.selected::after,
 section.show,
 c-control:hover::before {
   opacity: 1;
@@ -153,7 +158,7 @@ body::before,
 c-cursor[hide],
 c-reflection::after,
 .light-mode c-reflection::before,
-li.hover::before,
+li.selected::before,
 li::after,
 section,
 c-control[hide],
@@ -172,8 +177,8 @@ footer {
 }
 
 h1,
-h3,
-li {
+li,
+h3 {
   font-family: "Unbounded";
 }
 
@@ -214,8 +219,7 @@ c-control {
 c-cursor::after,
 c-room,
 button,
-button::before,
-li {
+button::before {
   will-change: transform;
 }
 
@@ -238,6 +242,12 @@ body::before {
   z-index: 2;
   background-color: inherit;
   transition: opacity 1s ease 1s;
+}
+
+@supports selector(:has(*)) {
+  body:has(nav.remove)::before {
+    content: none;
+  }
 }
 
 @keyframes noise {
@@ -402,7 +412,6 @@ nav.remove button {
 }
 
 header {
-  contain: content;
   inset: 128px 0 auto 0;
   text-align: center;
   transform: rotateY(-90deg) translateZ(-768px);
@@ -410,13 +419,11 @@ header {
 }
 
 h1 {
-  contain-intrinsic-height: 134px;
   font-size: 108px;
   font-weight: 400;
 }
 
 h2 {
-  contain-intrinsic-height: 71px;
   font-size: 52px;
   font-weight: 300;
   letter-spacing: 0.02em;
@@ -469,7 +476,7 @@ c-screen::before {
   inset: 0 auto auto 0;
   width: 2016px;
   height: 1120px;
-  background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff9f1c);
+  background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff4500);
   background-size: 2016px 1120px;
   transform: translate3d(0, 0, 0);
   transition: transform var(--mode-swap);
@@ -480,8 +487,8 @@ c-screen::before {
 }
 
 ul {
-  will-change: scroll-position, opacity;
-  --gap: 34px;
+  will-change: scroll-position;
+  --gap: 24px;
   padding: 0;
   width: inherit;
   height: inherit;
@@ -492,13 +499,18 @@ ul {
 }
 
 li {
-  contain: content;
+  will-change: transform, opacity;
+  padding-left: 8px;
   font-size: 28px;
   font-weight: 250;
-  line-height: 38px;
-  padding-left: 4px;
-  transform: translate3d(-6px, 0, 0);
+  line-height: 48px;
+  transform: translate3d(-8px, 0, 0);
+  opacity: 1;
   transition: transform 0.15s ease;
+}
+
+li.hide {
+  opacity: 0;
 }
 
 li:first-child {
@@ -508,7 +520,8 @@ li:first-child {
 li::before,
 li::after {
   content: attr(data-text);
-  inset: 0 0 0 auto;
+  inset: auto 0 auto auto;
+  transform: translate3d(0, 0, 0);
   transition: color var(--mode-swap);
 }
 
@@ -525,7 +538,19 @@ li::marker {
 }
 
 li.hover {
-  transform: translate3d(-2px, 0, 0);
+  transform: translate3d(-4px, 0, 0);
+}
+
+li.selected {
+  transform: translate3d(0, 0, 0);
+}
+
+li.hover:not(.selected)::before {
+  opacity: 0.25;
+}
+
+li.hover:not(.selected)::after {
+  opacity: 0.75;
 }
 
 section {
