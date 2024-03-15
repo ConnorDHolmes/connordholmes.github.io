@@ -152,7 +152,7 @@ const root = document.documentElement,
           remBl(roomEl, "backface");
           addCl(nav, "remove");
           [...listPairs.keys()].forEach((entry, index) =>
-            setTimeout(() => remCl(entry, "hide"), (index + 4) * 125)
+            setTimeout(() => remCl(entry, "hide"), (index + 10) * 125)
           );
         }, 350);
       },
