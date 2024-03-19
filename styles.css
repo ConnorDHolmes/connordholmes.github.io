@@ -1,6 +1,5 @@
 :root {
   --mode-swap: 0.5s ease;
-  /* previously #131313 and #ccc */
   --bgr: #131310;
   --acc: #f2f3e2;
 }
@@ -23,6 +22,32 @@ html,
 body,
 button {
   cursor: none !important;
+}
+
+body::after,
+c-screen,
+c-cursor::after,
+c-reflection,
+ul {
+  contain: strict;
+}
+
+c-cursor,
+c-scene,
+c-room,
+main {
+  contain: layout size;
+}
+
+nav,
+button,
+footer {
+  contain: layout;
+}
+
+header,
+li {
+  contain: content;
 }
 
 c-cursor,
@@ -57,17 +82,8 @@ button::after,
 c-reflection::before,
 c-reflection::after,
 c-reflection c-screen,
-section,
 ul {
   inset: 0;
-}
-
-body::after,
-c-screen,
-c-cursor::after,
-c-reflection,
-ul {
-  contain: strict;
 }
 
 body::before,
@@ -98,28 +114,11 @@ body::before,
 body::after,
 c-scene,
 c-reflection c-screen,
+section,
 footer,
 c-control::before,
 c-control[hide] {
   pointer-events: none;
-}
-
-c-cursor,
-c-scene,
-c-room,
-main {
-  contain: layout size;
-}
-
-nav,
-button,
-footer {
-  contain: layout;
-}
-
-header,
-li {
-  contain: content;
 }
 
 c-room,
@@ -141,6 +140,13 @@ nav,
 ul,
 footer {
   display: flex;
+}
+
+c-reflection,
+c-screen::before,
+c-control,
+c-control:hover::before {
+  transform: translate3d(0, 0, 0);
 }
 
 .overlay::before,
@@ -379,7 +385,7 @@ button::before {
   transform: scale3d(0, 0, 1);
 }
 
-button.hover::before {
+button.hov::before {
   transform: scale3d(1, 1, 1);
 }
 
@@ -392,7 +398,7 @@ button::after {
   transition: filter 0.25s ease, color var(--mode-swap);
 }
 
-button.hover::after {
+button.hov::after {
   filter: invert(1);
 }
 
@@ -441,11 +447,10 @@ c-screen {
 }
 
 c-reflection {
-  filter: blur(4px) opacity(0.6);
-  transform: translate3d(0, 0, 0);
   inset: 584px auto auto 8px;
   width: 1008px;
   height: 216px;
+  filter: blur(4px) opacity(0.6);
 }
 
 .performance-mode c-reflection {
@@ -477,8 +482,6 @@ c-screen::before {
   width: 2016px;
   height: 1120px;
   background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff4500);
-  background-size: 2016px 1120px;
-  transform: translate3d(0, 0, 0);
   transition: transform var(--mode-swap);
 }
 
@@ -488,7 +491,7 @@ c-screen::before {
 
 ul {
   will-change: scroll-position;
-  --gap: 24px;
+  --gap: 41px;
   padding: 0;
   width: inherit;
   height: inherit;
@@ -501,9 +504,9 @@ ul {
 li {
   will-change: transform, opacity;
   padding-left: 8px;
-  font-size: 28px;
+  font-size: 16px;
   font-weight: 250;
-  line-height: 48px;
+  line-height: 42px;
   transform: translate3d(-8px, 0, 0);
   opacity: 1;
   transition: transform 0.15s ease;
@@ -511,6 +514,7 @@ li {
 
 li.hide {
   opacity: 0;
+  pointer-events: none;
 }
 
 li:first-child {
@@ -521,7 +525,6 @@ li::before,
 li::after {
   content: attr(data-text);
   inset: auto 0 auto auto;
-  transform: translate3d(0, 0, 0);
   transition: color var(--mode-swap);
 }
 
@@ -537,7 +540,7 @@ li::marker {
   content: none;
 }
 
-li.hover {
+li.hov {
   transform: translate3d(-4px, 0, 0);
 }
 
@@ -545,27 +548,37 @@ li.selected {
   transform: translate3d(0, 0, 0);
 }
 
-li.hover:not(.selected)::before {
+li.hov:not(.selected)::before {
   opacity: 0.25;
 }
 
-li.hover:not(.selected)::after {
+li.hov:not(.selected)::after {
   opacity: 0.75;
 }
 
 section {
+  inset: 0;
   display: flex;
-  padding-right: 16px;
+  padding: 0 8px 40px 0;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 16px;
   pointer-events: none;
   transition: color var(--mode-swap);
 }
 
+img {
+  inset: auto 0 78px auto;
+  position: absolute;
+  z-index: -1;
+  opacity: 0.15;
+  width: 768px;
+  border-radius: 8px 0 0 8px;
+}
+
 h3 {
-  font-size: 56px;
+  font-size: 52px;
   font-weight: 300;
   line-height: 60%;
 }
@@ -595,7 +608,6 @@ footer span {
 
 c-control {
   transition: opacity 0.35s ease;
-  transform: translate3d(0, 0, 0);
 }
 
 c-control::before {
@@ -613,10 +625,6 @@ c-control::before {
   transform: translate3d(0, 4px, 0);
   transition: opacity 0.15s ease, transform 0.25s ease,
     background-color var(--mode-swap);
-}
-
-c-control:hover::before {
-  transform: translate3d(0, 0, 0);
 }
 
 c-control::after {

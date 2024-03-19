@@ -295,13 +295,11 @@ function updateHoveredEl() {
   const el = document.elementFromPoint(cursor.x.eased, cursor.y.eased);
   if (hoverables.includes(el)) {
     hoverables.forEach((h) =>
-      h === el || h === listPairs.get(el)
-        ? addCl(h, "hover")
-        : remCl(h, "hover")
+      h === el || h === listPairs.get(el) ? addCl(h, "hov") : remCl(h, "hov")
     );
     addBl(cursorEl, "clickable");
   } else {
-    hoverables.forEach((h) => remCl(h, "hover"));
+    hoverables.forEach((h) => remCl(h, "hov"));
     remBl(cursorEl, "clickable");
   }
 }
@@ -391,7 +389,7 @@ window
 
 //ALL CLICK ACTIONS
 document.addEventListener("click", () =>
-  actions.get(document.querySelector(".hover"))?.()
+  actions.get(document.querySelector(".hov"))?.()
 );
 
 //ON LOAD
