@@ -28,7 +28,8 @@ body::after,
 c-screen,
 c-cursor::after,
 c-reflection,
-ul {
+ul,
+section {
   contain: strict;
 }
 
@@ -155,7 +156,6 @@ c-reflection::before,
 .light-mode c-reflection::after,
 li::before,
 li.selected::after,
-section.show,
 c-control:hover::before {
   opacity: 1;
 }
@@ -166,7 +166,6 @@ c-reflection::after,
 .light-mode c-reflection::before,
 li.selected::before,
 li::after,
-section,
 c-control[hide],
 c-control::before {
   opacity: 0;
@@ -491,7 +490,7 @@ c-screen::before {
 
 ul {
   will-change: scroll-position;
-  --gap: 41px;
+  --gap: 30px;
   padding: 0;
   width: inherit;
   height: inherit;
@@ -504,7 +503,7 @@ ul {
 li {
   will-change: transform, opacity;
   padding-left: 8px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 250;
   line-height: 42px;
   transform: translate3d(-8px, 0, 0);
@@ -557,6 +556,7 @@ li.hov:not(.selected)::after {
 }
 
 section {
+  will-change: transform, opacity;
   inset: 0;
   display: flex;
   padding: 0 8px 40px 0;
@@ -564,17 +564,27 @@ section {
   align-items: flex-end;
   justify-content: flex-end;
   gap: 16px;
+  transform-origin: right;
+  transform: translate3d(0, 0, -1px) scale3d(0.97, 0.97, 1);
+  opacity: 0;
   pointer-events: none;
-  transition: color var(--mode-swap);
+  transition: color var(--mode-swap), transform 0.15s ease, opacity 0.15s ease;
+}
+
+section.show {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
 }
 
 img {
   inset: auto 0 78px auto;
   position: absolute;
   z-index: -1;
-  opacity: 0.15;
+  opacity: 0.9;
   width: 768px;
   border-radius: 8px 0 0 8px;
+  -webkit-mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.05));
+  mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.05));
 }
 
 h3 {
@@ -587,6 +597,28 @@ section span {
   font-size: 16px;
   letter-spacing: 0.025em;
   font-weight: 300;
+}
+
+h3,
+section span {
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translate3d(0, 4px, 0);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+section.show h3,
+section.show span {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+section.show h3 {
+  transition-delay: 0.1s, 0.1s;
+}
+
+section.show span {
+  transition-delay: 0.15s, 0.15s;
 }
 
 /* FOOTER */

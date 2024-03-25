@@ -170,27 +170,31 @@ let then = document.timeline.currentTime,
 
 //ADD CLASS (IF CLASS DOESN'T EXIST)
 function addCl(el, cl) {
-  !el.classList.contains(cl) && el.classList.add(cl);
+  !el.classList.contains(cl) &&
+    requestAnimationFrame(() => el.classList.add(cl));
 }
 
 //REMOVE CLASS (IF CLASS EXISTS)
 function remCl(el, cl) {
-  el.classList.contains(cl) && el.classList.remove(cl);
+  el.classList.contains(cl) &&
+    requestAnimationFrame(() => el.classList.remove(cl));
 }
 
 //TOGGLE CLASS
 function togCl(el, cl) {
-  el.classList.toggle(cl);
+  requestAnimationFrame(() => el.classList.toggle(cl));
 }
 
 //ADD BOOLEAN ATTRIBUTE (IF ATTRIBUTE DOESN'T EXIST)
 function addBl(el, attr) {
-  !el.hasAttribute(attr) && el.setAttribute(attr, "");
+  !el.hasAttribute(attr) &&
+    requestAnimationFrame(() => el.setAttribute(attr, ""));
 }
 
 //REMOVE BOOLEAN ATTRIBUTE (IF ATTRIBUTE EXISTS)
 function remBl(el, attr) {
-  el.hasAttribute(attr) && el.removeAttribute(attr);
+  el.hasAttribute(attr) &&
+    requestAnimationFrame(() => el.removeAttribute(attr));
 }
 
 //CLONE THE PROJECT LIST ITEMS (TO CREATE SEAMLESS WRAPPING) AND BIND THEM TO ACTIONS
