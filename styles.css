@@ -66,7 +66,6 @@ c-reflection,
 c-reflection::before,
 c-reflection::after,
 ul,
-li::before,
 li::after,
 section,
 footer,
@@ -95,7 +94,6 @@ button::after,
 c-screen::before,
 c-reflection::before,
 c-reflection::after,
-li::before,
 li::after,
 c-control::before,
 c-control::after {
@@ -145,6 +143,8 @@ footer {
 
 c-reflection,
 c-screen::before,
+li.selected,
+li.selected::after,
 c-control,
 c-control:hover::before {
   transform: translate3d(0, 0, 0);
@@ -154,8 +154,7 @@ c-control:hover::before {
 c-cursor,
 c-reflection::before,
 .light-mode c-reflection::after,
-li::before,
-li.selected::after,
+li.selected,
 c-control:hover::before {
   opacity: 1;
 }
@@ -164,8 +163,6 @@ body::before,
 c-cursor[hide],
 c-reflection::after,
 .light-mode c-reflection::before,
-li.selected::before,
-li::after,
 c-control[hide],
 c-control::before {
   opacity: 0;
@@ -192,8 +189,7 @@ ul {
   overflow: hidden;
 }
 
-button,
-li {
+button {
   color: transparent;
 }
 
@@ -214,8 +210,6 @@ c-control::before {
 }
 
 c-cursor,
-li::before,
-li::after,
 section,
 c-control {
   will-change: opacity;
@@ -507,7 +501,7 @@ li {
   font-weight: 250;
   line-height: 42px;
   transform: translate3d(-8px, 0, 0);
-  opacity: 1;
+  opacity: 0.6;
   transition: transform 0.15s ease;
 }
 
@@ -520,39 +514,21 @@ li:first-child {
   margin-top: var(--gap);
 }
 
-li::before,
 li::after {
-  content: attr(data-text);
-  inset: auto 0 auto auto;
-  transition: color var(--mode-swap);
-}
-
-li::before {
-  color: var(--acc);
-}
-
-li::after {
-  color: var(--bgr);
+  inset: 34px 0 auto 0;
+  height: 1px;
+  background-color: var(--acc);
+  transition: transform 0.2s ease, background-color var(--mode-swap);
+  transform: translate3d(-100%, 0, 0);
 }
 
 li::marker {
   content: none;
 }
 
-li.hov {
-  transform: translate3d(-4px, 0, 0);
-}
-
-li.selected {
-  transform: translate3d(0, 0, 0);
-}
-
-li.hov:not(.selected)::before {
-  opacity: 0.25;
-}
-
-li.hov:not(.selected)::after {
+li:not(.selected).hov {
   opacity: 0.75;
+  transform: translate3d(-4px, 0, 0);
 }
 
 section {
@@ -580,15 +556,14 @@ img {
   inset: auto 0 78px auto;
   position: absolute;
   z-index: -1;
-  opacity: 0.9;
   width: 768px;
-  border-radius: 8px 0 0 8px;
-  -webkit-mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.05));
-  mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.05));
+  border-radius: 6px 0 0 6px;
+  -webkit-mask-image: linear-gradient(178deg, black 50%, transparent);
+  mask-image: linear-gradient(178deg, black 50%, transparent);
 }
 
 h3 {
-  font-size: 52px;
+  font-size: 56px;
   font-weight: 300;
   line-height: 60%;
 }
