@@ -154,6 +154,7 @@ const root = document.documentElement,
           [...listPairs.keys()].forEach((entry, index) =>
             setTimeout(() => remCl(entry, "hide"), (index + 10) * 125)
           );
+          canScroll = true;
         }, 350);
       },
     ],
@@ -166,7 +167,8 @@ room.range.hor.ease = room.range.vert.ease = room.range.adj.ease = 0.05;
 room.range.zoom.ease = 0.04;
 
 let then = document.timeline.currentTime,
-  everyOtherFrame;
+  everyOtherFrame,
+  canScroll = false;
 
 //ADD CLASS (IF CLASS DOESN'T EXIST)
 function addCl(el, cl) {
@@ -271,15 +273,17 @@ function cloneScreen() {
       )) *
     entryCount;
 
-  list.addEventListener(
+  document.addEventListener(
     "wheel",
     (e) => {
-      if (list.scrollTop >= maxScroll) {
-        listClone.scrollTop = list.scrollTop = 1;
-      } else if (list.scrollTop === 0) {
-        listClone.scrollTop = list.scrollTop = maxScroll - 1;
-      } else {
-        listClone.scrollTop = list.scrollTop += e.deltaY;
+      if (canScroll) {
+        if (list.scrollTop >= maxScroll) {
+          listClone.scrollTop = list.scrollTop = 1;
+        } else if (list.scrollTop === 0) {
+          listClone.scrollTop = list.scrollTop = maxScroll - 1;
+        } else {
+          listClone.scrollTop = list.scrollTop += e.deltaY;
+        }
       }
     },
     { passive: true }

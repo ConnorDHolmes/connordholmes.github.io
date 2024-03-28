@@ -25,11 +25,12 @@ button {
 }
 
 body::after,
+header,
 c-screen,
 c-cursor::after,
 c-reflection,
 ul,
-section {
+li section {
   contain: strict;
 }
 
@@ -46,10 +47,9 @@ footer {
   contain: layout;
 }
 
-header,
-li {
+/* header {
   contain: content;
-}
+} */
 
 c-cursor,
 c-cursor::after,
@@ -131,7 +131,8 @@ h1,
 h2,
 h3,
 ul,
-li {
+li,
+p {
   margin: 0;
 }
 
@@ -155,6 +156,7 @@ c-cursor,
 c-reflection::before,
 .light-mode c-reflection::after,
 li.selected,
+section.show,
 c-control:hover::before {
   opacity: 1;
 }
@@ -411,6 +413,7 @@ nav.remove button {
 }
 
 header {
+  contain-intrinsic-height: 205px;
   inset: 128px 0 auto 0;
   text-align: center;
   transform: rotateY(-90deg) translateZ(-768px);
@@ -474,7 +477,8 @@ c-screen::before {
   inset: 0 auto auto 0;
   width: 2016px;
   height: 1120px;
-  background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff4500);
+  /* background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff4500); */
+  background: linear-gradient(to bottom right, red, #2ec4b6, #ff4500);
   transition: transform var(--mode-swap);
 }
 
@@ -484,7 +488,7 @@ c-screen::before {
 
 ul {
   will-change: scroll-position;
-  --gap: 30px;
+  --gap: 28px;
   padding: 0;
   width: inherit;
   height: inherit;
@@ -496,13 +500,14 @@ ul {
 
 li {
   will-change: transform, opacity;
-  padding-left: 8px;
-  font-size: 18px;
+  padding-left: 6px;
+  /* height: 50px; */
+  font-size: 16px;
   font-weight: 250;
-  line-height: 42px;
-  transform: translate3d(-8px, 0, 0);
+  line-height: 55px;
+  transform: translate3d(-4px, 0, 0);
   opacity: 0.6;
-  transition: transform 0.15s ease;
+  transition: transform 0.125s ease;
 }
 
 li.hide {
@@ -515,9 +520,9 @@ li:first-child {
 }
 
 li::after {
-  inset: 34px 0 auto 0;
+  inset: 40px 0 auto 0;
   height: 1px;
-  background-color: var(--acc);
+  background-color: var(--bgr);
   transition: transform 0.2s ease, background-color var(--mode-swap);
   transform: translate3d(-100%, 0, 0);
 }
@@ -528,18 +533,19 @@ li::marker {
 
 li:not(.selected).hov {
   opacity: 0.75;
-  transform: translate3d(-4px, 0, 0);
+  transform: translate3d(-2px, 0, 0);
 }
 
 section {
   will-change: transform, opacity;
-  inset: 0;
+  inset: auto 0 auto auto;
+  /* width: 736px; */
+  width: 672px;
+  height: 100%;
   display: flex;
-  padding: 0 8px 40px 0;
+  /* padding-top: 380px; */
+  padding-top: 380.5px;
   flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-  gap: 16px;
   transform-origin: right;
   transform: translate3d(0, 0, -1px) scale3d(0.97, 0.97, 1);
   opacity: 0;
@@ -548,34 +554,48 @@ section {
 }
 
 section.show {
-  opacity: 1;
   transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
 }
 
 img {
-  inset: auto 0 78px auto;
+  inset: 64px -3.5px auto auto;
   position: absolute;
   z-index: -1;
-  width: 768px;
-  border-radius: 6px 0 0 6px;
-  -webkit-mask-image: linear-gradient(178deg, black 50%, transparent);
-  mask-image: linear-gradient(178deg, black 50%, transparent);
+  width: 100%;
+  border-radius: 12px 0 0 0;
+  -webkit-mask-image: linear-gradient(182deg, black 50%, transparent);
+  mask-image: linear-gradient(182deg, black 50%, transparent);
 }
 
 h3 {
-  font-size: 56px;
+  position: relative;
+  font-size: 52px;
   font-weight: 300;
-  line-height: 60%;
+  line-height: 120%;
 }
 
 section span {
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0.025em;
-  font-weight: 300;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+section span,
+p {
+  position: relative;
+  left: 2.5px;
+}
+
+p {
+  font-size: 12px;
+  letter-spacing: 0.025em;
+  max-width: 352px;
 }
 
 h3,
-section span {
+section span,
+p {
   will-change: transform, opacity;
   opacity: 0;
   transform: translate3d(0, 4px, 0);
@@ -583,9 +603,18 @@ section span {
 }
 
 section.show h3,
+section.show span,
+section.show p {
+  transform: translate3d(0, 0, 0);
+}
+
+section.show h3,
 section.show span {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+}
+
+section.show p {
+  opacity: 0.75;
 }
 
 section.show h3 {
@@ -594,6 +623,10 @@ section.show h3 {
 
 section.show span {
   transition-delay: 0.15s, 0.15s;
+}
+
+section.show p {
+  transition-delay: 0.2s, 0.2s;
 }
 
 /* FOOTER */
