@@ -522,7 +522,7 @@ li:first-child {
 li::after {
   inset: 40px 0 auto 0;
   height: 1px;
-  background-color: var(--bgr);
+  background-color: var(--acc);
   transition: transform 0.2s ease, background-color var(--mode-swap);
   transform: translate3d(-100%, 0, 0);
 }
