@@ -71,6 +71,14 @@ c-control::before {
   position: absolute;
 }
 
+button,
+h4,
+p,
+a,
+a::before {
+  position: relative;
+}
+
 body::before,
 c-cursor,
 c-cursor::after,
@@ -345,7 +353,6 @@ nav {
 }
 
 button {
-  position: relative;
   padding: 10px 16px;
   background-color: transparent;
   font-family: inherit;
@@ -430,8 +437,13 @@ h1 {
 
 h2 {
   font-size: 52px;
-  font-weight: 300;
+
   letter-spacing: 0.02em;
+}
+
+h2,
+h3 {
+  font-weight: 300;
 }
 
 main {
@@ -482,7 +494,9 @@ c-screen::before {
   height: 1120px;
   /* background: linear-gradient(to bottom right, #ff3366, #2ec4b6, #ff4500); */
   /* background: linear-gradient(to bottom right, red, #2ec4b6, #ff4500); */
-  background: linear-gradient(to bottom right, #e3170a, #2ec4b6, #ff5a5f);
+  /* background: linear-gradient(to bottom right, #e3170a, #2ec4b6, #ff5a5f); */
+  /* background: linear-gradient(to bottom right, #e3170a, #2ec4b6, #fb5012); */
+  background: linear-gradient(to bottom right, #087e8b, #ff5a5f, #81f4e1);
   transition: transform var(--mode-swap);
 }
 
@@ -510,7 +524,7 @@ li {
   font-weight: 250;
   line-height: 55px;
   transform: translate3d(-4px, 0, 0);
-  opacity: 0.6;
+  opacity: 0.5;
   transition: transform 0.125s ease;
 }
 
@@ -525,7 +539,7 @@ li:first-child {
 
 li::after {
   inset: 40px 0 auto 0;
-  border-bottom: 1px solid var(--acc);
+  border-bottom: 0.75px solid var(--acc);
   transition: transform 0.2s ease, border-color var(--mode-swap);
   transform: translate3d(-100%, 0, 0);
 }
@@ -563,13 +577,12 @@ img {
   z-index: -1;
   width: 100%;
   border-radius: 12px 0 0 0;
-  -webkit-mask-image: linear-gradient(182deg, black 20%, transparent);
-  mask-image: linear-gradient(182deg, black 20%, transparent);
+  -webkit-mask-image: linear-gradient(184deg, black 50%, transparent 95%);
+  mask-image: linear-gradient(184deg, black 50%, transparent 95%);
 }
 
 h3 {
   font-size: 52px;
-  font-weight: 300;
   line-height: 120%;
 }
 
@@ -583,12 +596,10 @@ h4 {
 h4,
 p,
 a {
-  position: relative;
   left: 2.5px;
 }
 
 p {
-  font-weight: 300;
   max-width: 352px;
   margin-bottom: 8px;
 }
@@ -612,7 +623,6 @@ a::after {
 a::before {
   will-change: opacity;
   content: ">";
-  position: relative;
   left: -1.5px;
   width: 0.6em;
   opacity: 0;
