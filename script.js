@@ -199,6 +199,16 @@ function remBl(el, attr) {
     requestAnimationFrame(() => el.removeAttribute(attr));
 }
 
+//SET PROJECT LINK BEHAVIOR
+function bindLinks() {
+  document.querySelectorAll("a").forEach((link) => {
+    const destination = link.href;
+    actions.set(link, () => window.open(destination, "_blank"));
+    link.removeAttribute("href");
+    link.removeAttribute("target");
+  });
+}
+
 //CLONE THE PROJECT LIST ITEMS (TO CREATE SEAMLESS WRAPPING) AND BIND THEM TO ACTIONS
 function cloneListEntries() {
   const sections = document.querySelectorAll("section");
@@ -323,6 +333,19 @@ function refresh(timeStamp) {
   everyOtherFrame && !cursorEl.hasAttribute("hide") && updateHoveredEl();
   everyOtherFrame = !everyOtherFrame;
 
+  //seems to fix buggy tab change behavior with view
+  if (
+    cursor.x.eased > win.w + 16 ||
+    cursor.x.eased < -16 ||
+    room.x.eased > win.w + 16 ||
+    room.x.eased < -16
+  ) {
+    cursor.x.eased = win.midX;
+    cursor.y.eased = win.midX;
+    room.x.eased = win.midX;
+    room.y.eased = win.midX;
+  }
+
   then = timeStamp;
   requestAnimationFrame(refresh);
 }
@@ -411,6 +434,7 @@ document
   .querySelectorAll("[data-text]")
   .forEach((el) => el.setAttribute("data-text", el.innerHTML));
 
+bindLinks();
 cloneListEntries();
 cloneScreen();
 measureAndSize();

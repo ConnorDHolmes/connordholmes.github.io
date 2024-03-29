@@ -20,7 +20,8 @@ body {
 
 html,
 body,
-button {
+button,
+a {
   cursor: none !important;
 }
 
@@ -545,8 +546,9 @@ section {
   will-change: transform, opacity;
   inset: 0 0 0 auto;
   width: 672px;
-  padding-top: 380.5px;
+  padding-top: 364.5px;
   flex-direction: column;
+  align-items: flex-start;
   transform-origin: right;
   pointer-events: none;
   opacity: 0;
@@ -559,7 +561,7 @@ section {
 }
 
 img {
-  inset: 64px -3.5px auto auto;
+  inset: 48px -3.5px auto auto;
   position: absolute;
   z-index: -1;
   width: 100%;
@@ -582,20 +584,62 @@ h4 {
 }
 
 h4,
-p {
+p,
+a {
   position: relative;
   left: 2.5px;
 }
 
 p {
+  font-weight: 300;
+  max-width: 352px;
+  margin-bottom: 8px;
+}
+
+p,
+a {
   font-size: 12px;
   letter-spacing: 0.025em;
-  max-width: 352px;
+}
+
+a {
+  text-decoration: unset;
+  color: unset;
+}
+
+a::before,
+a::after {
+  display: inline-block;
+}
+
+a::before {
+  will-change: opacity;
+  content: ">";
+  position: relative;
+  left: -1.5px;
+  width: 0.6em;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+a::after {
+  content: attr(aria-label);
+  transform: translate3d(-0.6em, 0, 0);
+  transition: transform 0.15s ease;
+}
+
+a.hov::before {
+  opacity: 1;
+}
+
+a.hov::after {
+  transform: translate3d(0, 0, 0);
 }
 
 h3,
 h4,
-p {
+p,
+a {
   will-change: transform, opacity;
   opacity: 0;
   transform: translate3d(0, 4px, 0);
@@ -604,17 +648,15 @@ p {
 
 .show h3,
 .show h4,
-.show p {
+.show p,
+.show a {
   transform: translate3d(0, 0, 0);
 }
 
 .show h3,
-.show h4 {
+.show h4,
+.show a {
   opacity: 1;
-}
-
-.show p {
-  opacity: 0.75;
 }
 
 .show h3 {
@@ -626,7 +668,12 @@ p {
 }
 
 .show p {
+  opacity: 0.75;
   transition-delay: 0.2s, 0.2s;
+}
+
+.show a {
+  transition-delay: 0.25s, 0.25s;
 }
 
 /* FOOTER */
