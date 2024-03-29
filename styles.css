@@ -32,7 +32,7 @@ c-screen,
 c-cursor::after,
 c-reflection,
 ul,
-li section {
+section {
   contain: strict;
 }
 
@@ -48,10 +48,6 @@ button,
 footer {
   contain: layout;
 }
-
-/* header {
-  contain: content;
-} */
 
 c-cursor,
 c-cursor::after,
@@ -507,6 +503,7 @@ ul {
 }
 
 li {
+  contain: content;
   will-change: transform, opacity;
   padding-left: 6px;
   font-size: 16px;
