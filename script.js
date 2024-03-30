@@ -32,7 +32,9 @@ const root = document.documentElement,
   //SCENE
   sceneEl = document.querySelector("c-scene"),
   scene = {
-    h: sceneEl.offsetHeight,
+    get h() {
+      return sceneEl.offsetHeight;
+    },
     get scale() {
       return win.h / scene.h;
     },
@@ -419,8 +421,10 @@ window
   );
 
 //ALL CLICK ACTIONS
-document.addEventListener("click", () =>
-  actions.get(document.querySelector(".hov"))?.()
+document.addEventListener("click", (e) =>
+  win.w > 768
+    ? actions.get(document.querySelector(".hov"))?.()
+    : actions.get(e.target)?.()
 );
 
 //ON LOAD
