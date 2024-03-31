@@ -522,7 +522,7 @@ li {
   line-height: 55px;
   transform: translate3d(-4px, 0, 0);
   opacity: 0.5;
-  transition: transform 0.125s ease;
+  transition: transform 0.125s ease, opacity 0.1s ease;
 }
 
 li.hide {
