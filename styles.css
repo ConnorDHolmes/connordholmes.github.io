@@ -733,6 +733,10 @@ footer:hover > c-control:not(:hover):not([hide]) {
 }
 
 @media (max-width: 768px) {
+  html {
+    overscroll-behavior: auto;
+  }
+
   html,
   body {
     height: auto;
@@ -823,10 +827,10 @@ footer:hover > c-control:not(:hover):not([hide]) {
   c-screen {
     display: flex;
     flex-direction: column;
-    gap: 72px;
+    gap: 256px;
     width: 100%;
     height: auto;
-    padding-bottom: 64px;
+    padding-bottom: 128px;
     contain: paint;
     position: relative;
     inset: 0;
@@ -837,7 +841,7 @@ footer:hover > c-control:not(:hover):not([hide]) {
     width: 200%;
     height: 100%;
     background: linear-gradient(to right, var(--grad));
-    opacity: 0.75;
+    opacity: 0.5;
   }
 
   .light-mode c-screen::before {
@@ -866,7 +870,6 @@ footer:hover > c-control:not(:hover):not([hide]) {
 
   h3,
   h4,
-  p,
   a {
     opacity: 1;
     transform: none;
@@ -874,11 +877,19 @@ footer:hover > c-control:not(:hover):not([hide]) {
   }
 
   p {
+    font-size: 14px;
     margin-bottom: 16px;
+    opacity: 0.5;
+    transform: none;
+    position: static;
   }
 
   a {
-    font-size: 14px;
+    font-size: 16px;
+  }
+
+  a::after {
+    text-decoration: underline;
   }
 
   img {
@@ -891,8 +902,10 @@ footer:hover > c-control:not(:hover):not([hide]) {
   }
 
   footer {
+    pointer-events: auto;
+    user-select: all;
     position: static;
-    padding: 0 8px 48px 8px;
+    padding: 0 8px 64px 8px;
   }
 
   c-control {
