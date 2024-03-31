@@ -694,7 +694,11 @@ footer {
 }
 
 footer span {
+  pointer-events: auto;
   margin-right: auto;
+  user-select: text;
+  /* for safari */
+  -webkit-user-select: text;
 }
 
 c-control {
@@ -731,6 +735,12 @@ c-control::after {
 footer:hover > c-control:not(:hover):not([hide]) {
   opacity: 0.5;
 }
+
+footer span:hover ~ c-control:not(:hover):not([hide]) {
+  opacity: 1;
+}
+
+/* MOBILE */
 
 @media (max-width: 768px) {
   html {
@@ -812,12 +822,12 @@ footer:hover > c-control:not(:hover):not([hide]) {
   h1 {
     font-size: 50px;
     line-height: 50px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
 
   h2 {
     font-size: 20px;
-    max-width: 300px;
+    max-width: 200px;
   }
 
   h3 {
@@ -882,6 +892,7 @@ footer:hover > c-control:not(:hover):not([hide]) {
     opacity: 0.5;
     transform: none;
     position: static;
+    max-width: 330px;
   }
 
   a {
@@ -902,8 +913,6 @@ footer:hover > c-control:not(:hover):not([hide]) {
   }
 
   footer {
-    pointer-events: auto;
-    user-select: all;
     position: static;
     padding: 0 8px 64px 8px;
   }

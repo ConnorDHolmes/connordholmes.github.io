@@ -4,6 +4,7 @@ const root = document.documentElement,
   body = document.body,
   nav = document.querySelector("nav"),
   startButton = document.getElementById("start"),
+  email = document.querySelector("footer span"),
   resButton = document.getElementById("res"),
   hiddenKey = document.querySelector("c-control[hide]"),
   hoverables = [...document.querySelectorAll("[data-h]")],
@@ -420,12 +421,22 @@ window
     e.matches ? remCl(body, "light-mode") : addCl(body, "light-mode")
   );
 
+//REMOVE A USER SELECTION WITHIN THE WINDOW
+function removeSelection() {
+  window.getSelection && window.getSelection().removeAllRanges();
+  document.selection && document.selection.empty();
+}
+
 //ALL CLICK ACTIONS
-document.addEventListener("click", (e) =>
+document.addEventListener("click", (e) => {
   win.w > 768
     ? actions.get(document.querySelector(".hov"))?.()
-    : actions.get(e.target)?.()
-);
+    : actions.get(e.target)?.();
+
+  if (e.target !== email) {
+    removeSelection();
+  }
+});
 
 //ON LOAD
 
