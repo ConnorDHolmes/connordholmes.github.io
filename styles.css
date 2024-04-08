@@ -745,7 +745,7 @@ footer span:hover ~ c-control:not(:hover):not([hide]) {
 
 /* MOBILE */
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   html {
     overscroll-behavior: auto;
   }
