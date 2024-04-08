@@ -20,17 +20,17 @@
     <meta property="og:image" content="" />
 
     <link rel="preload" href="images/noise_overlay.webp" as="image" />
-    <link rel="preload" href="styles.css" as="style" />
-    <link rel="preload" href="script.js" as="script" />
+    <link rel="preload" href="styles_min.css" as="style" />
+    <link rel="preload" href="script_min.js" as="script" />
 
     <link rel="icon" href="favicon.ico" />
 
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles_min.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..400&family=Unbounded:wght@250..400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..500&family=Unbounded:wght@250..400&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -67,7 +67,7 @@
             <ul data-m>
               <li class="hide" data-h data-text>Spotlight</li>
               <li class="hide" data-h data-text>Ares Security Corp</li>
-              <li class="hide" data-h data-text>Seed AI</li>
+              <li class="hide" data-h data-text>SeedAI</li>
               <li class="hide" data-h data-text>Hack the Future</li>
               <li class="hide" data-h data-text>Inkling Agency</li>
               <li class="hide" data-h data-text>Blocks Animation</li>
@@ -98,7 +98,7 @@
               />
               <h3>Ares Security Corp</h3>
               <h4>Next.js • Contentful CMS • Heroku</h4>
-              <p>
+              <p class="ink">
                 Custom CMS-driven marketing site and blog rebuild for
                 cyber-security leader Ares Security.
               </p>
@@ -111,9 +111,9 @@
             </section>
             <section data-m>
               <img src="images/seedai.webp" alt="SeedAI Marketing Site" />
-              <h3>Seed AI</h3>
+              <h3>SeedAI</h3>
               <h4>Next.js • Contentful CMS • Heroku</h4>
-              <p>
+              <p class="ink">
                 Custom CMS-driven marketing site and blog for AI advocacy and
                 awareness nonprofit SeedAI.
               </p>
@@ -131,9 +131,9 @@
               />
               <h3>Hack the Future</h3>
               <h4>Webflow • Zapier • Javascript</h4>
-              <p>
-                Series of event-specific landing pages and forms for Hack the
-                Future, subsidiary of AI-focused nonprofit SeedAI.
+              <p class="ink">
+                Series of event-specific landing pages and forms for SeedAI
+                subsidiary Hack the Future.
               </p>
               <a
                 aria-label="View site"
@@ -149,7 +149,10 @@
               />
               <h3>Inkling Agency</h3>
               <h4>Webflow • jQuery</h4>
-              <p>Portfolio site for Brooklyn-based creative agency Inkling.</p>
+              <p class="ink">
+                Portfolio site for Inkling, a Brooklyn-based branding and
+                experiential agency.
+              </p>
               <a
                 aria-label="View site"
                 data-h
@@ -216,8 +219,8 @@
               <h3>Personal Eyes</h3>
               <h4>HTML • Javascript • CSS</h4>
               <p>
-                Custom static landing page for Las Vegas-based optician Personal
-                Eyes.
+                Custom static landing page for fashion-forward Las Vegas-based
+                optician Personal Eyes.
               </p>
               <a
                 aria-label="View site"
@@ -272,11 +275,6 @@
 
     <c-cursor></c-cursor>
 
-    <script src="script.js"></script>
+    <script src="script_min.js"></script>
   </body>
 </html>
-
-<!--
-  * Consolidate css classes with overlapping styles
-  * Make list items that exist beyond the fold appear instantly after the last visible list item appears.
--->

@@ -15,8 +15,6 @@
 html,
 body {
   height: 100vh;
-  /* use dvh if available */
-  height: 100dvh;
 }
 
 html,
@@ -67,6 +65,7 @@ c-reflection::after,
 ul,
 li::after,
 section,
+img,
 footer,
 c-control::before {
   position: absolute;
@@ -570,7 +569,6 @@ section {
 
 img {
   inset: 48px -3.5px auto auto;
-  position: absolute;
   z-index: -1;
   width: 100%;
   border-radius: 12px 0 0 0;
@@ -597,8 +595,13 @@ a {
 }
 
 p {
-  max-width: 352px;
+  max-width: 350px;
   margin-bottom: 8px;
+}
+
+p.ink::after {
+  content: "[Agency: Inkling]";
+  white-space: nowrap;
 }
 
 p,
@@ -889,7 +892,7 @@ footer span:hover ~ c-control:not(:hover):not([hide]) {
   p {
     font-size: 14px;
     margin-bottom: 16px;
-    opacity: 0.5;
+    opacity: 0.5 !important;
     transform: none;
     position: static;
     max-width: 330px;
