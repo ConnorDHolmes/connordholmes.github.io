@@ -212,6 +212,16 @@ function bindLinks() {
   });
 }
 
+//ADD A CLASS TO THE BODY TO INDICATE YOU'RE BROWSING IN SAFARI
+function detectSafari() {
+  if (
+    navigator.userAgent.indexOf("Safari") > -1 &&
+    navigator.userAgent.indexOf("Chrome") === -1
+  ) {
+    body.classList.add("safari-compat");
+  }
+}
+
 //CLONE THE PROJECT LIST ITEMS (TO CREATE SEAMLESS WRAPPING) AND BIND THEM TO ACTIONS
 function cloneListEntries() {
   const sections = document.querySelectorAll("section");
@@ -325,10 +335,19 @@ function updateHoveredEl() {
   }
 }
 
+function returningToTab() {
+  cursor.x.target = cursor.x.eased = room.x.eased = win.midX;
+  cursor.y.target = cursor.y.eased = room.y.eased = win.midY;
+  remBl(cursorEl, "clickable");
+  addBl(cursorEl, "hide");
+}
+
 //UPDATES FOR EACH FRAME
 function refresh(timeStamp) {
   roomEl.style.transform = `translate3d(0, 0, ${room.range.zoom.eased}px) rotate3d(1, 0, 0, ${room.tilt}deg) rotate3d(0, 1, 0, ${room.pan}deg)`;
-  cursorEl.style.transform = `translate3d(${cursor.x.eased}px, ${cursor.y.eased}px, 0)`;
+  cursorEl.style.transform = `translate3d(${cursor.x.eased - cursor.half}px, ${
+    cursor.y.eased - cursor.half
+  }px, 0)`;
 
   const multiplier = (timeStamp - then) / frameDurationBenchmark;
   easedTraits.forEach((trait) => !trait.isInactive && ease(trait, multiplier));
@@ -337,17 +356,17 @@ function refresh(timeStamp) {
   everyOtherFrame = !everyOtherFrame;
 
   //seems to fix buggy tab change behavior with view
-  if (
-    cursor.x.eased > win.w + 16 ||
-    cursor.x.eased < -16 ||
-    room.x.eased > win.w + 16 ||
-    room.x.eased < -16
-  ) {
-    cursor.x.eased = win.midX;
-    cursor.y.eased = win.midX;
-    room.x.eased = win.midX;
-    room.y.eased = win.midX;
-  }
+  // if (
+  //   cursor.x.eased > win.w + 16 ||
+  //   cursor.x.eased < -16 ||
+  //   room.x.eased > win.w + 16 ||
+  //   room.x.eased < -16
+  // ) {
+  //   cursor.x.eased = win.midX;
+  //   cursor.y.eased = win.midX;
+  //   room.x.eased = win.midX;
+  //   room.y.eased = win.midX;
+  // }
 
   then = timeStamp;
   requestAnimationFrame(refresh);
@@ -375,10 +394,14 @@ window.addEventListener("blur", resetView);
 //RESET VIEW TO CENTER IF DOCUMENT LOSES FOCUS
 root.addEventListener("blur", resetView);
 
+//RESET VALS WHEN CHANGING TABS/RETURNING TO TAB
+window.addEventListener("visibilitychange", returningToTab);
+document.addEventListener("focus", returningToTab);
+
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", (e) => {
-  cursor.x.target = e.pageX - cursor.half;
-  cursor.y.target = e.pageY - cursor.half;
+  cursor.x.target = e.pageX;
+  cursor.y.target = e.pageY;
   remBl(cursorEl, "hide");
 });
 
@@ -387,8 +410,8 @@ root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
 root.addEventListener("mouseenter", (e) => {
-  cursor.x.eased = e.pageX - cursor.half;
-  cursor.y.eased = e.pageY - cursor.half;
+  cursor.x.eased = e.pageX;
+  cursor.y.eased = e.pageY;
 });
 
 //ALL KEY INPUTS
@@ -449,6 +472,7 @@ document
   .querySelectorAll("[data-text]")
   .forEach((el) => el.setAttribute("data-text", el.innerHTML));
 
+detectSafari();
 bindLinks();
 cloneListEntries();
 cloneScreen();
