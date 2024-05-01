@@ -725,6 +725,12 @@ footer span:hover ~ c-control:not(:hover):not([hide]) {
 .safari-compat c-cursor {
   contain: none;
 }
+
+.safari-compat c-cursor::after {
+  contain: none;
+  transform: scale(0.4);
+}
+
 .safari-compat main {
   contain: size layout;
 }
