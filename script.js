@@ -94,7 +94,10 @@ const root = document.documentElement,
         },
         eased: -1024,
         get isInactive() {
-          return Math.abs(this.target - this.eased) < 0.5;
+          return (
+            Math.abs(this.target - this.eased) < 0.5 &&
+            !room.range.mode === "orbit"
+          );
         },
       },
       adj: {
@@ -338,6 +341,7 @@ function updateHoveredEl() {
 function returningToTab() {
   cursor.x.target = cursor.x.eased = room.x.eased = win.midX;
   cursor.y.target = cursor.y.eased = room.y.eased = win.midY;
+  hoverables.forEach((h) => remCl(h, "hov"));
   remBl(cursorEl, "clickable");
   addBl(cursorEl, "hide");
 }
@@ -354,19 +358,6 @@ function refresh(timeStamp) {
 
   everyOtherFrame && !cursorEl.hasAttribute("hide") && updateHoveredEl();
   everyOtherFrame = !everyOtherFrame;
-
-  //seems to fix buggy tab change behavior with view
-  // if (
-  //   cursor.x.eased > win.w + 16 ||
-  //   cursor.x.eased < -16 ||
-  //   room.x.eased > win.w + 16 ||
-  //   room.x.eased < -16
-  // ) {
-  //   cursor.x.eased = win.midX;
-  //   cursor.y.eased = win.midX;
-  //   room.x.eased = win.midX;
-  //   room.y.eased = win.midX;
-  // }
 
   then = timeStamp;
   requestAnimationFrame(refresh);
@@ -389,10 +380,11 @@ function resetView() {
 window.addEventListener("resize", measureAndSize);
 
 //RESET VIEW TO CENTER IF WINDOW LOSES FOCUS
-window.addEventListener("blur", resetView);
+window.addEventListener("blur", returningToTab);
 
 //RESET VIEW TO CENTER IF DOCUMENT LOSES FOCUS
-root.addEventListener("blur", resetView);
+root.addEventListener("blur", returningToTab);
+document.addEventListener("blur", returningToTab);
 
 //RESET VALS WHEN CHANGING TABS/RETURNING TO TAB
 window.addEventListener("visibilitychange", returningToTab);
@@ -410,8 +402,8 @@ root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
 root.addEventListener("mouseenter", (e) => {
-  cursor.x.eased = e.pageX;
-  cursor.y.eased = e.pageY;
+  cursor.x.target = cursor.x.eased = e.pageX;
+  cursor.x.target = cursor.y.eased = e.pageY;
 });
 
 //ALL KEY INPUTS

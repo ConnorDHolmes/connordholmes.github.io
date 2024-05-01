@@ -300,7 +300,7 @@ body::after {
   display: none;
 }
 
-/* cursor */
+/* CURSOR */
 
 c-cursor {
   width: 25px;
@@ -721,10 +721,10 @@ footer span:hover ~ c-control:not(:hover):not([hide]) {
   opacity: 1;
 }
 
-/* DESKTOP SAFARI COMPAT */
-
-.safari-compat c-cursor,
-.safari-compat c-cursor::after,
+/* DESKTOP SAFARI BUG FIXES */
+.safari-compat c-cursor {
+  contain: none;
+}
 .safari-compat main {
   contain: size layout;
 }
