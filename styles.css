@@ -281,7 +281,7 @@ body::after {
   z-index: 1;
   inset: 0 -128px -128px 0;
   background-image: url("images/noise_overlay.webp");
-  background-size: 1200px auto;
+  background-size: 800px auto;
   animation: 0.25s noise steps(3) infinite;
 }
 
