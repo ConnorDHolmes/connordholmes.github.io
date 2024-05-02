@@ -106,7 +106,8 @@ c-control::after {
 button,
 c-screen,
 c-control,
-.show {
+.show,
+footer span {
   pointer-events: auto;
 }
 
@@ -115,10 +116,11 @@ body::before,
 body::after,
 c-scene,
 c-reflection c-screen,
+li.hide,
 section,
 footer,
 c-control::before,
-c-control[hide] {
+c-control.hide {
   pointer-events: none;
 }
 
@@ -151,6 +153,12 @@ c-screen::before,
 li.selected,
 li.hov.selected,
 li.selected::after,
+.show,
+.show h3,
+.show h4,
+.show p,
+.show a,
+a.hov::after,
 c-control,
 c-control:hover::before {
   transform: translate3d(0, 0, 0);
@@ -161,14 +169,26 @@ c-cursor,
 li.selected,
 li.hov.selected,
 .show,
-c-control:hover::before {
+a.hov::before,
+.show h3,
+.show h4,
+.show a,
+c-control:hover::before,
+footer span:hover ~ c-control:not(:hover):not(.hide) {
   opacity: 1;
 }
 
 body::before,
-c-cursor[hide],
-c-control[hide],
-c-control::before {
+c-cursor.hide,
+c-control.hide,
+c-control::before,
+section,
+li.hide,
+a::before,
+h3,
+h4,
+p,
+a {
   opacity: 0;
 }
 
@@ -290,7 +310,6 @@ body::after {
   --acc: #131310;
 }
 
-.overlay,
 .performance-mode {
   --mode-swap: 0s linear;
 }
@@ -319,11 +338,11 @@ body:active c-cursor::after {
   transform: scale3d(0.3, 0.3, 1);
 }
 
-c-cursor[clickable]::after {
+c-cursor.can-click::after {
   transform: scale3d(1, 1, 1);
 }
 
-body:active c-cursor[clickable]::after {
+body:active c-cursor.can-click::after {
   transition-duration: 0.1s;
   transform: scale3d(0.6, 0.6, 1);
 }
@@ -339,11 +358,9 @@ c-scene {
 c-room {
   width: 1024px;
   height: 576px;
-  /* initial transform setting */
-  transform: translate3d(0, 0, -864px) rotate3d(0, 1, 0, 90deg);
 }
 
-c-room[backface] {
+c-room.backface {
   backface-visibility: visible;
 }
 
@@ -415,7 +432,6 @@ nav.hide button {
 
 nav.remove {
   transform-style: flat;
-  visibility: hidden;
   display: none;
 }
 
@@ -508,11 +524,6 @@ li {
   transition: transform 0.125s ease, opacity 0.1s ease;
 }
 
-li.hide {
-  opacity: 0;
-  pointer-events: none;
-}
-
 li:first-child {
   margin-top: var(--gap);
 }
@@ -537,14 +548,8 @@ section {
   inset: 0 0 0 336px;
   padding-top: 364.5px;
   transform-origin: right;
-  pointer-events: none;
-  opacity: 0;
   transform: translate3d(0, 0, -1px) scale3d(0.97, 0.97, 1);
   transition: color var(--mode-swap), transform 0.15s ease, opacity 0.15s ease;
-}
-
-.show {
-  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
 }
 
 img {
@@ -604,7 +609,6 @@ a::before {
   content: ">";
   left: -1.5px;
   width: 0.6em;
-  opacity: 0;
   transition: opacity 0.15s ease;
 }
 
@@ -614,34 +618,12 @@ a::after {
   transition: transform 0.15s ease;
 }
 
-a.hov::before {
-  opacity: 1;
-}
-
-a.hov::after {
-  transform: translate3d(0, 0, 0);
-}
-
 h3,
 h4,
 p,
 a {
-  opacity: 0;
   transform: translate3d(0, 4px, 0);
   transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.show h3,
-.show h4,
-.show p,
-.show a {
-  transform: translate3d(0, 0, 0);
-}
-
-.show h3,
-.show h4,
-.show a {
-  opacity: 1;
 }
 
 .show h3 {
@@ -675,7 +657,6 @@ footer {
 }
 
 footer span {
-  pointer-events: auto;
   margin-right: auto;
   user-select: text;
   /* for safari */
@@ -713,12 +694,8 @@ c-control::after {
   border-radius: 4px;
 }
 
-footer:hover > c-control:not(:hover):not([hide]) {
+footer:hover > c-control:not(:hover):not(.hide) {
   opacity: 0.5;
-}
-
-footer span:hover ~ c-control:not(:hover):not([hide]) {
-  opacity: 1;
 }
 
 /* DESKTOP SAFARI BUG FIXES */

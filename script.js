@@ -2,19 +2,24 @@
 
 //all easables
 class EasableTrait {
-  constructor(easing, target = 0) {
+  constructor(target, easing = null) {
     this.target = target;
     this.eased = target;
     this.easing = easing;
   }
 
   get isActive() {
-    return Math.abs(this.target - this.eased) > 0.001;
+    return Math.abs(this.target - this.eased) > 0.01;
   }
 
   ease() {
     if (this.isActive)
       this.eased += (this.target - this.eased) * (this.easing * mult);
+  }
+
+  easeDyn() {
+    if (this.isActive)
+      this.eased += (this.target - this.eased) * (rm.dynamicEase * mult);
   }
 
   snap() {
@@ -26,19 +31,23 @@ class EasableTrait {
 const vw = {
   w: window.innerWidth,
   h: window.innerHeight,
+  hMult: 1 / window.innerWidth,
+  vMult: 1 / window.innerHeight,
   midX: window.innerWidth * 0.5,
   midY: window.innerWidth * 0.5,
 
-  recalc() {
+  measure() {
     this.w = window.innerWidth;
     this.h = window.innerHeight;
+    this.hMult = 1 / window.innerWidth;
+    this.vMult = 1 / window.innerHeight;
     this.midX = this.w * 0.5;
     this.midY = this.h * 0.5;
   },
 };
 
 //scene
-const sn = {
+const scn = {
   el: document.querySelector("c-scene"),
 
   scale() {
@@ -53,54 +62,71 @@ const rm = {
 
   mode: 0,
   modes: [
-    //orbit (0)
-    { hRange: 6, vRange: 4, zoom: -864, adj: 90, rangeEasing: 0.01 },
-    //normal (1)
-    { hRange: 180, vRange: 100, zoom: 512, adj: 0, rangeEasing: 0.04 },
-    //focused (2)
+    //orbit
+    { hRange: 6, vRange: 4, zoom: -768, adj: 90, rangeEasing: 0.01 },
+    //normal
+    { hRange: 190, vRange: 100, zoom: 512, adj: 0, rangeEasing: 0.04 },
+    //focused
     { hRange: 2, vRange: 2, zoom: 576, adj: 0, rangeEasing: 0.04 },
   ],
 
-  rangeEasing: new EasableTrait(0.01, 0.01),
-  hRange: new EasableTrait(0.01, 6),
-  vRange: new EasableTrait(0.01, 4),
-  zoom: new EasableTrait(0.01, -864),
-  adj: new EasableTrait(0.01, 90),
-  x: new EasableTrait(0.15, vw.midX),
-  y: new EasableTrait(0.15, vw.midY),
+  rangeEasing: new EasableTrait(0.005, 0.01),
+  hRange: new EasableTrait(6),
+  vRange: new EasableTrait(4),
+  zoom: new EasableTrait(-768),
+  adj: new EasableTrait(90),
+  x: new EasableTrait(vw.midX, 0.15),
+  y: new EasableTrait(vw.midY, 0.15),
+
+  get dynamicEase() {
+    return this.rangeEasing.eased;
+  },
 
   get pan() {
     return (
       this.hRange.eased * -0.5 +
-      (this.x.eased / vw.w) * this.hRange.eased +
+      this.x.eased * vw.hMult * this.hRange.eased +
       this.adj.eased
     );
   },
 
   get tilt() {
-    return this.vRange.eased * 0.5 - (this.y.eased / vw.h) * this.vRange.eased;
+    return (
+      this.vRange.eased * 0.5 - this.y.eased * vw.vMult * this.vRange.eased
+    );
   },
 
   setMode(num) {
-    this.mode = num;
+    this.rangeEasing.target = this.modes[num].rangeEasing;
     this.hRange.target = this.modes[num].hRange;
     this.vRange.target = this.modes[num].vRange;
     this.zoom.target = this.modes[num].zoom;
     this.adj.target = this.modes[num].adj;
-    this.rangeEasing.target = this.modes[num].rangeEasing;
+    this.mode = num;
   },
 
   update() {
     this.el.style.transform = `translate3d(0, 0, ${this.zoom.eased}px) rotate3d(1, 0, 0, ${this.tilt}deg) rotate3d(0, 1, 0, ${this.pan}deg)`;
   },
+
+  easeTraits() {
+    this.x.ease();
+    this.y.ease();
+    this.rangeEasing.ease();
+    this.hRange.easeDyn();
+    this.vRange.easeDyn();
+    this.zoom.easeDyn();
+    this.adj.easeDyn();
+  },
 };
 
 //cursor
-const cs = {
+const crs = {
   el: document.querySelector("c-cursor"),
-  x: new EasableTrait(0.25, vw.midX),
-  y: new EasableTrait(0.25, vw.midY),
+  x: new EasableTrait(vw.midX, 0.25),
+  y: new EasableTrait(vw.midY, 0.25),
   hf: null,
+  isHidden: false,
 
   measure() {
     this.hf = this.el.offsetWidth * 0.5;
@@ -111,75 +137,74 @@ const cs = {
       this.y.eased - this.hf
     }px, 0)`;
   },
+
+  hide() {
+    this.isHidden = true;
+    addCl(this.el, "hide");
+  },
+
+  show() {
+    this.isHidden = false;
+    remCl(this.el, "hide");
+  },
+
+  default() {
+    remCl(this.el, "can-click");
+  },
+
+  canClick() {
+    addCl(this.el, "can-click");
+  },
+
+  easeTraits() {
+    this.x.ease();
+    this.y.ease();
+  },
 };
 
-const allEasables = [
-  cs.x,
-  cs.y,
-  rm.x,
-  rm.y,
-  rm.hRange,
-  rm.vRange,
-  rm.zoom,
-  rm.adj,
-  rm.rangeEasing,
-];
+//MAIN
+const root = document.documentElement;
+const body = document.body;
+const nav = document.querySelector("nav");
+const startButton = document.getElementById("start");
+const email = document.querySelector("footer span");
+const resButton = document.getElementById("res");
+const hiddenKey = document.querySelector("c-control.hide");
+const hoverables = [...document.querySelectorAll("[data-h]")];
 
-function easeAll() {
-  rm.adj.easing =
-    rm.hRange.easing =
-    rm.vRange.easing =
-    rm.zoom.easing =
-      rm.rangeEasing.eased;
-  allEasables.forEach((easable) => easable.ease());
-}
+//PROJECT LIST
+const list = document.querySelector("ul");
+const listEntries = list.querySelectorAll("li");
+const entryCount = listEntries.length;
+const listPairs = new Map();
+let canScroll = false;
 
-function snapAll() {
-  allEasables.forEach((easable) => easable.snap());
-}
+//RAF SPEED CONTROL
+const frameDurationMultiplier = 1 / (1000 / 60);
+let then = performance.now();
+let everyOtherFrame;
+let mult = 1;
 
-const root = document.documentElement,
-  //MAIN
-  body = document.body,
-  nav = document.querySelector("nav"),
-  startButton = document.getElementById("start"),
-  email = document.querySelector("footer span"),
-  resButton = document.getElementById("res"),
-  hiddenKey = document.querySelector("c-control[hide]"),
-  hoverables = [...document.querySelectorAll("[data-h]")],
-  //PROJECT LIST
-  list = document.querySelector("ul"),
-  listEntries = list.querySelectorAll("li"),
-  entryCount = listEntries.length,
-  listPairs = new Map(),
-  //RAF SPEED CONTROL
-  frameDurationBenchmark = 1000 / 60,
-  frameDurationMultiplier = 1 / frameDurationBenchmark,
-  //ALL CLICK ACTIONS
-  actions = new Map([
-    [
-      startButton,
-      () => {
-        addCl(nav, "hide");
-        setTimeout(() => {
-          rm.setMode(2);
-          remBl(hiddenKey, "hide");
-          remBl(rm.el, "backface");
-          addCl(nav, "remove");
-          [...listPairs.keys()].forEach((entry, index) =>
-            setTimeout(() => remCl(entry, "hide"), (index + 10) * 125)
-          );
-          canScroll = true;
-        }, 350);
-      },
-    ],
-    [resButton, () => window.open("resume_placeholder.pdf", "_blank")],
-  ]);
-
-let then = document.timeline.currentTime,
-  everyOtherFrame,
-  canScroll = false,
-  mult = 1;
+//ALL CLICK ACTIONS
+const actions = new Map([
+  [
+    startButton,
+    () => {
+      addCl(nav, "hide");
+      setTimeout(() => {
+        rm.setMode(2);
+        remCl(hiddenKey, "hide");
+        remCl(rm.el, "backface");
+        addCl(nav, "remove");
+        [...listPairs.keys()].forEach((entry, index) =>
+          setTimeout(() => remCl(entry, "hide"), (index + 20) * 125)
+        );
+        canScroll = true;
+      }, 350);
+    },
+  ],
+  [resButton, () => window.open("resume_placeholder.pdf", "_blank")],
+]);
 
 //ADD CLASS (IF CLASS DOESN'T EXIST)
 function addCl(el, cl) {
@@ -196,18 +221,6 @@ function remCl(el, cl) {
 //TOGGLE CLASS
 function togCl(el, cl) {
   requestAnimationFrame(() => el.classList.toggle(cl));
-}
-
-//ADD BOOLEAN ATTRIBUTE (IF ATTRIBUTE DOESN'T EXIST)
-function addBl(el, attr) {
-  !el.hasAttribute(attr) &&
-    requestAnimationFrame(() => el.setAttribute(attr, ""));
-}
-
-//REMOVE BOOLEAN ATTRIBUTE (IF ATTRIBUTE EXISTS)
-function remBl(el, attr) {
-  el.hasAttribute(attr) &&
-    requestAnimationFrame(() => el.removeAttribute(attr));
 }
 
 //SET PROJECT LINK BEHAVIOR
@@ -326,55 +339,55 @@ function cloneScreen() {
 
 //UPDATE HOVERED ELEMENT (TAKING THE CURSOR'S EASING INTO ACCOUNT)
 function updateHoveredEl() {
-  const el = document.elementFromPoint(cs.x.eased, cs.y.eased);
+  const el = document.elementFromPoint(crs.x.eased, crs.y.eased);
   if (hoverables.includes(el)) {
     hoverables.forEach((h) =>
       h === el || h === listPairs.get(el) ? addCl(h, "hov") : remCl(h, "hov")
     );
-    addBl(cs.el, "clickable");
+    crs.canClick();
   } else {
     hoverables.forEach((h) => remCl(h, "hov"));
-    remBl(cs.el, "clickable");
+    crs.default();
   }
 }
 
 function returningToTab() {
-  cs.x.target = cs.x.eased = rm.x.eased = vw.midX;
-  cs.y.target = cs.y.eased = rm.y.eased = vw.midY;
-  snapAll();
+  crs.x.target = crs.x.eased = rm.x.eased = vw.midX;
+  crs.y.target = crs.y.eased = rm.y.eased = vw.midY;
   hoverables.forEach((h) => remCl(h, "hov"));
-  remBl(cs.el, "clickable");
-  addBl(cs.el, "hide");
+  crs.default();
+  crs.hide();
 }
 
 //UPDATES FOR EACH FRAME
-function refresh(timeStamp) {
+function step(timeStamp) {
   rm.update();
-  cs.update();
+  crs.update();
 
   mult = (timeStamp - then) * frameDurationMultiplier;
-  easeAll();
+  rm.easeTraits();
+  crs.easeTraits();
 
-  everyOtherFrame && !cs.el.hasAttribute("hide") && updateHoveredEl();
+  everyOtherFrame && !crs.isHidden && updateHoveredEl();
   everyOtherFrame = !everyOtherFrame;
 
   then = timeStamp;
-  requestAnimationFrame(refresh);
+  requestAnimationFrame(step);
 }
 
 //SCALE THE SCENE TO FIT SCREEN HEIGHT AND RE-MEASURE WINDOW SIZE
 function measureAndSize() {
-  cs.measure();
-  vw.recalc();
-  sn.scale();
+  crs.measure();
+  vw.measure();
+  scn.scale();
   resetView();
 }
 
 //RESET VIEW TO MIDDLE
 function resetView() {
-  cs.x.target = rm.x.target = vw.midX;
-  cs.y.target = rm.y.target = vw.midY;
-  addBl(cs.el, "hide");
+  crs.x.target = rm.x.target = vw.midX;
+  crs.y.target = rm.y.target = vw.midY;
+  crs.hide();
 }
 
 //SCALE SCENE ON WINDOW RESIZE
@@ -393,9 +406,9 @@ document.addEventListener("focus", returningToTab);
 
 //UPDATE THE CURSOR
 document.addEventListener("mousemove", (e) => {
-  cs.x.target = rm.x.target = e.pageX;
-  cs.y.target = rm.y.target = e.pageY;
-  remBl(cs.el, "hide");
+  crs.x.target = rm.x.target = e.pageX;
+  crs.y.target = rm.y.target = e.pageY;
+  crs.show();
 });
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
@@ -403,8 +416,8 @@ root.addEventListener("mouseleave", resetView);
 
 //HANDLE CURSOR RETURNING TO DOCUMENT
 root.addEventListener("mouseenter", (e) => {
-  cs.x.target = cs.x.eased = e.pageX;
-  cs.x.target = cs.y.eased = e.pageY;
+  crs.x.target = crs.x.eased = e.pageX;
+  crs.x.target = crs.y.eased = e.pageY;
 });
 
 //ALL KEY INPUTS
@@ -445,7 +458,7 @@ function removeSelection() {
 
 //ALL CLICK ACTIONS
 document.addEventListener("click", (e) => {
-  vw.w > 768
+  vw.w > 992
     ? actions.get(document.querySelector(".hov"))?.()
     : actions.get(e.target)?.();
 
@@ -470,4 +483,4 @@ bindLinks();
 cloneListEntries();
 cloneScreen();
 measureAndSize();
-requestAnimationFrame(refresh);
+requestAnimationFrame(step);
