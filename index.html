@@ -23,12 +23,12 @@
     />
 
     <link rel="preload" href="images/noise_overlay.webp" as="image" />
-    <link rel="preload" href="styles_min.css" as="style" />
-    <link rel="preload" href="script_min.js" as="script" />
+    <link rel="preload" href="styles.css" as="style" />
+    <link rel="preload" href="script.js" as="script" />
 
     <link rel="icon" href="favicon.ico" />
 
-    <link rel="stylesheet" href="styles_min.css" />
+    <link rel="stylesheet" href="styles.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -278,6 +278,11 @@
 
     <c-cursor></c-cursor>
 
-    <script src="script_min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
+
+<!--
+  Create static class list js class to track and process dom changes (very small optimization that may actually do more harm than good)
+  ^ Adapt reflection code to use this instead of Mutation Observer
+-->

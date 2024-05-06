@@ -14,12 +14,8 @@ class EasableTrait {
 
   ease() {
     if (this.isActive)
-      this.eased += (this.target - this.eased) * (this.easing * mult);
-  }
-
-  easeDyn() {
-    if (this.isActive)
-      this.eased += (this.target - this.eased) * (rm.dynamicEase * mult);
+      this.eased +=
+        (this.target - this.eased) * ((this.easing || rm.dynamicEase) * mult);
   }
 
   snap() {
@@ -113,10 +109,10 @@ const rm = {
     this.x.ease();
     this.y.ease();
     this.rangeEasing.ease();
-    this.hRange.easeDyn();
-    this.vRange.easeDyn();
-    this.zoom.easeDyn();
-    this.adj.easeDyn();
+    this.hRange.ease();
+    this.vRange.ease();
+    this.zoom.ease();
+    this.adj.ease();
   },
 };
 
@@ -163,7 +159,6 @@ const crs = {
 };
 
 //MAIN
-const root = document.documentElement;
 const body = document.body;
 const nav = document.querySelector("nav");
 const startButton = document.getElementById("start");
@@ -284,9 +279,10 @@ function cloneScreen() {
     reflection = screen.cloneNode(true),
     pairs = new Map(),
     observer = new MutationObserver((changes) =>
-      changes.forEach(
-        (change) =>
-          (pairs.get(change.target).classList = change.target.classList)
+      changes.forEach((change) =>
+        requestAnimationFrame(
+          () => (pairs.get(change.target).classList = change.target.classList)
+        )
       )
     );
   //ONLY OBSERVE CHANGES IN ELEMENTS THAT MIGHT CHANGE (MUTABLE OR HOVERABLE)
@@ -351,14 +347,6 @@ function updateHoveredEl() {
   }
 }
 
-function returningToTab() {
-  crs.x.target = crs.x.eased = rm.x.eased = vw.midX;
-  crs.y.target = crs.y.eased = rm.y.eased = vw.midY;
-  hoverables.forEach((h) => remCl(h, "hov"));
-  crs.default();
-  crs.hide();
-}
-
 //UPDATES FOR EACH FRAME
 function step(timeStamp) {
   rm.update();
@@ -380,8 +368,34 @@ function measureAndSize() {
   crs.measure();
   vw.measure();
   scn.scale();
-  resetView();
 }
+
+//WHEN TAB LOSES OR REGAINS FOCUS
+function tabFocusChange() {
+  crs.hide();
+  resetView();
+  crs.x.snap();
+  crs.y.snap();
+  rm.x.snap();
+  rm.y.snap();
+  hoverables.forEach((h) => remCl(h, "hov"));
+  crs.default();
+}
+
+//UPDATE THE CURSOR
+document.addEventListener("mousemove", (e) => {
+  crs.x.target = rm.x.target = e.pageX;
+  crs.y.target = rm.y.target = e.pageY;
+  document.hasFocus() && crs.show();
+});
+
+//HANDLE CURSOR RETURNING TO DOCUMENT
+document.documentElement.addEventListener("mouseenter", (e) => {
+  crs.x.target = rm.x.target = e.pageX;
+  crs.y.target = rm.y.target = e.pageY;
+  crs.x.snap();
+  crs.y.snap();
+});
 
 //RESET VIEW TO MIDDLE
 function resetView() {
@@ -391,34 +405,16 @@ function resetView() {
 }
 
 //SCALE SCENE ON WINDOW RESIZE
-window.addEventListener("resize", measureAndSize);
-
-//RESET VIEW TO CENTER IF WINDOW LOSES FOCUS
-window.addEventListener("blur", returningToTab);
-
-//RESET VIEW TO CENTER IF DOCUMENT LOSES FOCUS
-root.addEventListener("blur", returningToTab);
-document.addEventListener("blur", returningToTab);
+window.addEventListener("resize", () => {
+  measureAndSize();
+  resetView();
+});
 
 //RESET VALS WHEN CHANGING TABS/RETURNING TO TAB
-window.addEventListener("visibilitychange", returningToTab);
-document.addEventListener("focus", returningToTab);
-
-//UPDATE THE CURSOR
-document.addEventListener("mousemove", (e) => {
-  crs.x.target = rm.x.target = e.pageX;
-  crs.y.target = rm.y.target = e.pageY;
-  crs.show();
-});
+window.addEventListener("visibilitychange", tabFocusChange);
 
 //RESET VIEW TO CENTER IF CURSOR EXITS DOCUMENT
-root.addEventListener("mouseleave", resetView);
-
-//HANDLE CURSOR RETURNING TO DOCUMENT
-root.addEventListener("mouseenter", (e) => {
-  crs.x.target = crs.x.eased = e.pageX;
-  crs.x.target = crs.y.eased = e.pageY;
-});
+document.documentElement.addEventListener("mouseleave", resetView);
 
 //ALL KEY INPUTS
 document.addEventListener("keyup", (e) => {
